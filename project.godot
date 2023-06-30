@@ -14,6 +14,10 @@ config/name="2dComponents"
 config/features=PackedStringArray("4.0", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Helpers="*res://addons/2d_essentials/autoload/helpers.tscn"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/2d_essentials/plugin.cfg")
