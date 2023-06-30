@@ -4,6 +4,7 @@ extends Node2D
 class_name HealthComponent
 
 signal health_changed(amount: int, type: TYPES)
+signal invulnerability_changed(active: bool)
 signal died
 
 @onready var invulnerability_timer: Timer = $InvulnerabilityTimer
@@ -41,12 +42,18 @@ func check_is_death():
 		died.emit()
 		owner.queue_free()
 		
-func make_invulnerable(time: float):
-	is_invulnerable = true
-	
-	invulnerability_timer.wait_time = max(0.05, time)
-	invulnerability_timer.one_shot = true
-	invulnerability_timer.start()
+func enable_invulnerabiliy(enable: bool, time: float = 0.05):
+	if enable:
+		is_invulnerable = true
+		invulnerability_timer.wait_time = max(0.05, time)
+		invulnerability_timer.one_shot = true
+		invulnerability_timer.start()
+	else:
+		is_invulnerable = false
+		invulnerability_timer.stop()
+
+	invulnerability_changed.emit(enable)
+
 
 func enable_health_regen(amount_per_second: int = health_regen_per_second):
 	health_regen_per_second = amount_per_second
@@ -73,4 +80,5 @@ func on_health_regen_timer_timeout():
 		health_regen_timer.stop()
 		
 func on_invulnerability_timer_timeout():
-	is_invulnerable = false
+	enable_invulnerabiliy(false)
+	

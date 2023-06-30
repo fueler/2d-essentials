@@ -1,8 +1,10 @@
 @tool
 extends EditorPlugin
 
+const GLOBALS_AUTOLOAD = "2DEssentialsGlobals"
 
 func _enter_tree():
+	add_autoload_singleton(GLOBALS_AUTOLOAD, "res://addons/2d_essentials/autoload/globals.gd")
 	add_custom_type("HealthComponent", "Node2D", preload("res://addons/health/health_component.gd"), preload("res://icon.svg"))
 
 
