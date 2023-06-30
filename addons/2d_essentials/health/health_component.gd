@@ -21,12 +21,25 @@ enum TYPES {
 	REGEN
 }
 
+func _get_configuration_warnings():
+	var has_health_regen_timer = false
+	
+	for child in get_children():
+		if child is Timer and child.name == "HealthRegenTimer":
+			has_health_regen_timer = true
+			break
+	
+	if !has_health_regen_timer and health_regen_per_second > 0:
+		return "A Timer with the name 'HealthRegenTimer' is needed when the variable health regen per seconds is greather than zero"
+	
+	return []
+	
 func _ready():
 	health_changed.connect(on_health_changed)
 	
 	if health_regen_timer:
 		health_regen_timer.timeout.connect(on_health_regen_timer_timeout)
-		enable_health_regen()
+		enable_health_regen(health_regen_per_second)
 		
 	if invulnerability_timer:
 		invulnerability_timer.timeout.connect(on_invulnerability_timer_timeout)
@@ -42,6 +55,7 @@ func damage(amount: int):
 
 func health(amount: int, type: TYPES = TYPES.HEALTH):
 	current_health = min(max_health, current_health + amount)
+	
 	health_changed.emit(amount, type)
 	
 	
@@ -69,14 +83,17 @@ func enable_invulnerabiliy(enable: bool, time: float = 0.05):
 
 
 func enable_health_regen(amount_per_second: int = health_regen_per_second):
-	health_regen_per_second = amount_per_second
-	
-	if health_regen_timer and health_regen_per_second > 0 and current_health != max_health:
-		health_regen_timer.stop()
+	if health_regen_timer:
+		health_regen_per_second = amount_per_second
 		
-		health_regen_timer.one_shot = false
-		health_regen_timer.wait_time = 1.0
-		health_regen_timer.start()
+		if current_health == max_health and health_regen_timer.time_left > 0:
+			health_regen_timer.stop()
+			return
+		
+		if health_regen_timer and health_regen_timer.is_stopped() and health_regen_per_second > 0:
+			health_regen_timer.one_shot = false
+			health_regen_timer.wait_time = 1.0
+			health_regen_timer.start()
 
 	
 func get_health_percent() -> float:
@@ -85,14 +102,12 @@ func get_health_percent() -> float:
 	
 func on_health_changed(amount: int, type: TYPES):
 	if type == TYPES.DAMAGE:
+		enable_health_regen()
 		Callable(check_is_death).call_deferred()
 
 
 func on_health_regen_timer_timeout():
 	health(health_regen_per_second, TYPES.REGEN)
-	
-	if current_health == max_health:
-		health_regen_timer.stop()
 	
 		
 func on_invulnerability_timer_timeout():
