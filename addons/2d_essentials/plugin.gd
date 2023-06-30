@@ -1,7 +1,7 @@
 @tool
 extends EditorPlugin
 
-const GLOBALS_AUTOLOAD = "2DEssentialsGlobals"
+const GLOBALS_AUTOLOAD = "Globals2D"
 
 func _enter_tree():
 	add_autoload_singleton(GLOBALS_AUTOLOAD, "res://addons/2d_essentials/autoload/globals.gd")
