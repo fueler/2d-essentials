@@ -6,5 +6,6 @@
 script = ExtResource("1_8007t")
 max_speed = 100
 dash_speed_multiplier = 5
+dash_cooldown = 2.0
 
 [node name="DashCooldownTimer" type="Timer" parent="."]
