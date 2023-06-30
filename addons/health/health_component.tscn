@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cmkinmxlel4x7"]
+
+[node name="HealthComponent" type="Node2D"]
+
+[node name="InvulnerabilityTimer" type="Timer" parent="."]
+
+[node name="HealthRegenTimer" type="Timer" parent="."]
