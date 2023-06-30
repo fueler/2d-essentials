@@ -1,6 +1,10 @@
-[gd_scene format=3 uid="uid://cmkinmxlel4x7"]
+[gd_scene load_steps=2 format=3 uid="uid://cmkinmxlel4x7"]
+
+[ext_resource type="Script" path="res://addons/2d_essentials/health/health_component.gd" id="1_hoxww"]
 
 [node name="HealthComponent" type="Node2D"]
+script = ExtResource("1_hoxww")
+current_health = 100
 
 [node name="InvulnerabilityTimer" type="Timer" parent="."]
 

@@ -1,6 +1,6 @@
 @tool
 extends Node
-class_name Globals2D
+class_name Utilities
 
 ## Generate n random directions on the angle range provided
 ## from an origin vector that will be rotated accordingly
