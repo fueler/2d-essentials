@@ -1,7 +1,6 @@
 @tool
-extends Node2D
 
-class_name HealthComponent
+class_name HealthComponent extends Node2D
 
 signal health_changed(amount: int, type: TYPES)
 signal invulnerability_changed(active: bool)
@@ -10,9 +9,14 @@ signal died
 var invulnerability_timer: Timer
 var health_regen_timer: Timer
 
+@export_group("Health Parameters")
+## The maximum health it can reach
 @export var max_health: int = 100
+## The actual health
 @export var current_health: int = max_health
+## The amount of health regenerated each second
 @export var health_regen_per_second: int = 0
+## The invulnerability flag, when is true no damage is received but can be healed
 @export var is_invulnerable:bool = false
 
 enum TYPES {

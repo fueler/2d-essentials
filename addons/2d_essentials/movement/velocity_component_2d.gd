@@ -1,16 +1,31 @@
 @tool
-extends Node2D
 
-class_name VelocityComponent2D
+class_name VelocityComponent2D extends Node2D
 
+############ SIGNALS ############
+signal dashed
+
+########## EDITABLE PARAMETERS ##########
+@export_group("Movement Parameters")
+## The max speed this character can reach
 @export var max_speed: int = 125
+## This value makes smoother the time it takes to reach maximum speed  
 @export var acceleration_smoothing: float = 15
-@export var friction: float = 0.5
+
+
+@export_group("Dash Parameters")
+## The speed multiplier would be applied to the player velocity on runtime
 @export var dash_speed_multiplier: int = 2
+## The times this character can dash until the cooldown is activated
+@export_range(1, 5, 1, "or_greater") var times_can_dash: int = 1
+## The time it takes for the dash ability to become available again.
 @export var dash_cooldown: float = 0.0
+
+#################################################3
 
 var dash_cooldown_timer: Timer
 var can_dash: bool = false
+var dash_queue: Array[int] = []
 
 var velocity: Vector2 = Vector2.ZERO
 var facing_direction: Vector2 = Vector2.ZERO
@@ -70,9 +85,15 @@ func decelerate():
 
 func dash():
 	if can_dash and dash_cooldown_timer and dash_cooldown_timer.is_stopped():
-		can_dash = false
+		if dash_queue.size() <= times_can_dash:
+			dash_queue.append(1)
+		else:
+			can_dash = false
+			dash_cooldown_timer.start()
+		
 		velocity *= dash_speed_multiplier
-		dash_cooldown_timer.start()
+	
+		dashed.emit()
 
 func enable_dash(cooldown: float = dash_cooldown):
 	if cooldown > 0 and dash_cooldown_timer:
@@ -89,4 +110,4 @@ func enable_dash(cooldown: float = dash_cooldown):
 	
 func on_dash_cooldown_timer_timeout():
 	can_dash = true
-	
+	dash_queue = []
