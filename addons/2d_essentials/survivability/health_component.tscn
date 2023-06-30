@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://i5vecmyu3w12"]
+
+[ext_resource type="Script" path="res://addons/2d_essentials/survivability/health_component.gd" id="1_u1wg4"]
+
+[node name="HealthComponent" type="Node2D"]
+script = ExtResource("1_u1wg4")
+current_health = 100
+
+[node name="InvulnerabilityTimer" type="Timer" parent="."]
+
+[node name="HealthRegenTimer" type="Timer" parent="."]

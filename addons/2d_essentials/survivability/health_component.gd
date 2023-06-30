@@ -7,8 +7,8 @@ signal health_changed(amount: int, type: TYPES)
 signal invulnerability_changed(active: bool)
 signal died
 
-@onready var invulnerability_timer: Timer
-@onready var health_regen_timer: Timer
+var invulnerability_timer: Timer
+var health_regen_timer: Timer
 
 @export var max_health: int = 100
 @export var current_health: int = max_health
@@ -21,17 +21,24 @@ enum TYPES {
 	REGEN
 }
 
-func _get_configuration_warnings():
-	var warnings: Array[String] = []
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings: PackedStringArray = []
+	
 	var has_health_regen_timer = false
+	var has_invulnerability_timer = false
 	
 	for child in get_children():
 		if child is Timer and child.name == "HealthRegenTimer":
 			has_health_regen_timer = true
-			break
+		
+		if child is Timer and child.name == "InvulnerabilityTimer":
+			has_invulnerability_timer = true
 	
 	if !has_health_regen_timer and health_regen_per_second > 0:
-		warnings.append("A Timer with the name 'HealthRegenTimer' is needed when the variable health regen per second is greather than zero")
+		warnings.append("A Timer with the name 'HealthRegenTimer' is needed when the parameter 'health regen per second' is greater than zero")
+	
+	if !has_invulnerability_timer and is_invulnerable:
+		warnings.append("A Timer with the name 'InvulnerabilityTimer' is needed when the parameter 'is_invulnerable' is set to true")
 	
 	return warnings
 	
@@ -67,7 +74,10 @@ func check_is_death():
 	if current_health == 0:
 		died.emit()
 		owner.queue_free()
-		
+
+func get_health_percent() -> float:
+	return max(0, current_health / max_health)
+	
 
 func enable_invulnerabiliy(enable: bool, time: float = 0.05):
 	if enable:
@@ -98,11 +108,7 @@ func enable_health_regen(amount_per_second: int = health_regen_per_second):
 			health_regen_timer.one_shot = false
 			health_regen_timer.wait_time = 1.0
 			health_regen_timer.start()
-
-	
-func get_health_percent() -> float:
-	return max(0, current_health / max_health)
-	
+			
 	
 func on_health_changed(amount: int, type: TYPES):
 	if type == TYPES.DAMAGE:
