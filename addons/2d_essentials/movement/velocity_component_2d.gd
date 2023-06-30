@@ -60,9 +60,7 @@ func accelerate_in_direction(direction: Vector2):
 func accelerate_to_target(target: CharacterBody2D):
 	var target_direction: Vector2 = (target.global_position - global_position).normalized()
 	
-	accelerate_in_direction(target_direction)
-	
-	return self
+	return accelerate_in_direction(target_direction)
 	
 func decelerate():
 	accelerate_in_direction(Vector2.ZERO)
