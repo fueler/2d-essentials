@@ -7,8 +7,8 @@ signal health_changed(amount: int, type: TYPES)
 signal invulnerability_changed(active: bool)
 signal died
 
-@onready var invulnerability_timer: Timer = $InvulnerabilityTimer
-@onready var health_regen_timer: Timer = $HealthRegenTimer
+@onready var invulnerability_timer: Timer
+@onready var health_regen_timer: Timer
 
 @export var max_health: int = 100
 @export var current_health: int = max_health
@@ -16,12 +16,13 @@ signal died
 @export var is_invulnerable:bool = false
 
 enum TYPES {
-	HEALTH,
 	DAMAGE,
+	HEALTH,
 	REGEN
 }
 
 func _get_configuration_warnings():
+	var warnings: Array[String] = []
 	var has_health_regen_timer = false
 	
 	for child in get_children():
@@ -30,11 +31,14 @@ func _get_configuration_warnings():
 			break
 	
 	if !has_health_regen_timer and health_regen_per_second > 0:
-		return "A Timer with the name 'HealthRegenTimer' is needed when the variable health regen per seconds is greather than zero"
+		warnings.append("A Timer with the name 'HealthRegenTimer' is needed when the variable health regen per second is greather than zero")
 	
-	return []
+	return warnings
 	
 func _ready():
+	health_regen_timer = get_node_or_null("HealthRegenTimer")
+	invulnerability_timer = get_node_or_null("InvulnerabilityTimer")
+	
 	health_changed.connect(on_health_changed)
 	
 	if health_regen_timer:
