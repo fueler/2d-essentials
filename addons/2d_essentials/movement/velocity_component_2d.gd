@@ -6,14 +6,14 @@ class_name VelocityComponent2D extends Node2D
 signal dashed
 
 ########## EDITABLE PARAMETERS ##########
-@export_group("Movement Parameters")
+@export_group("Speed")
 ## The max speed this character can reach
 @export var max_speed: int = 125
 ## This value makes smoother the time it takes to reach maximum speed  
 @export var acceleration_smoothing: float = 15
 
 
-@export_group("Dash Parameters")
+@export_group("Dash")
 ## The speed multiplier would be applied to the player velocity on runtime
 @export var dash_speed_multiplier: int = 2
 ## The times this character can dash until the cooldown is activated

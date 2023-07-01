@@ -63,12 +63,15 @@ func _ready():
 func damage(amount: int):
 	if is_invulnerable: amount = 0
 	
+	amount = abs(amount)
+	
 	current_health = max(0, current_health - amount)
 	
 	health_changed.emit(amount, TYPES.DAMAGE)
 
 
 func health(amount: int, type: TYPES = TYPES.HEALTH):
+	amount = abs(amount)
 	current_health = min(max_health, current_health + amount)
 	
 	health_changed.emit(amount, type)
