@@ -1,4 +1,4 @@
-[gd_scene load_steps=106 format=3 uid="uid://gs2f5s7lrvll"]
+[gd_scene load_steps=107 format=3 uid="uid://gs2f5s7lrvll"]
 
 [ext_resource type="Script" path="res://examples/top-down-example/player.gd" id="1_kqsev"]
 [ext_resource type="Texture2D" uid="uid://dnuls68v6pawr" path="res://examples/top-down-example/assets/player.png" id="2_sdxs5"]
@@ -550,7 +550,7 @@ advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_v6cos"]
 states/Die/node = SubResource("AnimationNodeBlendSpace2D_00qjs")
-states/Die/position = Vector2(717, 52)
+states/Die/position = Vector2(718, 52)
 states/Idle/node = SubResource("AnimationNodeBlendSpace2D_d66rf")
 states/Idle/position = Vector2(406, 70)
 states/SlashAttack/node = SubResource("AnimationNodeBlendSpace2D_1w3lm")
@@ -611,6 +611,30 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../SlashAttack/CollisionShape2D:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../SlashAttack/CollisionShape2D:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(12, -4.13161)]
 }
 
 [sub_resource type="Animation" id="Animation_lvvrb"]
@@ -1060,6 +1084,18 @@ tracks/2/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../SlashAttack/CollisionShape2D:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
 
 [sub_resource type="Animation" id="Animation_1ass3"]
 resource_name = "attack_left"
@@ -1099,6 +1135,30 @@ tracks/2/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../SlashAttack/CollisionShape2D:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../SlashAttack/CollisionShape2D:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(11, -4.132), Vector2(-13, -3), Vector2(-11, -4.132)]
 }
 
 [sub_resource type="Animation" id="Animation_pgdtx"]
@@ -1201,6 +1261,9 @@ _data = {
 [sub_resource type="CircleShape2D" id="CircleShape2D_dosvr"]
 radius = 9.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_afnx2"]
+size = Vector2(11.9937, 15.0461)
+
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(71, 58)
 script = ExtResource("1_kqsev")
@@ -1222,7 +1285,6 @@ animation = &"idle_down"
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeStateMachine_v6cos")
 anim_player = NodePath("../AnimationPlayer")
-active = true
 process_callback = 0
 parameters/playback = SubResource("AnimationNodeStateMachinePlayback_d505x")
 parameters/conditions/idle = false
@@ -1250,3 +1312,12 @@ script = ExtResource("3_nh1wh")
 script = ExtResource("4_jq58l")
 max_health = 25
 current_health = 25
+
+[node name="SlashAttack" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SlashAttack"]
+position = Vector2(12, -4.13161)
+scale = Vector2(1.28687, 1.17883)
+shape = SubResource("RectangleShape2D_afnx2")
