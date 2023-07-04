@@ -4,7 +4,7 @@ class_name VelocityComponent2D extends Node2D
 
 ############ SIGNALS ############
 signal dashed
-
+signal knockback_received
 ########## EDITABLE PARAMETERS ##########
 @export_group("Speed")
 ## The max speed this character can reach
@@ -21,6 +21,8 @@ signal dashed
 ## The time it takes for the dash ability to become available again.
 @export var dash_cooldown: float = 0.0
 
+@export_group("Knockback")
+@export var knockback_power: int = 300
 #################################################3
 
 var dash_cooldown_timer: Timer
@@ -81,8 +83,16 @@ func decelerate():
 	accelerate_in_direction(Vector2.ZERO)
 	
 	return self
-	
 
+func knockback(from: Vector2, power: int = knockback_power):
+	var knockback_direction: Vector2 = (from - velocity).normalized() * power
+	velocity = knockback_direction
+	
+	move()
+	
+	knockback_received.emit()
+	
+	
 func dash():
 	if can_dash and dash_cooldown_timer and dash_cooldown_timer.is_stopped():
 		if dash_queue.size() <= times_can_dash:

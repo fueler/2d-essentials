@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="2dComponents"
+run/main_scene="res://examples/top-down-example/world.tscn"
 config/features=PackedStringArray("4.0", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -18,11 +19,25 @@ config/icon="res://icon.svg"
 
 Helpers="*res://addons/2d_essentials/autoload/helpers.tscn"
 
+[display]
+
+window/size/viewport_width=1024
+window/size/viewport_height=768
+window/size/window_width_override=1024
+window/size/window_height_override=768
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/2d_essentials/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
 
+[layer_names]
+
+2d_physics/layer_1="World"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="Enemies"
+
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
