@@ -23,12 +23,9 @@ Here you can find the full available list of components, be sure to read the doc
 This one manages all related to taking damage and health on the parent node, usually you add this to a **CharacterBody2D** but nothing prevents from being used in a **StaticRigidBody2D** if you want to make alive a tree or any other game object.
 
 ### Setup
-Add this component as a child in which node you want to add a life and damage logic, the next steps are:
-- Set the initial values you desire for this component
-![health_component_parameters](images/health_component_parameters.PNG)
+Add this component as a child in which node you want to add a life and damage logic, just define the the initial values you desire for this component:
 
-- (Optional) To enable health regen you need to add a value greater than zero for the parameter `health regen per second` and add a Timer as a child with the name `HealthRegenTimer`
-- (Optional) To enable the possibility to activate invulnerability you need to add another Timer as a child with the name `InvulnerabilityTimer`
+![health_component_parameters](images/health_component_parameters.PNG)
 
 ### Taking damage
 Easy as call the function `damage` inside the component, a signal `health_changed` is emitted everytime receives damage while checking if the current health has reached zero, in which case it additionaly emits a `died` signal.
@@ -46,7 +43,7 @@ health_component.health(25)
 ```
 
 ### Health regeneration per second
-By default, the health regeneration is set to be **every second** and need to be activated as we describe in the Setup section above. When the health component call the function `damage()` the regeneration is enabled until reach the max health where it will be deactivated.
+By default, the health regeneration is set to be **every second**. When the health component call the function `damage()` the regeneration is enabled until reach the max health where it will be deactivated.
 
 You can change the amount per second dinamically using the function `enable_health_regen` or set to zero if you want to disable it:
 
@@ -88,6 +85,7 @@ Whether top-down, platformer or grid-based, this component offers the functional
 🧇***(This component does not register inputs, it is a headless component that only applies movement to one node. The logic of when to do this is up to you as the developer)***
 
 ## Speed group
+All parameters and function here relates to node movement.
 ### Move
 This is a shorcut that update the velocity and call the method `move_and_slide()`. Can receive the `CharacterBody2D` node via parameter or access the parent to whom this component belongs.
 
@@ -104,6 +102,8 @@ velocity_component_2d.accelerate_in_direction(direction).move()
 Same behavior as `accelerate_in_direction` but this time taking a target *(Node2D)* as parameter that will define the direction in which it will move.
 
 ```python
+var player = get_tree().get_first_node_in_group("player") as CharacterBody2D
+
 velocity_component_2d.accelerate_to_target(player).move()
 ```
 
@@ -115,20 +115,21 @@ velocity_component_2d.decelerate()
 ```
 
 ## Dash group
-To use it, you will need to add a Timer node with the name DashCooldownTimer and it will define the loading time between dashes.
-You can define a number of dashes to be performed before the cooldown is activated.
+This component allows you to enable a dash functionality, also supports a number of dashes which each add a timer to free it from the queue and enable it again.
 
 ### Dash
-This function moves the node fastly in the last faced direction of the node by default. You can provide a different direction as parameter:
+This function moves the node fastly in the last faced direction of the node by default. You can provide a different direction as parameter. This function trigger a signal `dashed` in case you want to add extra functionality when you dash
 
 ```python
 if Input.is_just_action_pressed("dash"):
     velocity_component_2d.dash()
+    #or 
+    velocity_component_2d.dash(other_direction)
 ```
 ### Enable or disable Dash
-You can enable or disable the dash feature using the function `enable_dash` passing the new cooldown between dashes as parameter:
+You can enable or disable the dash feature using the function `enable_dash` passing the new cooldown between dashes and the times you can dash continuosly as parameters:
 ```python
-velocity_component_2d.enable_dash(3.0)
+velocity_component_2d.enable_dash(3.0, 2)
 # or disable it
 velocity_component_2d.enable_dash(0.0)
 
@@ -144,4 +145,10 @@ func _on_slash_attack_area_entered(area: Area2D):
     target.velocity_component_2d.knockback(self.velocity_component_2d.velocity)
     # or new knockback power
     target.velocity_component_2d.knockback(self.velocity_component_2d.velocity, 500)
+```
+
+## Signals
+```python
+signal dashed
+signal knockback_received
 ```
