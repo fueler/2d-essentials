@@ -2,8 +2,8 @@
 
 class_name HealthComponent extends Node2D
 
-signal health_changed(amount: int, type: TYPES)
-signal invulnerability_changed(active: bool)
+signal health_changed(amount, type)
+signal invulnerability_changed(active)
 signal died
 
 var invulnerability_timer: Timer
@@ -38,9 +38,10 @@ func _ready():
 
 
 func damage(amount: int):
-	if is_invulnerable: amount = 0
+	if is_invulnerable: 
+		amount = 0
 	
-	amount = abs(amount)
+	amount = absi(amount)
 	
 	current_health = max(0, current_health - amount)
 	
@@ -48,7 +49,7 @@ func damage(amount: int):
 
 
 func health(amount: int, type: TYPES = TYPES.HEALTH):
-	amount = abs(amount)
+	amount = absi(amount)
 	current_health = min(max_health, current_health + amount)
 	
 	health_changed.emit(amount, type)
@@ -115,7 +116,8 @@ func _create_invulnerability_timer(time: float = invulnerability_time):
 		new_invulnerability_timer.name = "InvulnerabilityTimer"
 		new_invulnerability_timer.wait_time = time
 		new_invulnerability_timer.one_shot = true
-
+		new_invulnerability_timer.autostart = false
+		
 		invulnerability_timer = new_invulnerability_timer
 		add_child(new_invulnerability_timer)
 		

@@ -121,11 +121,7 @@ func test_signal_invulnerability_changed_emitted_after_enable():
 	var health_component_test_instance = auto_free(preloaded_component_script.new())
 
 	add_child(health_component_test_instance)
-	var timer: Timer = Timer.new()
 	
-	timer.name = "InvulnerabilityTimer"
-	
-	health_component_test_instance.add_child(timer)
 	health_component_test_instance.enable_invulnerability(true, 2.0)
 	
 	await assert_signal(health_component_test_instance).is_emitted("invulnerability_changed", [true])
@@ -135,12 +131,7 @@ func test_signal_invulnerability_changed_emitted_after_timeout():
 	var health_component_test_instance = auto_free(preloaded_component_script.new())
 
 	add_child(health_component_test_instance)
-	var timer: Timer = Timer.new()
-	
-	timer.name = "InvulnerabilityTimer"
-	
-	health_component_test_instance.add_child(timer)
-	
+
 	health_component_test_instance.enable_invulnerability(true, 2.0)
 	
 	await assert_signal(health_component_test_instance).wait_until(2100).is_emitted("invulnerability_changed", [false])
@@ -161,6 +152,6 @@ func test_signal_after_damage_is_emitted() -> void:
 	var health_component_test_instance = auto_free(preloaded_component_script.new())
 	add_child(health_component_test_instance)
 	
-	health_component_test_instance.damage(10)
+	health_component_test_instance.damage(25)
 	
-	await assert_signal(health_component_test_instance).is_emitted("health_changed", [10,  health_component_test_instance.TYPES.DAMAGE])
+	await assert_signal(health_component_test_instance).is_emitted("health_changed", [25,  health_component_test_instance.TYPES.DAMAGE])

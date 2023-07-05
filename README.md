@@ -16,10 +16,23 @@ This is nothing more than a collection of new nodes that you can add as a new sc
 
 ![example_adding_new_component](images/example_adding_new_component.PNG)
 
+# Global Helpers Node
+This plugin provides a global singleton named `Helpers` to contain all the stuff that can be shared globally and can be useful in your game
+
+## Generate random directions from an origin Vector2
+This function generate a `n` random directions in a `Array[Vector2]` format from an starting vector point defining the min and max angles:
+```python
+# 5 Random diirections from Vector down (0, 1) between 90º and 180º
+Helpers.generate_random_directions_on_angle_range(Vector2.DOWN, 90, 180, 5)
+
+# 25 random directions from the actual player global position between 0 and 360º
+Helpers.generate_random_directions_on_angle_range(player.global_position, 0, 360, 25)
+
+```
 
 # 🐱‍🚀Available components
 Here you can find the full available list of components, be sure to read the documentation for each component before use in your project to get the most out of it.
-# 💖HealthComponent
+## 💖HealthComponent
 This one manages all related to taking damage and health on the parent node, usually you add this to a **CharacterBody2D** but nothing prevents from being used in a **StaticRigidBody2D** if you want to make alive a tree or any other game object.
 
 ### Setup
