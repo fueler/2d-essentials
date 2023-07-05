@@ -53,8 +53,12 @@ func _on_chase_timer_timeout():
 	recalculate_path()
 
 func _on_health_component_died():
-	queue_free()
-
+	animation_tree["parameters/playback"].travel("Die")
 
 func _on_health_component_health_changed(amount, type):
-	print(amount,type)
+	pass
+
+
+
+func _on_velocity_component_2d_knockback_received():
+	pass

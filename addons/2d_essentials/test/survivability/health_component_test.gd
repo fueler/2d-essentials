@@ -82,6 +82,7 @@ func test_health_never_add_life_above_the_max_health():
 	assert_int(health_component_test_instance.current_health).is_equal(health_component_test_instance.max_health)
 	
 func test_health_percent_correspond_to_the_max_and_current_health():
+	# 1.0 corresponds to 100% as the godot editor works with decimals
 	var health_component_test_instance = auto_free(preloaded_component_script.new())
 	
 	health_component_test_instance.max_health = 100

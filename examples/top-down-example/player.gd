@@ -43,4 +43,7 @@ func on_player_died():
 
 
 func _on_slash_attack_area_entered(area: Area2D):
-	area.get_parent().health_component.damage(110)
+	var target = area.get_parent()
+	
+	target.health_component.damage(10)
+	target.velocity_component_2d.knockback(velocity_component_2d.velocity)
