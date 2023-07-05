@@ -40,3 +40,7 @@ func on_player_died():
 	
 	animation_tree.set("parameters/Die/blend_position", velocity_component_2d.last_faced_direction)
 	animation_tree["parameters/playback"].travel("Die")
+
+
+func _on_slash_attack_area_entered(area: Area2D):
+	area.get_parent().health_component.damage(110)

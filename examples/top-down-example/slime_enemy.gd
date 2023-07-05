@@ -3,6 +3,7 @@ extends CharacterBody2D
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var navigation_agent_2d: NavigationAgent2D = $Navigation/NavigationAgent2D
 @onready var velocity_component_2d: VelocityComponent2D = $VelocityComponent2D
+@onready var health_component: HealthComponent = $HealthComponent
 
 var initial_position: Vector2 = Vector2.ZERO
 var target_node: Node2D = null
@@ -50,4 +51,10 @@ func recalculate_path():
 		
 func _on_chase_timer_timeout():
 	recalculate_path()
-	
+
+func _on_health_component_died():
+	queue_free()
+
+
+func _on_health_component_health_changed(amount, type):
+	print(amount,type)

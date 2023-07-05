@@ -47,6 +47,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 	return warnings
 	
 func _ready():
+	current_health = max(max_health, current_health)
+	
 	health_regen_timer = get_node_or_null("HealthRegenTimer")
 	invulnerability_timer = get_node_or_null("InvulnerabilityTimer")
 	
@@ -80,10 +82,9 @@ func health(amount: int, type: TYPES = TYPES.HEALTH):
 func check_is_death():
 	if current_health == 0:
 		died.emit()
-		owner.queue_free()
 
 func get_health_percent() -> float:
-	return max(0, current_health / max_health)
+	return float(current_health) / max_health
 	
 
 func enable_invulnerabiliy(enable: bool, time: float = 0.05):

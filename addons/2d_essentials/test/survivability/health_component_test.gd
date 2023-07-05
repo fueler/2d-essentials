@@ -8,8 +8,6 @@ extends GdUnitTestSuite
 const __source = 'res://addons/2d_essentials/survivability/health_component.gd'
 var preloaded_component_script
 
-var jaja: HealthComponent
-
 func before():
 	preloaded_component_script = preload(__source)
 
@@ -56,13 +54,46 @@ func test_damage_removes_life_correctly() -> void:
 	assert_int(health_component_test_instance.current_health).is_equal(1)
 	
 	
-	
 func test_damage_never_let_current_health_stay_below_zero() -> void:
 	var health_component_test_instance = auto_free(preloaded_component_script.new())
 
 	health_component_test_instance.damage(99999999999999)
 	
 	assert_int(health_component_test_instance.current_health).is_equal(0)
+
+func test_health_add_lifes_as_expected():
+	var health_component_test_instance = auto_free(preloaded_component_script.new())
+	
+	health_component_test_instance.max_health = 125
+	health_component_test_instance.current_health = 30
+	
+	health_component_test_instance.health(25)
+	
+	assert_int(health_component_test_instance.current_health).is_equal(55)
+	
+func test_health_never_add_life_above_the_max_health():
+	var health_component_test_instance = auto_free(preloaded_component_script.new())
+	
+	health_component_test_instance.max_health = 125
+	health_component_test_instance.current_health = 30
+	
+	health_component_test_instance.health(300)
+	
+	assert_int(health_component_test_instance.current_health).is_equal(health_component_test_instance.max_health)
+	
+func test_health_percent_correspond_to_the_max_and_current_health():
+	var health_component_test_instance = auto_free(preloaded_component_script.new())
+	
+	health_component_test_instance.max_health = 100
+	health_component_test_instance.current_health = 100
+	
+	assert_float(health_component_test_instance.get_health_percent()).is_equal(1.0)
+	
+	health_component_test_instance.current_health = 45
+	assert_float(health_component_test_instance.get_health_percent()).is_equal(0.45)
+	
+	health_component_test_instance.current_health = 0
+	assert_float(health_component_test_instance.get_health_percent()).is_equal(0.0)
 	
 func test_signal_exists_on_health_component():
 	var health_component_test_instance = auto_free(preloaded_component_script.new())
@@ -71,6 +102,17 @@ func test_signal_exists_on_health_component():
 		.is_signal_exists("health_changed")\
 		.is_signal_exists("invulnerability_changed")\
 		.is_signal_exists("died")
+		
+func test_signal_died_after_current_health_is_zero():
+	var health_component_test_instance = auto_free(preloaded_component_script.new())
+	health_component_test_instance.max_health = 100
+	health_component_test_instance.current_health = 100
+	
+	add_child(health_component_test_instance)
+
+	health_component_test_instance.damage(101)
+	
+	await assert_signal(health_component_test_instance).is_emitted("died")
 	
 func test_signal_after_damage_is_emitted() -> void:
 	var health_component_test_instance = auto_free(preloaded_component_script.new())

@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://cvkxhlxm487wu"]
+[gd_scene load_steps=77 format=3 uid="uid://cvkxhlxm487wu"]
 
 [ext_resource type="Script" path="res://examples/top-down-example/slime_enemy.gd" id="1_3caxv"]
 [ext_resource type="Texture2D" uid="uid://blytsupdkklau" path="res://examples/top-down-example/assets/slime.png" id="1_sgxsc"]
@@ -731,6 +731,9 @@ radius = 6.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_im7nx"]
 radius = 80.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_76ay6"]
+radius = 9.0
+
 [node name="SlimeEnemy" type="CharacterBody2D" groups=["enemies"]]
 collision_layer = 4
 collision_mask = 10
@@ -768,6 +771,7 @@ scale = Vector2(1.07854, 1)
 shape = SubResource("CircleShape2D_u0cl6")
 
 [node name="PlayerDetectionArea" type="Area2D" parent="."]
+visible = false
 position = Vector2(0, -6)
 collision_layer = 0
 collision_mask = 2
@@ -778,6 +782,8 @@ shape = SubResource("CircleShape2D_im7nx")
 debug_color = Color(0.87451, 0.447059, 0.223529, 0.419608)
 
 [node name="HealthComponent" parent="." instance=ExtResource("3_e6x2o")]
+max_health = 20
+current_health = 20
 
 [node name="VelocityComponent2D" parent="." instance=ExtResource("4_1ufgy")]
 max_speed = 75
@@ -793,6 +799,18 @@ process_callback = 0
 wait_time = 0.5
 autostart = true
 
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(0, -6)
+shape = SubResource("CircleShape2D_76ay6")
+debug_color = Color(0.843137, 0.156863, 0.0941176, 0.419608)
+
 [connection signal="body_entered" from="PlayerDetectionArea" to="." method="_on_player_detection_area_body_entered"]
 [connection signal="body_exited" from="PlayerDetectionArea" to="." method="_on_player_detection_area_body_exited"]
+[connection signal="died" from="HealthComponent" to="." method="_on_health_component_died"]
+[connection signal="health_changed" from="HealthComponent" to="." method="_on_health_component_health_changed"]
 [connection signal="timeout" from="Navigation/ChaseTimer" to="." method="_on_chase_timer_timeout"]
+[connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]

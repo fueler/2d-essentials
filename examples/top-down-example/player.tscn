@@ -1377,7 +1377,7 @@ max_health = 25
 current_health = 25
 
 [node name="SlashAttack" type="Area2D" parent="."]
-collision_layer = 2
+collision_layer = 0
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SlashAttack"]
@@ -1386,3 +1386,5 @@ rotation = 1.5708
 shape = SubResource("CapsuleShape2D_s4by5")
 disabled = true
 debug_color = Color(0.796078, 0.270588, 0.254902, 0.419608)
+
+[connection signal="area_entered" from="SlashAttack" to="." method="_on_slash_attack_area_entered"]
