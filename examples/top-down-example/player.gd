@@ -28,6 +28,9 @@ func _physics_process(delta):
 
 	
 	velocity_component_2d.accelerate_in_direction(direction).move()
+	
+	if Input.is_action_just_pressed("dash"):
+		velocity_component_2d.dash()
 
 
 func get_input_direction() -> Vector2:

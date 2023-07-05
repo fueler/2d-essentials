@@ -1370,12 +1370,14 @@ shape = SubResource("CircleShape2D_dosvr")
 
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("3_nh1wh")
-dash_cooldown = 1.5
+dash_speed_multiplier = 5
+times_can_dash = 3
 
 [node name="HealthComponent" type="Node2D" parent="."]
 script = ExtResource("4_jq58l")
 max_health = 25
 current_health = 25
+invulnerability_time = null
 
 [node name="SlashAttack" type="Area2D" parent="."]
 collision_layer = 0

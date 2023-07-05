@@ -19,39 +19,21 @@ signal knockback_received
 ## The times this character can dash until the cooldown is activated
 @export_range(1, 5, 1, "or_greater") var times_can_dash: int = 1
 ## The time it takes for the dash ability to become available again.
-@export var dash_cooldown: float = 0.0
+@export var dash_cooldown: float = 1.5
 
 @export_group("Knockback")
 @export var knockback_power: int = 300
 #################################################3
 
-var dash_cooldown_timer: Timer
 var can_dash: bool = false
-var dash_queue: Array[int] = []
+var dash_queue: Array[String] = []
 
 var velocity: Vector2 = Vector2.ZERO
 var facing_direction: Vector2 = Vector2.ZERO
 var last_faced_direction: Vector2 = Vector2.DOWN
 
 
-func _get_configuration_warnings() -> PackedStringArray:
-	var warnings: PackedStringArray = []
-	
-	var has_dash_cooldown_timer = false
-	
-	for child in get_children():
-		if child is Timer and child.name == "DashCooldownTimer":
-			has_dash_cooldown_timer = true
-			
-	if !has_dash_cooldown_timer and dash_cooldown > 0:
-		warnings.append("A Timer with the name 'DashCooldownTimer' is needed when the parameter 'dash_cooldown' is greater than zero")
-			
-	return warnings
-	
-	
 func _ready():
-	dash_cooldown_timer = get_node_or_null("DashCooldownTimer")
-	
 	enable_dash(dash_cooldown)
 
 
@@ -94,35 +76,37 @@ func knockback(from: Vector2, power: int = knockback_power):
 	
 	
 func dash(target_direction: Vector2 = facing_direction):
-	if can_dash and dash_cooldown_timer and dash_cooldown_timer.is_stopped():
-		if dash_queue.size() <= times_can_dash:
-			dash_queue.append(1)
-			
-			velocity *= dash_speed_multiplier
-			facing_direction = target_direction
-			move()
-			
-			dashed.emit()
-		else:
-			can_dash = false
-			dash_cooldown_timer.start()
+	if can_dash and dash_queue.size() < times_can_dash:
+		dash_queue.append("dash")
+		
+		velocity *= dash_speed_multiplier
+		facing_direction = target_direction
+		move()
+		
+		_create_dash_cooldown_timer()
+		dashed.emit()
 		
 	
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
-	if cooldown > 0 and times_can_dash > 0 and dash_cooldown_timer:
-		
-		can_dash = true
-		times_can_dash = times
-		
-		dash_cooldown_timer.one_shot = true
-		dash_cooldown_timer.wait_time = cooldown
-		dash_cooldown_timer.timeout.connect(on_dash_cooldown_timer_timeout)
-	else:
-		can_dash = false
-		
-		if dash_cooldown_timer:
-			dash_cooldown_timer.stop()
+	can_dash =  cooldown > 0 and times_can_dash > 0
+	times_can_dash = times
 	
 func on_dash_cooldown_timer_timeout():
-	can_dash = true
-	dash_queue = []
+	dash_queue.pop_back()
+	can_dash = dash_queue.size() < times_can_dash
+
+	for child in get_children():
+		if child is Timer and child.is_stopped():
+			child.queue_free()
+	
+
+func _create_dash_cooldown_timer(time: float = dash_cooldown):
+	var dash_cooldown_timer: Timer = Timer.new()
+	
+	dash_cooldown_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	dash_cooldown_timer.wait_time = max(0.05, time)
+	dash_cooldown_timer.one_shot = true
+	dash_cooldown_timer.autostart = true
+	
+	add_child(dash_cooldown_timer)
+	dash_cooldown_timer.timeout.connect(on_dash_cooldown_timer_timeout)

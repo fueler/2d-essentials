@@ -798,6 +798,7 @@ debug_color = Color(0.87451, 0.447059, 0.223529, 0.419608)
 [node name="HealthComponent" parent="." instance=ExtResource("3_e6x2o")]
 max_health = 20
 current_health = 20
+invulnerability_time = 1.0
 
 [node name="VelocityComponent2D" parent="." instance=ExtResource("4_1ufgy")]
 max_speed = 75
