@@ -91,22 +91,20 @@ func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
 	can_dash =  cooldown > 0 and times_can_dash > 0
 	times_can_dash = times
 	
-func on_dash_cooldown_timer_timeout():
+func on_dash_cooldown_timer_timeout(timer: Timer):
 	dash_queue.pop_back()
 	can_dash = dash_queue.size() < times_can_dash
-
-	for child in get_children():
-		if child is Timer and child.is_stopped():
-			child.queue_free()
+	
+	timer.queue_free()
 	
 
 func _create_dash_cooldown_timer(time: float = dash_cooldown):
 	var dash_cooldown_timer: Timer = Timer.new()
-	
+
 	dash_cooldown_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
 	dash_cooldown_timer.wait_time = max(0.05, time)
 	dash_cooldown_timer.one_shot = true
 	dash_cooldown_timer.autostart = true
 	
 	add_child(dash_cooldown_timer)
-	dash_cooldown_timer.timeout.connect(on_dash_cooldown_timer_timeout)
+	dash_cooldown_timer.timeout.connect(on_dash_cooldown_timer_timeout.bind(dash_cooldown_timer))
