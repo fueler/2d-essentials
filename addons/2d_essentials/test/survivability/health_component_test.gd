@@ -95,6 +95,18 @@ func test_health_percent_correspond_to_the_max_and_current_health():
 	
 	health_component_test_instance.current_health = 0
 	assert_float(health_component_test_instance.get_health_percent()).is_equal(0.0)
+
+
+func test_damage_is_zero_when_invulnerability_is_active():
+	var health_component_test_instance = auto_free(preloaded_component_script.new())
+
+	add_child(health_component_test_instance)
+	health_component_test_instance.current_health = 125
+	health_component_test_instance.enable_invulnerability(true, 2.0)
+	health_component_test_instance.damage(999999999999999999)
+	
+	assert_int(health_component_test_instance.current_health).is_equal(125)
+	
 	
 func test_signal_exists_on_health_component():
 	var health_component_test_instance = auto_free(preloaded_component_script.new())
@@ -104,6 +116,36 @@ func test_signal_exists_on_health_component():
 		.is_signal_exists("invulnerability_changed")\
 		.is_signal_exists("died")
 		
+		
+func test_signal_invulnerability_changed_emitted_after_enable():
+	var health_component_test_instance = auto_free(preloaded_component_script.new())
+
+	add_child(health_component_test_instance)
+	var timer: Timer = Timer.new()
+	
+	timer.name = "InvulnerabilityTimer"
+	
+	health_component_test_instance.add_child(timer)
+	health_component_test_instance.enable_invulnerability(true, 2.0)
+	
+	await assert_signal(health_component_test_instance).is_emitted("invulnerability_changed", [true])
+
+
+func test_signal_invulnerability_changed_emitted_after_timeout():
+	var health_component_test_instance = auto_free(preloaded_component_script.new())
+
+	add_child(health_component_test_instance)
+	var timer: Timer = Timer.new()
+	
+	timer.name = "InvulnerabilityTimer"
+	
+	health_component_test_instance.add_child(timer)
+	
+	health_component_test_instance.enable_invulnerability(true, 2.0)
+	
+	await assert_signal(health_component_test_instance).wait_until(2100).is_emitted("invulnerability_changed", [false])
+	
+
 func test_signal_died_after_current_health_is_zero():
 	var health_component_test_instance = auto_free(preloaded_component_script.new())
 	health_component_test_instance.max_health = 100

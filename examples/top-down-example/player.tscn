@@ -1370,6 +1370,7 @@ shape = SubResource("CircleShape2D_dosvr")
 
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("3_nh1wh")
+dash_cooldown = 1.5
 
 [node name="HealthComponent" type="Node2D" parent="."]
 script = ExtResource("4_jq58l")

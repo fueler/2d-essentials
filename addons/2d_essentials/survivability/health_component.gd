@@ -87,7 +87,7 @@ func get_health_percent() -> float:
 	return float(current_health) / max_health
 	
 
-func enable_invulnerabiliy(enable: bool, time: float = 0.05):
+func enable_invulnerability(enable: bool, time: float = 0.05):
 	if enable:
 		is_invulnerable = true
 		
@@ -95,13 +95,15 @@ func enable_invulnerabiliy(enable: bool, time: float = 0.05):
 			invulnerability_timer.wait_time = max(0.05, time)
 			invulnerability_timer.one_shot = true
 			invulnerability_timer.start()
+			
+			invulnerability_changed.emit(true)
 	else:
 		is_invulnerable = false
 		
 		if invulnerability_timer:
 			invulnerability_timer.stop()
-
-	invulnerability_changed.emit(enable)
+		
+		invulnerability_changed.emit(false)
 
 
 func enable_health_regen(amount_per_second: int = health_regen_per_second):
@@ -129,5 +131,6 @@ func on_health_regen_timer_timeout():
 	
 		
 func on_invulnerability_timer_timeout():
-	enable_invulnerabiliy(false)
+	enable_invulnerability(false)
+	invulnerability_changed.emit(false)
 	

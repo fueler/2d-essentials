@@ -74,7 +74,7 @@ func accelerate_in_direction(direction: Vector2):
 	
 	return self
 
-func accelerate_to_target(target: CharacterBody2D):
+func accelerate_to_target(target: Node2D):
 	var target_direction: Vector2 = (target.global_position - global_position).normalized()
 	
 	return accelerate_in_direction(target_direction)
@@ -93,21 +93,26 @@ func knockback(from: Vector2, power: int = knockback_power):
 	knockback_received.emit()
 	
 	
-func dash():
+func dash(target_direction: Vector2 = facing_direction):
 	if can_dash and dash_cooldown_timer and dash_cooldown_timer.is_stopped():
 		if dash_queue.size() <= times_can_dash:
 			dash_queue.append(1)
+			
+			velocity *= dash_speed_multiplier
+			facing_direction = target_direction
+			move()
+			
+			dashed.emit()
 		else:
 			can_dash = false
 			dash_cooldown_timer.start()
 		
-		velocity *= dash_speed_multiplier
 	
-		dashed.emit()
-
-func enable_dash(cooldown: float = dash_cooldown):
-	if cooldown > 0 and dash_cooldown_timer:
+func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
+	if cooldown > 0 and times_can_dash > 0 and dash_cooldown_timer:
+		
 		can_dash = true
+		times_can_dash = times
 		
 		dash_cooldown_timer.one_shot = true
 		dash_cooldown_timer.wait_time = cooldown
