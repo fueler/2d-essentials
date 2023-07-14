@@ -10,7 +10,7 @@ signal knockback_received
 ## The max speed this character can reach
 @export var max_speed: int = 125
 ## This value makes smoother the time it takes to reach maximum speed  
-@export var acceleration_smoothing: float = 15
+@export var acceleration_smoothing: float = 15.0
 
 
 @export_group("Dash")
@@ -76,7 +76,7 @@ func knockback(from: Vector2, power: int = knockback_power):
 	
 	
 func dash(target_direction: Vector2 = facing_direction):
-	if can_dash and dash_queue.size() < times_can_dash:
+	if !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash:
 		dash_queue.append("dash")
 		
 		velocity *= dash_speed_multiplier
@@ -90,13 +90,6 @@ func dash(target_direction: Vector2 = facing_direction):
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
 	can_dash =  cooldown > 0 and times_can_dash > 0
 	times_can_dash = times
-	
-func on_dash_cooldown_timer_timeout(timer: Timer):
-	dash_queue.pop_back()
-	can_dash = dash_queue.size() < times_can_dash
-	
-	timer.queue_free()
-	
 
 func _create_dash_cooldown_timer(time: float = dash_cooldown):
 	var dash_cooldown_timer: Timer = Timer.new()
@@ -108,3 +101,10 @@ func _create_dash_cooldown_timer(time: float = dash_cooldown):
 	
 	add_child(dash_cooldown_timer)
 	dash_cooldown_timer.timeout.connect(on_dash_cooldown_timer_timeout.bind(dash_cooldown_timer))
+
+func on_dash_cooldown_timer_timeout(timer: Timer):
+	dash_queue.pop_back()
+	can_dash = dash_queue.size() < times_can_dash
+	
+	timer.queue_free()
+

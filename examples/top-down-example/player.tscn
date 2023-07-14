@@ -1377,7 +1377,6 @@ times_can_dash = 3
 script = ExtResource("4_jq58l")
 max_health = 25
 current_health = 25
-invulnerability_time = null
 
 [node name="SlashAttack" type="Area2D" parent="."]
 collision_layer = 0
