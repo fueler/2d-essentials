@@ -5,4 +5,3 @@
 [node name="HealthComponent" type="Node2D"]
 script = ExtResource("1_u1wg4")
 current_health = 100
-invulnerability_time = null

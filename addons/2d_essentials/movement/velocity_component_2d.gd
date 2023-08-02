@@ -58,6 +58,8 @@ signal jumped
 @export var knockback_power: int = 300
 #################################################
 
+@onready var body: Node2D = get_parent()
+
 var can_dash: bool = false
 var dash_queue: Array[String] = []
 
@@ -65,16 +67,29 @@ var velocity: Vector2 = Vector2.ZERO
 var facing_direction: Vector2 = Vector2.ZERO
 var last_faced_direction: Vector2 = Vector2.DOWN
 
+var coyote_timer: Timer
 
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings: PackedStringArray = []
+	
+	if get_parent() == null:
+		warnings.append("This component needs a Node2D parent in order to work properly")
+			
+	return warnings
+	
 func _ready():
 	enable_dash(dash_cooldown)
+	create_coyote_timer()
 
-
-func move(body: CharacterBody2D = get_parent()):
+func move():
 	if body:
+		var was_on_floor: bool = body.is_on_floor()
+		
 		body.velocity = velocity
 		body.move_and_slide()
-	
+		
+		check_coyote_jump_time_window(was_on_floor)
+		
 	return self
 	
 func accelerate_in_direction(direction: Vector2):
@@ -129,8 +144,27 @@ func apply_gravity():
 	velocity.y += get_gravity() * get_physics_process_delta_time()	
 	
 func jump():
-	velocity.y = jump_velocity
-	jumped.emit()
+	if body.is_on_floor() or coyote_timer.time_left > 0.0:
+		velocity.y = jump_velocity
+		jumped.emit()
+	
+func create_coyote_timer():
+	if coyote_timer:
+		return
+	
+	coyote_timer = Timer.new()
+	coyote_timer.name = "CoyoteTimer"
+	coyote_timer.wait_time = coyote_jump_time_window
+	coyote_timer.one_shot = true
+	coyote_timer.autostart = false
+
+	add_child(coyote_timer)
+
+func check_coyote_jump_time_window(was_on_floor: bool = true):
+	var just_left_ledge = was_on_floor and not body.is_on_floor() and velocity.y >= 0
+	
+	if just_left_ledge:
+		coyote_timer.start()
 	
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
 	can_dash =  cooldown > 0 and times_can_dash > 0
