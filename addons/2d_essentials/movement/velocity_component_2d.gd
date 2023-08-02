@@ -46,15 +46,12 @@ signal wall_jumped
 @export_group("Wall Jump")
 ## Enable the wall jump action
 @export var wall_jump_enabled : bool = false
-## Decide if it counts as a jump to reduce the allowed jump counter.
-@export var counts_as_jump: bool = false
 ## The maximum angle of deviation that a wall can have to allow the jump to be executed.
 @export var maximum_permissible_wall_angle : float = 0.0
 ## Enable the sliding when the character is on a wall
 @export var wall_slide_enabled: bool = false
 ## The gravity applied to start sliding on the wall until reach the floor
 @export var wall_slide_gravity: float = 50.0
-
 
 @onready var jump_velocity: float = ((2.0 * jump_height) / jump_time_to_peak) * -1.0
 @onready var jump_gravity: float =  (2.0 * jump_height) / pow(jump_time_to_peak, 2) 
@@ -68,11 +65,13 @@ signal wall_jumped
 @onready var body: Node2D = get_parent()
 
 var can_dash: bool = false
-var dash_queue: Array[String] = []
+var dash_queue: Array[Vector2] = []
 
 var velocity: Vector2 = Vector2.ZERO
 var facing_direction: Vector2 = Vector2.ZERO
 var last_faced_direction: Vector2 = Vector2.DOWN
+
+var jump_queue: Array[Vector2] = []
 
 var is_wall_sliding: bool =  false
 var coyote_timer: Timer
@@ -93,14 +92,21 @@ func _ready():
 func move():
 	if body:
 		var was_on_floor: bool = body.is_on_floor()
-		
+	
 		body.velocity = velocity
 		body.move_and_slide()
 		
 		check_coyote_jump_time_window(was_on_floor)
+		reset_jump_queue()
 		
 	return self
-	
+
+func reset_jump_queue():
+	if body.is_on_floor() and jump_queue.size() > 0:
+		print("CLEARING ON FLOOR")
+		print(jump_queue.size())
+		jump_queue.clear()
+
 func accelerate_in_direction(direction: Vector2):
 	if !direction.is_equal_approx(Vector2.ZERO):
 		last_faced_direction = direction
@@ -136,7 +142,7 @@ func knockback(from: Vector2, power: int = knockback_power):
 	
 func dash(target_direction: Vector2 = facing_direction):
 	if !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash:
-		dash_queue.append("dash")
+		dash_queue.append(global_position)
 		
 		velocity *= dash_speed_multiplier
 		facing_direction = target_direction
@@ -153,10 +159,19 @@ func apply_gravity():
 	velocity.y += get_gravity() * get_physics_process_delta_time()	
 	
 func jump():
-	if body.is_on_floor() or coyote_timer.time_left > 0.0:
-		velocity.y = jump_velocity
-		jumped.emit()
-
+	if not is_wall_sliding:
+		if body.is_on_floor() or coyote_timer.time_left > 0.0:
+			apply_jump()
+		else:
+			if jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps:
+				apply_jump()
+	
+func apply_jump():
+	velocity.y = jump_velocity
+	jump_queue.append(global_position)
+	jumped.emit()
+	
+	
 func wall_jump(direction: Vector2):
 	if body.is_on_wall() and wall_jump_enabled:
 		
@@ -164,25 +179,28 @@ func wall_jump(direction: Vector2):
 		var left_angle = abs(wall_normal.angle_to(Vector2.LEFT))
 		var right_angle = abs(wall_normal.angle_to(Vector2.RIGHT))
 		
-		if is_wall_sliding or (direction.is_equal_approx(Vector2.LEFT) and (wall_normal.is_equal_approx(Vector2.LEFT) or left_angle < maximum_permissible_wall_angle)):
-			velocity.x = wall_normal.x * max_speed
-			velocity.y = jump_velocity
-			wall_jumped.emit()
-				
-		if is_wall_sliding or (direction.is_equal_approx(Vector2.RIGHT) and (wall_normal.is_equal_approx(Vector2.RIGHT) or right_angle < maximum_permissible_wall_angle)):
-			velocity.x = wall_normal.x * max_speed
-			velocity.y = jump_velocity
-			wall_jumped.emit()
+		if is_wall_sliding:
+			apply_wall_jump_direction(wall_normal)
+		elif direction.is_equal_approx(Vector2.LEFT) and (wall_normal.is_equal_approx(Vector2.LEFT) or left_angle <= maximum_permissible_wall_angle):
+			apply_wall_jump_direction(wall_normal)
+		elif direction.is_equal_approx(Vector2.RIGHT) and (wall_normal.is_equal_approx(Vector2.RIGHT) or right_angle <= maximum_permissible_wall_angle):
+			apply_wall_jump_direction(wall_normal)
 			
+
+			
+func apply_wall_jump_direction(wall_normal: Vector2):
+	velocity.x = wall_normal.x * max_speed
+	velocity.y = jump_velocity
+	jump_queue.append(global_position)
+	wall_jumped.emit()
+	
 func wall_sliding():
 	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor()
 	
 	if is_wall_sliding:
-		print(wall_slide_gravity * get_physics_process_delta_time())
-		print( min(velocity.y, wall_slide_gravity))
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
 		velocity.y = min(velocity.y, wall_slide_gravity)
-	
+		
 func create_coyote_timer():
 	if coyote_timer:
 		return

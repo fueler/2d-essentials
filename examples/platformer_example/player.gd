@@ -22,7 +22,6 @@ func _physics_process(delta):
 
 	velocity_component_2d.move()
 
-	
 
 func apply_gravity():
 	if not is_on_floor():
