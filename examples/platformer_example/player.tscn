@@ -103,11 +103,11 @@ shape = SubResource("RectangleShape2D_os6kr")
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("3_xl3c6")
 max_speed = 100
-jump_height = 50.0
-jump_time_to_peak = 0.2
-jump_time_to_fall = 0.3
+jump_time_to_peak = 0.5
+jump_time_to_fall = 0.4
 allowed_jumps = 2
 height_reduced_by_jump = 25
+coyote_jump_enabled = true
 wall_jump_enabled = true
 maximum_permissible_wall_angle = 10.0
-coyote_jump_enabled = true
+wall_slide_enabled = true

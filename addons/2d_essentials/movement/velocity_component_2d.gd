@@ -6,6 +6,7 @@ class_name VelocityComponent2D extends Node2D
 signal dashed
 signal knockback_received
 signal jumped
+signal wall_jumped
 
 ########## EDITABLE PARAMETERS ##########
 @export_group("Speed")
@@ -37,17 +38,23 @@ signal jumped
 ## Reduced amount of jump effectiveness at each iteration
 @export var height_reduced_by_jump : int = 0
 
+## Enable the coyote jump
+@export var coyote_jump_enabled: bool = false
+## The time window this jump can be executed when the character is not on the floor
+@export var coyote_jump_time_window: float = 0.2
+
+@export_group("Wall Jump")
 ## Enable the wall jump action
 @export var wall_jump_enabled : bool = false
 ## Decide if it counts as a jump to reduce the allowed jump counter.
 @export var counts_as_jump: bool = false
 ## The maximum angle of deviation that a wall can have to allow the jump to be executed.
 @export var maximum_permissible_wall_angle : float = 0.0
+## Enable the sliding when the character is on a wall
+@export var wall_slide_enabled: bool = false
+## The gravity applied to start sliding on the wall until reach the floor
+@export var wall_slide_gravity: float = 50.0
 
-## Enable the coyote jump
-@export var coyote_jump_enabled: bool = false
-## The time window this jump can be executed when the character is not on the floor
-@export var coyote_jump_time_window: float = 0.2
 
 @onready var jump_velocity: float = ((2.0 * jump_height) / jump_time_to_peak) * -1.0
 @onready var jump_gravity: float =  (2.0 * jump_height) / pow(jump_time_to_peak, 2) 
@@ -67,12 +74,14 @@ var velocity: Vector2 = Vector2.ZERO
 var facing_direction: Vector2 = Vector2.ZERO
 var last_faced_direction: Vector2 = Vector2.DOWN
 
+var is_wall_sliding: bool =  false
 var coyote_timer: Timer
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings: PackedStringArray = []
+	var parent_node = get_parent()
 	
-	if get_parent() == null:
+	if parent_node == null or not parent_node is Node2D:
 		warnings.append("This component needs a Node2D parent in order to work properly")
 			
 	return warnings
@@ -147,6 +156,32 @@ func jump():
 	if body.is_on_floor() or coyote_timer.time_left > 0.0:
 		velocity.y = jump_velocity
 		jumped.emit()
+
+func wall_jump(direction: Vector2):
+	if body.is_on_wall() and wall_jump_enabled:
+		
+		var wall_normal = body.get_wall_normal()
+		var left_angle = abs(wall_normal.angle_to(Vector2.LEFT))
+		var right_angle = abs(wall_normal.angle_to(Vector2.RIGHT))
+		
+		if is_wall_sliding or (direction.is_equal_approx(Vector2.LEFT) and (wall_normal.is_equal_approx(Vector2.LEFT) or left_angle < maximum_permissible_wall_angle)):
+			velocity.x = wall_normal.x * max_speed
+			velocity.y = jump_velocity
+			wall_jumped.emit()
+				
+		if is_wall_sliding or (direction.is_equal_approx(Vector2.RIGHT) and (wall_normal.is_equal_approx(Vector2.RIGHT) or right_angle < maximum_permissible_wall_angle)):
+			velocity.x = wall_normal.x * max_speed
+			velocity.y = jump_velocity
+			wall_jumped.emit()
+			
+func wall_sliding():
+	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor()
+	
+	if is_wall_sliding:
+		print(wall_slide_gravity * get_physics_process_delta_time())
+		print( min(velocity.y, wall_slide_gravity))
+		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
+		velocity.y = min(velocity.y, wall_slide_gravity)
 	
 func create_coyote_timer():
 	if coyote_timer:
@@ -161,10 +196,11 @@ func create_coyote_timer():
 	add_child(coyote_timer)
 
 func check_coyote_jump_time_window(was_on_floor: bool = true):
-	var just_left_ledge = was_on_floor and not body.is_on_floor() and velocity.y >= 0
-	
-	if just_left_ledge:
-		coyote_timer.start()
+	if coyote_jump_enabled:
+		var just_left_ledge = was_on_floor and not body.is_on_floor() and velocity.y >= 0
+		
+		if just_left_ledge:
+			coyote_timer.start()
 	
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
 	can_dash =  cooldown > 0 and times_can_dash > 0
