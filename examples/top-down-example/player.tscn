@@ -1,4 +1,4 @@
-[gd_scene load_steps=107 format=3 uid="uid://gs2f5s7lrvll"]
+[gd_scene load_steps=106 format=3 uid="uid://gs2f5s7lrvll"]
 
 [ext_resource type="Script" path="res://examples/top-down-example/player.gd" id="1_kqsev"]
 [ext_resource type="Texture2D" uid="uid://dnuls68v6pawr" path="res://examples/top-down-example/assets/player.png" id="2_sdxs5"]
@@ -559,8 +559,6 @@ states/Start/position = Vector2(135, 156)
 states/Walk/node = SubResource("AnimationNodeBlendSpace2D_pnp6y")
 states/Walk/position = Vector2(694, 219)
 transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition_fo6s5"), "Idle", "Walk", SubResource("AnimationNodeStateMachineTransition_by33w"), "Walk", "Idle", SubResource("AnimationNodeStateMachineTransition_ew16q"), "Idle", "SlashAttack", SubResource("AnimationNodeStateMachineTransition_bjchl"), "Walk", "SlashAttack", SubResource("AnimationNodeStateMachineTransition_kb1pd"), "SlashAttack", "Idle", SubResource("AnimationNodeStateMachineTransition_43mbs"), "SlashAttack", "Walk", SubResource("AnimationNodeStateMachineTransition_8kgiq"), "Walk", "Die", SubResource("AnimationNodeStateMachineTransition_f8u55"), "Die", "End", SubResource("AnimationNodeStateMachineTransition_gx17n"), "Idle", "Die", SubResource("AnimationNodeStateMachineTransition_rghr4")]
-
-[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_d505x"]
 
 [sub_resource type="Animation" id="Animation_s0y3e"]
 length = 0.001
@@ -1349,7 +1347,6 @@ animation = &"idle_down"
 tree_root = SubResource("AnimationNodeStateMachine_v6cos")
 anim_player = NodePath("../AnimationPlayer")
 process_callback = 0
-parameters/playback = SubResource("AnimationNodeStateMachinePlayback_d505x")
 parameters/conditions/idle = false
 parameters/conditions/is_attacking = false
 parameters/conditions/is_walking = false

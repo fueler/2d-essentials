@@ -5,6 +5,7 @@ class_name VelocityComponent2D extends Node2D
 ############ SIGNALS ############
 signal dashed
 signal knockback_received
+
 ########## EDITABLE PARAMETERS ##########
 @export_group("Speed")
 ## The max speed this character can reach
@@ -21,9 +22,40 @@ signal knockback_received
 ## The time it takes for the dash ability to become available again.
 @export var dash_cooldown: float = 1.5
 
+@export_group("Jump")
+
+## The maximum height the character can reach
+@export var jump_height: float = 100
+## Time it takes to reach the maximum jump height
+@export var jump_time_to_peak: float = 0.4
+## Time it takes to reach the floor after jump
+@export var jump_time_to_fall: float = 0.5
+
+## Jumps allowed to perform in a row
+@export var allowed_jumps : int = 1
+## Reduced amount of jump effectiveness at each iteration
+@export var height_reduced_by_jump : int = 0
+
+## Enable the wall jump action
+@export var wall_jump_enabled : bool = false
+## Decide if it counts as a jump to reduce the allowed jump counter.
+@export var counts_as_jump: bool = false
+## The maximum angle of deviation that a wall can have to allow the jump to be executed.
+@export var maximum_permissible_wall_angle : float = 0.0
+
+## Enable the coyote jump
+@export var coyote_jump_enabled: bool = false
+## The time window this jump can be executed when the character is not on the floor
+@export var coyote_jump_time_window: float = 0.2
+
+@onready var jump_velocity: float = ( (2.0 * jump_height) / jump_time_to_peak ) * -1.0
+@onready var jump_gravity: float = ( (-2.0 * jump_height) / pow(jump_time_to_peak, 2) ) * -1.0
+@onready var fall_gravity: float = ( (-2.0 * jump_height) / pow(jump_time_to_fall, 2) ) * -1.0
+
 @export_group("Knockback")
+## The amount of power the character is pushed in the direction of the force source
 @export var knockback_power: int = 300
-#################################################3
+#################################################
 
 var can_dash: bool = false
 var dash_queue: Array[String] = []
@@ -60,20 +92,23 @@ func accelerate_to_target(target: Node2D):
 	var target_direction: Vector2 = (target.global_position - global_position).normalized()
 	
 	return accelerate_in_direction(target_direction)
+
+func accelerate_to_position(position: Vector2):
+	var target_direction: Vector2 = (position - global_position).normalized()
 	
+	return accelerate_in_direction(target_direction)
+
+				
 func decelerate():
 	accelerate_in_direction(Vector2.ZERO)
 	
 	return self
-
 func knockback(from: Vector2, power: int = knockback_power):
 	var knockback_direction: Vector2 = (from - velocity).normalized() * power
 	velocity = knockback_direction
-	
+
 	move()
-	
-	knockback_received.emit()
-	
+	knockback_received.emit()		
 	
 func dash(target_direction: Vector2 = facing_direction):
 	if !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash:
@@ -86,6 +121,12 @@ func dash(target_direction: Vector2 = facing_direction):
 		_create_dash_cooldown_timer()
 		dashed.emit()
 		
+	
+func get_gravity() -> float:
+	return jump_gravity if velocity .y < 0.0 else fall_gravity
+	
+func jump():
+	velocity.y = jump_velocity
 	
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
 	can_dash =  cooldown > 0 and times_can_dash > 0
