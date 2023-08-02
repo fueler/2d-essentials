@@ -102,7 +102,7 @@ shape = SubResource("RectangleShape2D_os6kr")
 
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("3_xl3c6")
-max_speed = 100
+dash_gravity_time_disabled = null
 jump_time_to_peak = 0.5
 jump_time_to_fall = 0.4
 allowed_jumps = 2

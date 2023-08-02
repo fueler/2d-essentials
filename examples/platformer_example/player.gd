@@ -5,19 +5,21 @@ extends CharacterBody2D
 
 func _physics_process(delta):
 	var input_axis = Input.get_axis("ui_left", "ui_right")
-	var direction: Vector2 = Vector2.ZERO
+	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
+	var horizontal_direction: Vector2 = Vector2.ZERO
 	
 	match input_axis:
 		-1.0:
-			direction = Vector2.LEFT
+			horizontal_direction = Vector2.LEFT
 		1.0:
-			direction = Vector2.RIGHT
+			horizontal_direction = Vector2.RIGHT
 
 	apply_gravity()
 	handle_jump()
 	handle_wall_sliding()
-	handle_wall_jump(direction)
-	handle_horizontal_movement(direction)
+	handle_wall_jump(horizontal_direction)
+	handle_horizontal_movement(horizontal_direction)
+	handle_dash(input_direction)
 	update_animations(input_axis)
 
 	velocity_component_2d.move()
@@ -44,7 +46,11 @@ func handle_horizontal_movement(direction: Vector2):
 	else:
 		velocity_component_2d.accelerate_in_direction(direction)
 
-
+func handle_dash(direction: Vector2):
+	if Input.is_action_just_pressed("dash"):
+		velocity_component_2d.dash(direction)
+		
+		
 func update_animations(input_axis):
 	if input_axis == 0:
 		animated_sprite_2d.play('idle')

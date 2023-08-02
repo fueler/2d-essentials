@@ -11,18 +11,19 @@ signal wall_jumped
 ########## EDITABLE PARAMETERS ##########
 @export_group("Speed")
 ## The max speed this character can reach
-@export var max_speed: int = 125
+@export var max_speed: int = 100
 ## This value makes smoother the time it takes to reach maximum speed  
 @export var acceleration: float = 400.0
 @export var friction: float =  800.0
 
 @export_group("Dash")
 ## The speed multiplier would be applied to the player velocity on runtime
-@export var dash_speed_multiplier: int = 2
+@export var dash_speed_multiplier: float = 3.0
 ## The times this character can dash until the cooldown is activated
 @export_range(1, 5, 1, "or_greater") var times_can_dash: int = 1
 ## The time it takes for the dash ability to become available again.
 @export var dash_cooldown: float = 1.5
+@export var dash_gravity_time_disabled:float = 0.1
 
 @export_group("Jump")
 
@@ -64,6 +65,7 @@ signal wall_jumped
 
 @onready var body: Node2D = get_parent()
 
+var gravity_enabled: bool = true
 var can_dash: bool = false
 var dash_queue: Array[Vector2] = []
 
@@ -112,8 +114,11 @@ func accelerate_in_direction(direction: Vector2):
 		last_faced_direction = direction
 		
 	facing_direction = direction
-
-	velocity = velocity.move_toward(facing_direction * max_speed, acceleration * get_physics_process_delta_time())
+	
+	if acceleration > 0:
+		velocity = velocity.move_toward(facing_direction * max_speed, acceleration * get_physics_process_delta_time())
+	else:
+		velocity = facing_direction * max_speed
 	
 	return self
 
@@ -129,7 +134,10 @@ func accelerate_to_position(position: Vector2):
 
 				
 func decelerate():
-	velocity = velocity.move_toward(Vector2.ZERO, friction * get_physics_process_delta_time())
+	if friction > 0:
+		velocity = velocity.move_toward(Vector2.ZERO, friction * get_physics_process_delta_time())
+	else:
+		velocity = Vector2.ZERO
 	
 	return self
 	
@@ -142,21 +150,25 @@ func knockback(from: Vector2, power: int = knockback_power):
 	
 func dash(target_direction: Vector2 = facing_direction):
 	if !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash:
+		gravity_enabled = false
 		dash_queue.append(global_position)
 		
-		velocity *= dash_speed_multiplier
+		velocity += target_direction * (max_speed * dash_speed_multiplier)
 		facing_direction = target_direction
 		move()
 		
 		_create_dash_cooldown_timer()
+		_create_dash_duration_timer()
 		dashed.emit()
-		
+
 	
 func get_gravity() -> float:
+	
 	return jump_gravity if velocity.y < 0.0 else fall_gravity
 
 func apply_gravity():
-	velocity.y += get_gravity() * get_physics_process_delta_time()	
+	if gravity_enabled:
+		velocity.y += get_gravity() * get_physics_process_delta_time()	
 	
 func jump():
 	if not is_wall_sliding:
@@ -206,7 +218,9 @@ func create_coyote_timer():
 		return
 	
 	coyote_timer = Timer.new()
+	
 	coyote_timer.name = "CoyoteTimer"
+	coyote_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
 	coyote_timer.wait_time = coyote_jump_time_window
 	coyote_timer.one_shot = true
 	coyote_timer.autostart = false
@@ -235,9 +249,22 @@ func _create_dash_cooldown_timer(time: float = dash_cooldown):
 	add_child(dash_cooldown_timer)
 	dash_cooldown_timer.timeout.connect(on_dash_cooldown_timer_timeout.bind(dash_cooldown_timer))
 
+func _create_dash_duration_timer(time: float = dash_gravity_time_disabled):
+	var dash_duration_timer = Timer.new()
+	dash_duration_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	dash_duration_timer.wait_time = time
+	dash_duration_timer.one_shot = true
+	dash_duration_timer.autostart = true
+	
+	add_child(dash_duration_timer)
+	dash_duration_timer.timeout.connect(on_dash_duration_timer_timeout.bind(dash_duration_timer))
+
 func on_dash_cooldown_timer_timeout(timer: Timer):
 	dash_queue.pop_back()
 	can_dash = dash_queue.size() < times_can_dash
-	
+
 	timer.queue_free()
 
+func on_dash_duration_timer_timeout(timer: Timer):
+	gravity_enabled = true
+	timer.queue_free()
