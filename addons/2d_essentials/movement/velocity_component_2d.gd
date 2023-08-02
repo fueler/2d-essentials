@@ -5,14 +5,15 @@ class_name VelocityComponent2D extends Node2D
 ############ SIGNALS ############
 signal dashed
 signal knockback_received
+signal jumped
 
 ########## EDITABLE PARAMETERS ##########
 @export_group("Speed")
 ## The max speed this character can reach
 @export var max_speed: int = 125
 ## This value makes smoother the time it takes to reach maximum speed  
-@export var acceleration_smoothing: float = 15.0
-
+@export var acceleration: float = 400.0
+@export var friction: float =  800.0
 
 @export_group("Dash")
 ## The speed multiplier would be applied to the player velocity on runtime
@@ -25,7 +26,7 @@ signal knockback_received
 @export_group("Jump")
 
 ## The maximum height the character can reach
-@export var jump_height: float = 100
+@export var jump_height: float = 100.0
 ## Time it takes to reach the maximum jump height
 @export var jump_time_to_peak: float = 0.4
 ## Time it takes to reach the floor after jump
@@ -48,9 +49,9 @@ signal knockback_received
 ## The time window this jump can be executed when the character is not on the floor
 @export var coyote_jump_time_window: float = 0.2
 
-@onready var jump_velocity: float = ( (2.0 * jump_height) / jump_time_to_peak ) * -1.0
-@onready var jump_gravity: float = ( (-2.0 * jump_height) / pow(jump_time_to_peak, 2) ) * -1.0
-@onready var fall_gravity: float = ( (-2.0 * jump_height) / pow(jump_time_to_fall, 2) ) * -1.0
+@onready var jump_velocity: float = ((2.0 * jump_height) / jump_time_to_peak) * -1.0
+@onready var jump_gravity: float =  (2.0 * jump_height) / pow(jump_time_to_peak, 2) 
+@onready var fall_gravity: float =  (2.0 * jump_height) / pow(jump_time_to_fall, 2) 
 
 @export_group("Knockback")
 ## The amount of power the character is pushed in the direction of the force source
@@ -82,9 +83,7 @@ func accelerate_in_direction(direction: Vector2):
 		
 	facing_direction = direction
 
-	var smoothing_factor: float = 1 - exp(-acceleration_smoothing * get_physics_process_delta_time())
-	
-	velocity = velocity.lerp(facing_direction * max_speed, smoothing_factor)
+	velocity = velocity.move_toward(facing_direction * max_speed, acceleration * get_physics_process_delta_time())
 	
 	return self
 
@@ -100,9 +99,10 @@ func accelerate_to_position(position: Vector2):
 
 				
 func decelerate():
-	accelerate_in_direction(Vector2.ZERO)
+	velocity = velocity.move_toward(Vector2.ZERO, friction * get_physics_process_delta_time())
 	
 	return self
+	
 func knockback(from: Vector2, power: int = knockback_power):
 	var knockback_direction: Vector2 = (from - velocity).normalized() * power
 	velocity = knockback_direction
@@ -123,10 +123,14 @@ func dash(target_direction: Vector2 = facing_direction):
 		
 	
 func get_gravity() -> float:
-	return jump_gravity if velocity .y < 0.0 else fall_gravity
+	return jump_gravity if velocity.y < 0.0 else fall_gravity
+
+func apply_gravity():
+	velocity.y += get_gravity() * get_physics_process_delta_time()	
 	
 func jump():
 	velocity.y = jump_velocity
+	jumped.emit()
 	
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
 	can_dash =  cooldown > 0 and times_can_dash > 0

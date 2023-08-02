@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cj3ehr3pks056"]
+
+[ext_resource type="PackedScene" uid="uid://hdqcw5g3evi1" path="res://examples/platformer_example/player.tscn" id="1_gq0q7"]
+[ext_resource type="Script" path="res://examples/platformer_example/world.gd" id="1_tifqw"]
+
+[node name="World" type="Node"]
+script = ExtResource("1_tifqw")
+
+[node name="Player" parent="." instance=ExtResource("1_gq0q7")]
+position = Vector2(24, 56)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(0, 64, 80, 64, 80, 104, 120, 104, 120, 64, 168, 56, 192, 64, 216, 64, 216, 0, 248, 0, 248, 128, 0, 128)
+
+[node name="Polygon2D" type="Polygon2D" parent="StaticBody2D/CollisionPolygon2D"]
