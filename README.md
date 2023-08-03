@@ -129,7 +129,7 @@ Whether top-down, platformer or grid-based, this component offers the functional
 ## Speed group
 All parameters and function here relates to node movement.
 ### Move
-This is a shorcut that update the velocity and call the method `move_and_slide()`. Can receive the `CharacterBody2D` node via parameter or access the parent to whom this component belongs.
+This is a shorcut that update the velocity and call the method `move_and_slide()`.
 
 ### Accelerate in direction
 This define the direction *(Vector2)* is going to accelerate smoothly using the **Speed** group parameters defined in the component, by itself does not move the node, you have to chain the call to the method `move` 
