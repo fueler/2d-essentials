@@ -105,7 +105,6 @@ script = ExtResource("3_xl3c6")
 jump_time_to_peak = 0.5
 jump_time_to_fall = 0.4
 allowed_jumps = 3
-height_reduced_by_jump = 25
 coyote_jump_enabled = true
 wall_jump_enabled = true
 maximum_permissible_wall_angle = 10.0

@@ -87,9 +87,11 @@ func _get_configuration_warnings() -> PackedStringArray:
 			
 	return warnings
 	
+	
 func _ready():
 	enable_dash(dash_cooldown)
 	create_coyote_timer()
+	
 	
 func move():
 	if body:
@@ -103,11 +105,13 @@ func move():
 		
 	return self
 
+
 func reset_jump_queue():
 	if body.is_on_floor() and jump_queue.size() > 0:
 		print("CLEARING ON FLOOR")
 		print(jump_queue.size())
 		jump_queue.clear()
+
 
 func accelerate_in_direction(direction: Vector2):
 	if !direction.is_equal_approx(Vector2.ZERO):
@@ -122,10 +126,12 @@ func accelerate_in_direction(direction: Vector2):
 	
 	return self
 
+
 func accelerate_to_target(target: Node2D):
 	var target_direction: Vector2 = (target.global_position - global_position).normalized()
 	
 	return accelerate_in_direction(target_direction)
+
 
 func accelerate_to_position(position: Vector2):
 	var target_direction: Vector2 = (position - global_position).normalized()
@@ -141,12 +147,14 @@ func decelerate():
 	
 	return self
 	
+	
 func knockback(from: Vector2, power: int = knockback_power):
 	var knockback_direction: Vector2 = (from - velocity).normalized() * power
 	velocity = knockback_direction
 
 	move()
 	knockback_received.emit()		
+	
 	
 func dash(target_direction: Vector2 = facing_direction):
 	if !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash:
@@ -161,23 +169,27 @@ func dash(target_direction: Vector2 = facing_direction):
 		_create_dash_duration_timer()
 		dashed.emit()
 
+
 func calculate_jump_velocity(height: int = jump_height, time_to_peak: float = jump_time_to_peak):
 	return ((2.0 * height) / time_to_peak) * -1.0
 	
+	
 func calculate_jump_gravity(height: int = jump_height, time_to_peak: float = jump_time_to_peak):
 	return (2.0 * height) / pow(time_to_peak, 2) 
+	
 	
 func calculate_fall_gravity(height: int = jump_height, time_to_fall: float = jump_time_to_fall):
 	return (2.0 * height) / pow(time_to_fall, 2) 
 	
 
 func get_gravity() -> float:
-	
 	return jump_gravity if velocity.y < 0.0 else fall_gravity
+
 
 func apply_gravity():
 	if gravity_enabled:
 		velocity.y += get_gravity() * get_physics_process_delta_time()	
+	
 	
 func jump():
 	if not is_wall_sliding:
@@ -187,10 +199,11 @@ func jump():
 			if jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps:
 				apply_jump()
 	
+	
 func apply_jump():
 	jump_queue.append(global_position)
 	
-	if jump_queue.size() > 1:
+	if jump_queue.size() > 1 and height_reduced_by_jump > 0:
 		var height_reduced: int =  (jump_queue.size() - 1) * height_reduced_by_jump
 		velocity.y = calculate_jump_velocity(jump_height - height_reduced)
 	else:
@@ -213,7 +226,6 @@ func wall_jump(direction: Vector2):
 		elif direction.is_equal_approx(Vector2.RIGHT) and (wall_normal.is_equal_approx(Vector2.RIGHT) or right_angle <= maximum_permissible_wall_angle):
 			apply_wall_jump_direction(wall_normal)
 			
-
 			
 func apply_wall_jump_direction(wall_normal: Vector2):
 	velocity.x = wall_normal.x * max_speed
@@ -221,12 +233,14 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 	jump_queue.append(global_position)
 	wall_jumped.emit()
 	
+	
 func wall_sliding():
 	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor()
 	
 	if is_wall_sliding:
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
 		velocity.y = min(velocity.y, wall_slide_gravity)
+		
 		
 func create_coyote_timer():
 	if coyote_timer:
@@ -242,6 +256,7 @@ func create_coyote_timer():
 
 	add_child(coyote_timer)
 
+
 func check_coyote_jump_time_window(was_on_floor: bool = true):
 	if coyote_jump_enabled:
 		var just_left_ledge = was_on_floor and not body.is_on_floor() and velocity.y >= 0
@@ -249,9 +264,11 @@ func check_coyote_jump_time_window(was_on_floor: bool = true):
 		if just_left_ledge:
 			coyote_timer.start()
 	
+	
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
 	can_dash =  cooldown > 0 and times_can_dash > 0
 	times_can_dash = times
+
 
 func _create_dash_cooldown_timer(time: float = dash_cooldown):
 	var dash_cooldown_timer: Timer = Timer.new()
@@ -264,6 +281,7 @@ func _create_dash_cooldown_timer(time: float = dash_cooldown):
 	add_child(dash_cooldown_timer)
 	dash_cooldown_timer.timeout.connect(on_dash_cooldown_timer_timeout.bind(dash_cooldown_timer))
 
+
 func _create_dash_duration_timer(time: float = dash_gravity_time_disabled):
 	var dash_duration_timer = Timer.new()
 	dash_duration_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
@@ -274,11 +292,13 @@ func _create_dash_duration_timer(time: float = dash_gravity_time_disabled):
 	add_child(dash_duration_timer)
 	dash_duration_timer.timeout.connect(on_dash_duration_timer_timeout.bind(dash_duration_timer))
 
+
 func on_dash_cooldown_timer_timeout(timer: Timer):
 	dash_queue.pop_back()
 	can_dash = dash_queue.size() < times_can_dash
 
 	timer.queue_free()
+
 
 func on_dash_duration_timer_timeout(timer: Timer):
 	gravity_enabled = true
