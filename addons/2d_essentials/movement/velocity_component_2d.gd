@@ -54,9 +54,9 @@ signal wall_jumped
 ## The gravity applied to start sliding on the wall until reach the floor
 @export var wall_slide_gravity: float = 50.0
 
-@onready var jump_velocity: float = ((2.0 * jump_height) / jump_time_to_peak) * -1.0
-@onready var jump_gravity: float =  (2.0 * jump_height) / pow(jump_time_to_peak, 2) 
-@onready var fall_gravity: float =  (2.0 * jump_height) / pow(jump_time_to_fall, 2) 
+@onready var jump_velocity: float = calculate_jump_velocity()
+@onready var jump_gravity: float =  calculate_jump_gravity()
+@onready var fall_gravity: float =  calculate_fall_gravity()
 
 @export_group("Knockback")
 ## The amount of power the character is pushed in the direction of the force source
@@ -90,7 +90,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 func _ready():
 	enable_dash(dash_cooldown)
 	create_coyote_timer()
-
+	
 func move():
 	if body:
 		var was_on_floor: bool = body.is_on_floor()
@@ -161,7 +161,16 @@ func dash(target_direction: Vector2 = facing_direction):
 		_create_dash_duration_timer()
 		dashed.emit()
 
+func calculate_jump_velocity(height: int = jump_height, time_to_peak: float = jump_time_to_peak):
+	return ((2.0 * height) / time_to_peak) * -1.0
 	
+func calculate_jump_gravity(height: int = jump_height, time_to_peak: float = jump_time_to_peak):
+	return (2.0 * height) / pow(time_to_peak, 2) 
+	
+func calculate_fall_gravity(height: int = jump_height, time_to_fall: float = jump_time_to_fall):
+	return (2.0 * height) / pow(time_to_fall, 2) 
+	
+
 func get_gravity() -> float:
 	
 	return jump_gravity if velocity.y < 0.0 else fall_gravity
@@ -179,8 +188,14 @@ func jump():
 				apply_jump()
 	
 func apply_jump():
-	velocity.y = jump_velocity
 	jump_queue.append(global_position)
+	
+	if jump_queue.size() > 1:
+		var height_reduced: int =  (jump_queue.size() - 1) * height_reduced_by_jump
+		velocity.y = calculate_jump_velocity(jump_height - height_reduced)
+	else:
+		velocity.y = jump_velocity
+
 	jumped.emit()
 	
 	
