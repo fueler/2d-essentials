@@ -63,7 +63,7 @@ signal wall_jumped
 @export var knockback_power: int = 300
 #################################################
 
-@onready var body: Node2D = get_parent()
+@onready var body = get_parent()
 
 var gravity_enabled: bool = true
 var can_dash: bool = false
@@ -108,8 +108,6 @@ func move():
 
 func reset_jump_queue():
 	if body.is_on_floor() and jump_queue.size() > 0:
-		print("CLEARING ON FLOOR")
-		print(jump_queue.size())
 		jump_queue.clear()
 
 
