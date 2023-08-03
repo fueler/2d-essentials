@@ -39,6 +39,7 @@ func handle_jump():
 	if Input.is_action_just_pressed("jump"):
 		velocity_component_2d.jump()
 
+
 func handle_wall_jump(direction: Vector2):
 	if Input.is_action_just_pressed("jump"):
 		velocity_component_2d.wall_jump(direction)

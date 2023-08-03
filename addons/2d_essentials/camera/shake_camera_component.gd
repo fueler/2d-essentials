@@ -19,11 +19,14 @@ func _get_configuration_warnings() -> PackedStringArray:
 			
 	return warnings
 
+
 func _ready():
 	_create_shake_duration_timer()
 	
+	
 func _process(delta):
 	shake_camera(shake_strength, delta)
+
 
 func shake_camera(fade: float = 5.0, delta: float = get_process_delta_time()):
 	if shake_strength > 0:
@@ -33,8 +36,13 @@ func shake_camera(fade: float = 5.0, delta: float = get_process_delta_time()):
 		shake_strength = lerpf(shake_strength, 0, fade * delta)
 		camera2d.offset = Vector2(random_number_generator.randf_range(-shake_strength, shake_strength), random_number_generator.randf_range(-shake_strength,shake_strength))
 
-func shake(strength: float = default_shake_strength):
+
+func shake(strength: float = default_shake_strength, time: float = shake_duration):
 	shake_strength = strength
+	
+	if shake_duration_timer:
+		shake_duration_timer.stop()
+		shake_duration_timer.wait_time = max(0.05, time)
 
 func _create_shake_duration_timer(time:float = shake_duration):
 	shake_duration_timer = Timer.new()
@@ -46,6 +54,7 @@ func _create_shake_duration_timer(time:float = shake_duration):
 
 	add_child(shake_duration_timer)
 	shake_duration_timer.timeout.connect(on_shake_duration_timer_timeout)
-
+	
+	
 func on_shake_duration_timer_timeout():
 	shake_strength = 0.0

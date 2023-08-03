@@ -2,6 +2,7 @@
 extends Node
 class_name Utilities
 
+signal frame_freezed
 ## Generate 'n' random directions on the angle range provided
 ## from an origin vector that will be rotated accordingly
 # [Important] The angles needs to be on degrees
@@ -26,3 +27,11 @@ func generate_random_directions_on_angle_range(origin: Vector2 = Vector2.UP, min
 ## Generate a random angle between a range provided
 func generate_random_angle(min_angle_range: float = 0.0, max_angle_range: float = 360.0) -> float:
 	return lerp(min_angle_range, max_angle_range, randf())
+
+
+func frame_freeze(time_scale: float, duration: float):
+	frame_freezed.emit()
+	
+	Engine.time_scale = time_scale
+	await get_tree().create_timer(duration * time_scale).timeout
+	Engine.time_scale = 1.0
