@@ -4,8 +4,7 @@
 
 [node name="VelocityComponent2D" type="Node2D"]
 script = ExtResource("1_8007t")
-max_speed = 100
-dash_speed_multiplier = 5
+dash_speed_multiplier = 5.0
 dash_cooldown = 2.0
 jump_height = 0.0
 jump_time_to_peak = 0.0

@@ -2,7 +2,13 @@ extends CharacterBody2D
 
 @onready var velocity_component_2d: VelocityComponent2D = $VelocityComponent2D
 @onready var animated_sprite_2d = $AnimatedSprite2D
+@onready var camera_2d = $Camera2D
 
+func _process(delta):
+	if Input.is_action_just_pressed("shake"):
+		$Camera2D/ShakeCameraComponent2D.shake() 
+
+		
 func _physics_process(delta):
 	var input_axis = Input.get_axis("ui_left", "ui_right")
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()

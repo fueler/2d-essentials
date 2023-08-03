@@ -1,6 +1,7 @@
-[gd_scene load_steps=14 format=3 uid="uid://hdqcw5g3evi1"]
+[gd_scene load_steps=15 format=3 uid="uid://hdqcw5g3evi1"]
 
 [ext_resource type="Script" path="res://examples/platformer_example/player.gd" id="1_fd30s"]
+[ext_resource type="Script" path="res://addons/2d_essentials/camera/shake_camera_component.gd" id="2_0w5er"]
 [ext_resource type="Texture2D" uid="uid://cewkcehovo12e" path="res://examples/platformer_example/assets/player.png" id="2_hha1a"]
 [ext_resource type="Script" path="res://addons/2d_essentials/movement/velocity_component_2d.gd" id="3_xl3c6"]
 
@@ -91,6 +92,9 @@ process_callback = 0
 position_smoothing_enabled = true
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
+
+[node name="ShakeCameraComponent2D" type="Node2D" parent="Camera2D"]
+script = ExtResource("2_0w5er")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_c65qj")
