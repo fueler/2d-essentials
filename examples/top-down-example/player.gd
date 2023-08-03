@@ -27,7 +27,9 @@ func _physics_process(delta):
 	animation_tree.set("parameters/conditions/is_attacking", Input.is_action_just_pressed("attack"))
 
 	
-	velocity_component_2d.accelerate_in_direction(direction).move()
+	velocity_component_2d.\
+		accelerate_in_direction(direction)\
+		.move()
 	
 	if Input.is_action_just_pressed("dash"):
 		velocity_component_2d.dash()

@@ -1367,7 +1367,7 @@ shape = SubResource("CircleShape2D_dosvr")
 
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("3_nh1wh")
-dash_speed_multiplier = 5
+dash_speed_multiplier = 5.0
 times_can_dash = 3
 
 [node name="HealthComponent" type="Node2D" parent="."]

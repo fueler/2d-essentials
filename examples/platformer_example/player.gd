@@ -12,14 +12,9 @@ func _process(delta):
 func _physics_process(delta):
 	var input_axis = Input.get_axis("ui_left", "ui_right")
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
-	var horizontal_direction: Vector2 = Vector2.ZERO
+	var horizontal_direction: Vector2 = translate_x_axis_to_vector(input_axis)
 	
-	match input_axis:
-		-1.0:
-			horizontal_direction = Vector2.LEFT
-		1.0:
-			horizontal_direction = Vector2.RIGHT
-
+	
 	apply_gravity()
 	handle_jump()
 	handle_wall_sliding()
@@ -29,7 +24,6 @@ func _physics_process(delta):
 	update_animations(input_axis)
 
 	velocity_component_2d.move()
-
 
 func apply_gravity():
 	if not is_on_floor():
@@ -52,6 +46,19 @@ func handle_horizontal_movement(direction: Vector2):
 		velocity_component_2d.decelerate()
 	else:
 		velocity_component_2d.accelerate_in_direction(direction)
+		
+		
+func translate_x_axis_to_vector(input_axis: float) -> Vector2:
+	var horizontal_direction: Vector2 = Vector2.ZERO
+	
+	match input_axis:
+		-1.0:
+			horizontal_direction = Vector2.LEFT
+		1.0:
+			horizontal_direction = Vector2.RIGHT
+			
+	return horizontal_direction
+	
 
 func handle_dash(direction: Vector2):
 	if Input.is_action_just_pressed("dash"):

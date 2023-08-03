@@ -55,9 +55,13 @@ func health(amount: int, type: TYPES = TYPES.HEALTH):
 	health_changed.emit(amount, type)
 	
 	
-func check_is_death():
-	if current_health == 0:
+func check_is_dead() -> bool:
+	var is_dead: bool = current_health == 0
+	
+	if is_dead:
 		died.emit()
+
+	return is_dead
 
 func get_health_percent() -> float:
 	return float(current_health) / max_health
@@ -126,7 +130,7 @@ func _create_invulnerability_timer(time: float = invulnerability_time):
 func on_health_changed(amount: int, type: TYPES):
 	if type == TYPES.DAMAGE:
 		enable_health_regen()
-		Callable(check_is_death).call_deferred()
+		Callable(check_is_dead).call_deferred()
 
 
 func on_health_regen_timer_timeout():
