@@ -63,6 +63,13 @@ signal wall_jumped
 @export var knockback_power: int = 300
 #################################################
 
+@export_group("Click-Point")
+@export var click_point_enabled: bool = false
+# Maximum num of movements allowed on one click point turn
+@export var max_num_movements: int =  3
+# The scene to display when a point is selected
+@export var point_display_scene: PackedScene
+
 @onready var body = get_parent()
 
 var gravity_enabled: bool = true

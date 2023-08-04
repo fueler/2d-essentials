@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvqr1d75b5lly"]
+
+[ext_resource type="Script" path="res://examples/click-point-movement/click_point_movement.gd" id="1_sq7h6"]
+
+[node name="ClickPointMovement" type="Node2D"]
+script = ExtResource("1_sq7h6")
+
+[node name="Line2D" type="Line2D" parent="."]
+width = 2.0
+default_color = Color(0.972549, 0.227451, 0.352941, 1)

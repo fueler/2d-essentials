@@ -3,6 +3,7 @@ extends CharacterBody2D
 @onready var velocity_component_2d: VelocityComponent2D = $VelocityComponent2D
 @onready var animated_sprite_2d = $AnimatedSprite2D
 @onready var camera_2d = $Camera2D
+@onready var shake_camera_component_2d = $Camera2D/ShakeCameraComponent2D
 
 func _process(delta):
 	if Input.is_action_just_pressed("shake"):

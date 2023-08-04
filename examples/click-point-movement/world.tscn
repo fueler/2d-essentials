@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://h4y2nocurktf"]
+
+[ext_resource type="PackedScene" uid="uid://bvqr1d75b5lly" path="res://examples/click-point-movement/click_point_movement.tscn" id="1_a4hwd"]
+[ext_resource type="PackedScene" uid="uid://dshgwn5hu1oit" path="res://examples/click-point-movement/player.tscn" id="2_eejm3"]
+[ext_resource type="PackedScene" uid="uid://dsrkjn7iryrel" path="res://examples/click-point-movement/click_point_display.tscn" id="2_mchuc"]
+
+[node name="Scenario" type="Node2D"]
+
+[node name="ClickPointMovement" parent="." node_paths=PackedStringArray("moveable_entity") instance=ExtResource("1_a4hwd")]
+point_display_scene = ExtResource("2_mchuc")
+moveable_entity = NodePath("../Player")
+
+[node name="Player" parent="." instance=ExtResource("2_eejm3")]
+collision_layer = 2
+collision_mask = 8

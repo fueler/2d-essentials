@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://hdqcw5g3evi1" path="res://examples/platformer_example/player.tscn" id="1_gq0q7"]
 [ext_resource type="Script" path="res://examples/platformer_example/world.gd" id="1_tifqw"]
 
-[node name="World" type="Node"]
+[node name="World2" type="Node"]
 script = ExtResource("1_tifqw")
 
 [node name="Player" parent="." instance=ExtResource("1_gq0q7")]
