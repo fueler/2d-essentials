@@ -67,16 +67,16 @@ func add_points(points: PackedVector2Array):
 	for point in points:
 		add_point(point)
 		
-func add_point(position: Vector2):
-	if movement_point_can_be_added(position):	
-		line2d.add_point(position)
-		draw_point_scene(position)
+func add_point(point: Vector2):
+	if movement_point_can_be_added(point):	
+		line2d.add_point(point)
+		draw_point_scene(point)
 
-func remove_point(position: Vector2):
+func remove_point(point: Vector2):
 	if movement_points().is_empty():
 		return
 	
-	var index = line2d.points.find(position)
+	var index = line2d.points.find(point)
 	
 	line2d.remove_point(index)
 
@@ -98,5 +98,4 @@ func maximum_allowed_movements_reached() -> bool:
 	return line2d.get_point_count() == max_num_movements
 
 func movement_point_can_be_added(position: Vector2) -> bool:
-	return line2d.get_point_count() < max_num_movements
-
+	return !is_moving and line2d.get_point_count() < max_num_movements

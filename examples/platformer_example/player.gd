@@ -33,6 +33,9 @@ func apply_gravity():
 func handle_jump():
 	if Input.is_action_just_pressed("jump"):
 		velocity_component_2d.jump()
+		
+	if Input.is_action_just_released("jump") and velocity_component_2d.velocity.y < velocity_component_2d.jump_velocity / 2:
+			velocity_component_2d.velocity.y = velocity_component_2d.jump_velocity / 2
 
 
 func handle_wall_jump(direction: Vector2):
