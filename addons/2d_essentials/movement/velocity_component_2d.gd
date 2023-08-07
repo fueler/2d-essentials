@@ -155,9 +155,9 @@ func decelerate():
 	
 	return self
 	
-	
 func knockback(from: Vector2, power: int = knockback_power):
 	var knockback_direction: Vector2 = (from - velocity).normalized() * power
+
 	velocity = knockback_direction
 
 	move()

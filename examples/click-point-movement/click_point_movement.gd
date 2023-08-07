@@ -13,12 +13,12 @@ var enabled: bool = false
 var current_index_point: int = 0
 var is_moving: bool = false
 
-func _input(event):
-	if event is InputEventMouseButton and event.pressed:
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			add_point(get_global_mouse_position())
-		if event.button_index == MOUSE_BUTTON_RIGHT:
-			enable_movement(true)
+#func _input(event):
+#	if event is InputEventMouseButton and event.pressed:
+#		if event.button_index == MOUSE_BUTTON_LEFT:
+#			add_point(get_global_mouse_position())
+#		if event.button_index == MOUSE_BUTTON_RIGHT:
+#			enable_movement(true)
 
 func _physics_process(delta):
 	if enabled:

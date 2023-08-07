@@ -1330,7 +1330,6 @@ collision_mask = 12
 script = ExtResource("1_kqsev")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(2.6, 2.6)
 process_callback = 0
 limit_left = 0
 limit_top = 0
@@ -1367,7 +1366,7 @@ shape = SubResource("CircleShape2D_dosvr")
 
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("3_nh1wh")
-dash_speed_multiplier = 5.0
+dash_speed_multiplier = 2.0
 times_can_dash = 3
 
 [node name="HealthComponent" type="Node2D" parent="."]

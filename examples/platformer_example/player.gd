@@ -62,9 +62,9 @@ func translate_x_axis_to_vector(input_axis: float) -> Vector2:
 	
 	match input_axis:
 		-1.0:
-			horizontal_direction = Vector2.LEFT
+			horizontal_direction = Vector2.LEFT if camera_2d.rotation_degrees == 0 else Vector2.RIGHT
 		1.0:
-			horizontal_direction = Vector2.RIGHT
+			horizontal_direction = Vector2.RIGHT if camera_2d.rotation_degrees == 0 else Vector2.LEFT
 			
 	return horizontal_direction
 	
@@ -79,7 +79,7 @@ func update_animations(input_axis):
 		animated_sprite_2d.play('idle')
 	else:
 		animated_sprite_2d.play("run")
-		animated_sprite_2d.flip_h = input_axis < 0
+		animated_sprite_2d.flip_h = input_axis < 0 if camera_2d.rotation == 0 else input_axis > 0
 		
 	if not is_on_floor():
 		animated_sprite_2d.play("jump")
@@ -89,8 +89,10 @@ func _on_invert_gravity_area_body_entered(body):
 	velocity_component_2d.invert_gravity()
 	animated_sprite_2d.flip_v = velocity_component_2d.is_inverted_gravity
 	collision_shape_2d.position.y = -collision_shape_2d.position.y
+	
+	camera_2d.rotation_degrees = 180 if velocity_component_2d.is_inverted_gravity else 0
 
 	#The character needs a little push so that it does not collide again after the first collision.
-	body.velocity.y += 50 if velocity_component_2d.is_inverted_gravity else -50
+	body.velocity.y += -50 if velocity_component_2d.is_inverted_gravity else 50
 	body.move_and_slide() 
 

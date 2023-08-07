@@ -1,4 +1,4 @@
-[gd_scene load_steps=77 format=3 uid="uid://cvkxhlxm487wu"]
+[gd_scene load_steps=76 format=3 uid="uid://cvkxhlxm487wu"]
 
 [ext_resource type="Script" path="res://examples/top-down-example/slime_enemy.gd" id="1_3caxv"]
 [ext_resource type="Texture2D" uid="uid://blytsupdkklau" path="res://examples/top-down-example/assets/slime.png" id="1_sgxsc"]
@@ -345,8 +345,6 @@ states/Start/position = Vector2(93, 133)
 states/Walk/node = SubResource("AnimationNodeBlendSpace2D_8uwof")
 states/Walk/position = Vector2(634, 274)
 transitions = ["Idle", "Walk", SubResource("AnimationNodeStateMachineTransition_0kbmc"), "Walk", "Idle", SubResource("AnimationNodeStateMachineTransition_nsd2f"), "Start", "Idle", SubResource("AnimationNodeStateMachineTransition_xntwk"), "Die", "End", SubResource("AnimationNodeStateMachineTransition_w74ky"), "Walk", "Die", SubResource("AnimationNodeStateMachineTransition_5cleh"), "Walk", "Jump", SubResource("AnimationNodeStateMachineTransition_yevo4"), "Jump", "Idle", SubResource("AnimationNodeStateMachineTransition_gkf5x"), "Idle", "Die", SubResource("AnimationNodeStateMachineTransition_njuwx"), "Idle", "Hurt", SubResource("AnimationNodeStateMachineTransition_5wben"), "Hurt", "Idle", SubResource("AnimationNodeStateMachineTransition_lmfyo"), "Hurt", "Walk", SubResource("AnimationNodeStateMachineTransition_xwwhp"), "Walk", "Hurt", SubResource("AnimationNodeStateMachineTransition_da8ke"), "Hurt", "Die", SubResource("AnimationNodeStateMachineTransition_h23wt"), "Idle", "Jump", SubResource("AnimationNodeStateMachineTransition_mhouo")]
-
-[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_a1r7r"]
 
 [sub_resource type="Animation" id="Animation_l3yt6"]
 length = 0.001
@@ -764,7 +762,6 @@ animation = &"idle"
 tree_root = SubResource("AnimationNodeStateMachine_eysly")
 anim_player = NodePath("../AnimationPlayer")
 process_callback = 0
-parameters/playback = SubResource("AnimationNodeStateMachinePlayback_a1r7r")
 parameters/conditions/idle = false
 parameters/conditions/is_jumping = false
 parameters/conditions/is_walking = false
@@ -796,13 +793,11 @@ shape = SubResource("CircleShape2D_im7nx")
 debug_color = Color(0.87451, 0.447059, 0.223529, 0.419608)
 
 [node name="HealthComponent" parent="." instance=ExtResource("3_e6x2o")]
-max_health = 20
-current_health = 20
-invulnerability_time = 1.0
+max_health = 30
+current_health = 30
 
 [node name="VelocityComponent2D" parent="." instance=ExtResource("4_1ufgy")]
 max_speed = 75
-acceleration_smoothing = 10.0
 
 [node name="Navigation" type="Node2D" parent="."]
 

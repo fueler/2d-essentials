@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://h4y2nocurktf"]
+[gd_scene load_steps=6 format=3 uid="uid://h4y2nocurktf"]
 
 [ext_resource type="PackedScene" uid="uid://bvqr1d75b5lly" path="res://examples/click-point-movement/click_point_movement.tscn" id="1_a4hwd"]
 [ext_resource type="PackedScene" uid="uid://dshgwn5hu1oit" path="res://examples/click-point-movement/player.tscn" id="2_eejm3"]
 [ext_resource type="PackedScene" uid="uid://dsrkjn7iryrel" path="res://examples/click-point-movement/click_point_display.tscn" id="2_mchuc"]
+[ext_resource type="Script" path="res://examples/click-point-movement/allowed_click_area.gd" id="4_31dav"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_43puf"]
+size = Vector2(191, 118)
 
 [node name="Scenario" type="Node2D"]
 
@@ -13,3 +17,11 @@ moveable_entity = NodePath("../Player")
 [node name="Player" parent="." instance=ExtResource("2_eejm3")]
 collision_layer = 2
 collision_mask = 8
+
+[node name="AllowedClickArea" type="Area2D" parent="."]
+script = ExtResource("4_31dav")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AllowedClickArea"]
+position = Vector2(159, 89)
+shape = SubResource("RectangleShape2D_43puf")
+debug_color = Color(0.141176, 0.32549, 0.141176, 0.419608)

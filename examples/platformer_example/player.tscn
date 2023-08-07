@@ -88,8 +88,11 @@ collision_layer = 2
 script = ExtResource("1_fd30s")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+ignore_rotation = false
 process_callback = 0
 position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+rotation_smoothing_enabled = true
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 

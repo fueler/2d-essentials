@@ -50,5 +50,6 @@ func on_player_died():
 func _on_slash_attack_area_entered(area: Area2D):
 	var target = area.get_parent()
 	
-	target.health_component.damage(10)
-	target.velocity_component_2d.knockback(velocity_component_2d.velocity)
+	if target.has_node("HealthComponent") and target.has_node("VelocityComponent2D"):
+		target.get_node("HealthComponent").damage(10)
+		target.get_node("VelocityComponent2D").knockback(velocity_component_2d.last_faced_direction)
