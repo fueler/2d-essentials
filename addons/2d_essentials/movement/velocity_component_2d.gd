@@ -227,7 +227,7 @@ func jump():
 			if jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps:
 				apply_jump()
 	
-	
+			
 func apply_jump():
 	jump_queue.append(global_position)
 	

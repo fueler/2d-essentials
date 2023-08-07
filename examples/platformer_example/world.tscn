@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://examples/platformer_example/world.gd" id="1_tifqw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qmlpa"]
-size = Vector2(144, 4.5)
+size = Vector2(144, 2.25)
 
 [node name="World2" type="Node"]
 script = ExtResource("1_tifqw")
@@ -23,17 +23,19 @@ polygon = PackedVector2Array(0, 64, 80, 64, 80, 104, 120, 104, 120, 64, 168, 56,
 position = Vector2(0, -56)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticWall"]
+position = Vector2(-5, -31)
 polygon = PackedVector2Array(24, -32, 168, -32, 168, -8, 24, -8)
 
 [node name="Polygon2D" type="Polygon2D" parent="StaticWall/CollisionPolygon2D"]
 
 [node name="InvertGravityArea" type="Area2D" parent="."]
+position = Vector2(-4, -9)
 collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InvertGravityArea"]
-position = Vector2(96, -2.75)
+position = Vector2(96, -3)
 shape = SubResource("RectangleShape2D_qmlpa")
-debug_color = Color(0, 0.6, 0.12549, 0.419608)
+debug_color = Color(0.835294, 0.6, 0.678431, 0.419608)
 
 [connection signal="body_entered" from="InvertGravityArea" to="Player" method="_on_invert_gravity_area_body_entered"]
