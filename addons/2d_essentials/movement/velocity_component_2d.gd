@@ -234,7 +234,7 @@ func apply_jump():
 	
 	
 func wall_jump(direction: Vector2):
-	if body.is_on_wall() and wall_jump_enabled:
+	if body.is_on_wall() and not body.is_on_ceiling() and wall_jump_enabled:
 		
 		var wall_normal = body.get_wall_normal()
 		var left_angle = abs(wall_normal.angle_to(Vector2.LEFT))
@@ -256,12 +256,11 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 	
 	
 func wall_sliding():
-	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor()
-	
+	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
 	if is_wall_sliding:
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
-		velocity.y = min(velocity.y, wall_slide_gravity)
-		
+		velocity.y = max(velocity.y, wall_slide_gravity) if is_inverted_gravity else min(velocity.y, wall_slide_gravity)
+
 		
 func create_coyote_timer():
 	if coyote_timer:

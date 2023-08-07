@@ -54,7 +54,7 @@ func health(amount: int, type: TYPES = TYPES.HEALTH):
 	
 	health_changed.emit(amount, type)
 	
-	
+
 func check_is_dead() -> bool:
 	var is_dead: bool = current_health == 0
 	
