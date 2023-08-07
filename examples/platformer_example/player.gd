@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 @onready var velocity_component_2d: VelocityComponent2D = $VelocityComponent2D
 @onready var animated_sprite_2d = $AnimatedSprite2D
+@onready var collision_shape_2d = $CollisionShape2D
 @onready var camera_2d = $Camera2D
 @onready var shake_camera_component_2d = $Camera2D/ShakeCameraComponent2D
 
@@ -34,7 +35,9 @@ func handle_jump():
 	if Input.is_action_just_pressed("jump"):
 		velocity_component_2d.jump()
 		
-	if Input.is_action_just_released("jump") and velocity_component_2d.velocity.y < velocity_component_2d.jump_velocity / 2:
+	if Input.is_action_just_released("jump"):
+		if velocity_component_2d.velocity.y < velocity_component_2d.jump_velocity / 2 \
+		or velocity_component_2d.is_inverted_gravity and velocity_component_2d.velocity.y > velocity_component_2d.jump_velocity / 2:
 			velocity_component_2d.velocity.y = velocity_component_2d.jump_velocity / 2
 
 
@@ -78,3 +81,9 @@ func update_animations(input_axis):
 		
 	if not is_on_floor():
 		animated_sprite_2d.play("jump")
+
+func _on_invert_gravity_area_body_entered(body):
+	velocity_component_2d.invert_gravity()
+	animated_sprite_2d.flip_v = velocity_component_2d.is_inverted_gravity
+	collision_shape_2d.position.y = -collision_shape_2d.position.y
+	

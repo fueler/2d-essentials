@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://cj3ehr3pks056"]
+[gd_scene load_steps=4 format=3 uid="uid://cj3ehr3pks056"]
 
 [ext_resource type="PackedScene" uid="uid://hdqcw5g3evi1" path="res://examples/platformer_example/player.tscn" id="1_gq0q7"]
 [ext_resource type="Script" path="res://examples/platformer_example/world.gd" id="1_tifqw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qmlpa"]
+size = Vector2(144, 4.5)
 
 [node name="World2" type="Node"]
 script = ExtResource("1_tifqw")
@@ -15,3 +18,22 @@ position = Vector2(21, 54)
 polygon = PackedVector2Array(0, 64, 80, 64, 80, 104, 120, 104, 120, 64, 168, 56, 192, 64, 216, 64, 216, 0, 248, 0, 248, 128, 0, 128)
 
 [node name="Polygon2D" type="Polygon2D" parent="StaticBody2D/CollisionPolygon2D"]
+
+[node name="StaticWall" type="StaticBody2D" parent="."]
+position = Vector2(0, -56)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticWall"]
+polygon = PackedVector2Array(24, -32, 168, -32, 168, -8, 24, -8)
+
+[node name="Polygon2D" type="Polygon2D" parent="StaticWall/CollisionPolygon2D"]
+
+[node name="InvertGravityArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InvertGravityArea"]
+position = Vector2(96, -2.75)
+shape = SubResource("RectangleShape2D_qmlpa")
+debug_color = Color(0, 0.6, 0.12549, 0.419608)
+
+[connection signal="body_entered" from="InvertGravityArea" to="Player" method="_on_invert_gravity_area_body_entered"]

@@ -7,6 +7,7 @@ signal dashed
 signal knockback_received
 signal jumped
 signal wall_jumped
+signal inverted_gravity(inverted: bool)
 
 ########## EDITABLE PARAMETERS ##########
 @export_group("Speed")
@@ -73,6 +74,8 @@ signal wall_jumped
 @onready var body = get_parent()
 
 var gravity_enabled: bool = true
+var is_inverted_gravity: bool = false
+
 var can_dash: bool = false
 var dash_queue: Array[Vector2] = []
 
@@ -176,7 +179,8 @@ func dash(target_direction: Vector2 = facing_direction):
 
 
 func calculate_jump_velocity(height: int = jump_height, time_to_peak: float = jump_time_to_peak):
-	return ((2.0 * height) / time_to_peak) * -1.0
+	var y_axis = 1.0 if is_inverted_gravity else -1.0
+	return ((2.0 * height) / time_to_peak) * y_axis
 	
 	
 func calculate_jump_gravity(height: int = jump_height, time_to_peak: float = jump_time_to_peak):
@@ -188,14 +192,33 @@ func calculate_fall_gravity(height: int = jump_height, time_to_fall: float = jum
 	
 
 func get_gravity() -> float:
-	return jump_gravity if velocity.y < 0.0 else fall_gravity
+	if is_inverted_gravity:
+		return jump_gravity if velocity.y > 0.0 else fall_gravity
+	else:
+		return jump_gravity if velocity.y < 0.0 else fall_gravity
 
 
 func apply_gravity():
 	if gravity_enabled:
-		velocity.y += get_gravity() * get_physics_process_delta_time()	
+		var gravity_force = get_gravity() * get_physics_process_delta_time()
+		
+		if is_inverted_gravity:
+			velocity.y -= gravity_force
+		else:
+			velocity.y += gravity_force
 	
-	
+func invert_gravity():
+	if body and gravity_enabled:
+		jump_velocity = -jump_velocity
+		
+		if wall_slide_enabled:
+			wall_slide_gravity = -wall_slide_gravity
+			
+		is_inverted_gravity = jump_velocity > 0
+		body.up_direction = Vector2.DOWN if is_inverted_gravity else Vector2.UP
+		
+		inverted_gravity.emit(is_inverted_gravity)
+			
 func jump():
 	if not is_wall_sliding:
 		if body.is_on_floor() or coyote_timer.time_left > 0.0:
