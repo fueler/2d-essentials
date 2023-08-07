@@ -117,3 +117,6 @@ coyote_jump_enabled = true
 wall_jump_enabled = true
 maximum_permissible_wall_angle = 10.0
 wall_slide_enabled = true
+click_point_enabled = false
+max_num_movements = 3
+point_display_scene = null

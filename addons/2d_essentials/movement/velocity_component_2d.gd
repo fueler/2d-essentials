@@ -64,13 +64,6 @@ signal inverted_gravity(inverted: bool)
 @export var knockback_power: int = 300
 #################################################
 
-@export_group("Click-Point")
-@export var click_point_enabled: bool = false
-# Maximum num of movements allowed on one click point turn
-@export var max_num_movements: int =  3
-# The scene to display when a point is selected
-@export var point_display_scene: PackedScene
-
 @onready var body = get_parent()
 
 var gravity_enabled: bool = true
@@ -114,12 +107,6 @@ func move():
 		reset_jump_queue()
 		
 	return self
-
-
-func reset_jump_queue():
-	if body.is_on_floor() and jump_queue.size() > 0:
-		jump_queue.clear()
-
 
 func accelerate_in_direction(direction: Vector2):
 	if !direction.is_equal_approx(Vector2.ZERO):
@@ -218,7 +205,13 @@ func invert_gravity():
 		body.up_direction = Vector2.DOWN if is_inverted_gravity else Vector2.UP
 		
 		inverted_gravity.emit(is_inverted_gravity)
-			
+
+
+func reset_jump_queue():
+	if body.is_on_floor() and jump_queue.size() > 0:
+		jump_queue.clear()
+
+	
 func jump():
 	if not is_wall_sliding:
 		if body.is_on_floor() or coyote_timer.time_left > 0.0:
