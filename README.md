@@ -1,5 +1,5 @@
 <p align="center">
-	<img width="256px" src="https://github.com/godotessentials/2d-essentials/blob/main/icon.png" alt="Godot 2d essentials logo" />
+	<img width="256px" src="https://github.com/godotessentials/2d-essentials/blob/main/icon.PNG" alt="Godot 2d essentials logo" />
 	<h1 align="center">Godot 2D Essentials</h1>
 </p>
 
