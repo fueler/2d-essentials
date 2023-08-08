@@ -51,7 +51,7 @@ func handle_wall_sliding():
 	velocity_component_2d.wall_sliding()
 	
 func handle_horizontal_movement(direction: Vector2):
-	if direction.is_equal_approx(Vector2.ZERO):
+	if direction.is_equal_approx(Vector2.ZERO) and is_on_floor():
 		velocity_component_2d.decelerate()
 	else:
 		velocity_component_2d.accelerate_in_direction(direction)
