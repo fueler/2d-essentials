@@ -151,12 +151,12 @@ func knockback(from: Vector2, power: int = knockback_power):
 	knockback_received.emit()		
 	
 	
-func dash(target_direction: Vector2 = facing_direction):
+func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
 	if !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash:
 		gravity_enabled = false
 		dash_queue.append(global_position)
 		
-		velocity += target_direction * (max_speed * dash_speed_multiplier)
+		velocity += target_direction * (max_speed * speed_multiplier)
 		facing_direction = target_direction
 		move()
 		

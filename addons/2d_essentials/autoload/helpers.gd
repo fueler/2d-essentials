@@ -3,6 +3,9 @@ extends Node
 class_name Utilities
 
 signal frame_freezed
+
+@onready var random_number_generator: RandomNumberGenerator = RandomNumberGenerator.new()
+
 ## Generate 'n' random directions on the angle range provided
 ## from an origin vector that will be rotated accordingly
 # [Important] The angles needs to be on degrees
@@ -28,7 +31,10 @@ func generate_random_directions_on_angle_range(origin: Vector2 = Vector2.UP, min
 func generate_random_angle(min_angle_range: float = 0.0, max_angle_range: float = 360.0) -> float:
 	return lerp(min_angle_range, max_angle_range, randf())
 
-
+func generate_random_direction():
+	return Vector2(random_number_generator.randi_range(-1, 1), random_number_generator.randi_range(-1, 1)).normalized()
+	
+	
 func frame_freeze(time_scale: float, duration: float):
 	frame_freezed.emit()
 	
