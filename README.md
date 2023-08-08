@@ -1,12 +1,11 @@
 <p align="center">
-	<img width="256px" src="https://raw.githubusercontent.com/dreadpon/godot_spatial_gardener_media/main/readme/rdm_logo.png" alt="Plugin logo" />
+	<img width="256px" src="https://github.com/godotessentials/2d-essentials/blob/main/icon.png" alt="Godot 2d essentials logo" />
+	<h1 align="center">Godot 2D Essentials</h1>
 </p>
 
-![godot plugin icon](godot_plugin_icon.PNG)
+**Godot 2D Essentials** is a comprehensive collection of production-ready components designed to expedite the development of your 2D games. These components handle fundamental behaviors without impinging on the distinct logic of your game.
 
-- - -
-
-Godot 2D essentials is a collection of production ready components to speed up the development of your 2d games. This components handles basic behaviours without affecting the particular logic of your game.
+We provide several examples demonstrating how to utilize them, all located in the [examples](https://github.com/godotessentials/2d-essentials/tree/main/examples) folder within this repository
 
 We provide you a few examples on how to use them in the folder **examples** that you can find in this repository
 
@@ -15,10 +14,10 @@ We provide you a few examples on how to use them in the folder **examples** that
 
 # ✨Installation
 ## Automatic (Recommended)
-You can download this plugin from the official [godot asset library](https://godotengine.org/asset-library/asset) using the AssetLib tab in your godot editor. Install it and you're ready to go
+You can download this plugin from the official [Godot asset library](https://godotengine.org/asset-library/asset) using the AssetLib tab in your godot editor. Once installed, you're ready to get started
 ##  Manual 
-Create an addons folder in the root of your godot project and download the content from the repository addons folder
+To manually install the plugin, create an **"addons"** folder at the root of your Godot project and then download the contents from the **"addons"** folder of this repository
 # 🐱‍🏍Getting started
-This is nothing more than a collection of new nodes that you can add as a new scene like you usually do when working with the Godot game engine. They were designed to be flexible enough to adapt to what your game mechanics are looking for and not intervene in decisions that may affect the implementation of the mechanics of your particular game.
+This collection comprises new nodes that can be added as scenes, following your usual process when working with the Godot game engine. These nodes are designed to be flexible, allowing them to adapt to the mechanics of your game without interfering with decisions that might impact the implementation of your game's unique mechanics.
 # Official documentation
-To understand in detail and see some examples of use visit the [official documentation](https://godot-essentials.gitbook.io/addons-documentation/) where you can find all the information you need.
+For detailed understanding and examples of usage, please refer to the [official documentation](https://godot-essentials.gitbook.io/addons-documentation/), where you can find all the necessary information.

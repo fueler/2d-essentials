@@ -54,11 +54,3 @@ func _on_chase_timer_timeout():
 
 func _on_health_component_died():
 	animation_tree["parameters/playback"].travel("Die")
-
-func _on_health_component_health_changed(amount, type):
-	pass
-
-
-
-func _on_velocity_component_2d_knockback_received():
-	pass

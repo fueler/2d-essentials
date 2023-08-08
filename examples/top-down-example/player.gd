@@ -10,7 +10,7 @@ func _ready():
 	
 	health_component.died.connect(on_player_died)
 	
-func _physics_process(delta):
+func _physics_process(_delta):
 	var direction: Vector2 = get_input_direction()
 	
 	if direction.is_equal_approx(Vector2.ZERO):
