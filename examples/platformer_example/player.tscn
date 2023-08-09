@@ -117,3 +117,5 @@ coyote_jump_enabled = true
 wall_jump_enabled = true
 maximum_permissible_wall_angle = 10.0
 wall_slide_enabled = true
+wall_climb_enabled = true
+wall_climb_speed_up = 450.0

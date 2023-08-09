@@ -20,11 +20,12 @@ func _physics_process(delta):
 	apply_gravity()
 	handle_jump()
 	handle_wall_sliding()
+	handle_wall_climb(input_direction)
 	handle_wall_jump(horizontal_direction)
 	handle_horizontal_movement(horizontal_direction)
 	handle_dash(input_direction)
 	update_animations(input_axis)
-
+	
 	velocity_component_2d.move()
 
 func apply_gravity():
@@ -49,6 +50,9 @@ func handle_wall_jump(direction: Vector2):
 	
 func handle_wall_sliding():
 	velocity_component_2d.wall_sliding()
+
+func handle_wall_climb(direction: Vector2):
+	velocity_component_2d.wall_climb(direction)
 	
 func handle_horizontal_movement(direction: Vector2):
 	if direction.is_equal_approx(Vector2.ZERO) and is_on_floor():
