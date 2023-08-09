@@ -7,6 +7,9 @@ signal dashed
 signal knockback_received
 signal jumped
 signal wall_jumped
+signal wall_climb_started
+signal wall_climb_finished
+
 signal inverted_gravity(inverted: bool)
 
 ########## EDITABLE PARAMETERS ##########
@@ -60,6 +63,7 @@ signal inverted_gravity(inverted: bool)
 @export var wall_climb_speed_up: float = 450.0
 @export var wall_climb_speed_down: float = 500.0
 @export var time_it_can_climb: float = 3.0
+@export var time_disabled_when_timeout: float = 0.7
 
 @onready var jump_velocity: float = calculate_jump_velocity()
 @onready var jump_gravity: float =  calculate_jump_gravity()
@@ -274,10 +278,12 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 	is_wall_climbing = (direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling() and wall_climb_enabled
 	
 	if is_wall_climbing:
-		gravity_enabled = false
-		wall_slide_enabled = false
-	
-		
+				# This conditional allows us to know when the climb is started as gravity and wall slide are active.
+		if gravity_enabled and wall_slide_enabled:
+			gravity_enabled = false
+			wall_slide_enabled = false
+			wall_climb_started.emit()
+			
 		var wall_climb_speed_direction = wall_climb_speed_down
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
 		
@@ -287,9 +293,13 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 
 		velocity.y += climb_force
 		velocity.y = max(velocity.y, wall_climb_speed_direction) if is_inverted_gravity else min(velocity.y, wall_climb_speed_direction)
+
 	else:
-		gravity_enabled = true
-		wall_slide_enabled = true
+		# This conditional allows us to know when the climb is finished as gravity and wall slide were disabled.
+		if not gravity_enabled and not wall_slide_enabled:
+			gravity_enabled = true
+			wall_slide_enabled = true
+			wall_climb_finished.emit()
 	
 func wall_sliding():
 	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
@@ -373,13 +383,16 @@ func on_dash_cooldown_timer_timeout(timer: Timer):
 	can_dash = dash_queue.size() < times_can_dash
 
 	timer.queue_free()
-
-
+	
+	
 func on_dash_duration_timer_timeout(timer: Timer):
 	gravity_enabled = true
 	timer.queue_free()
 	
 func on_wall_climb_timer_timeout():
 	wall_climb_enabled = false
-	await (get_tree().create_timer(1.0)).timeout
+	wall_climb_finished.emit()
+	
+	await (get_tree().create_timer(time_disabled_when_timeout)).timeout
+	
 	wall_climb_enabled = true
