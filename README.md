@@ -7,14 +7,12 @@
 
 We provide several examples demonstrating how to utilize them, all located in the [examples](https://github.com/godotessentials/2d-essentials/tree/main/examples) folder within this repository
 
-We provide you a few examples on how to use them in the folder **examples** that you can find in this repository
-
 # Requirements
 - Godot 4+
 
 # ✨Installation
 ## Automatic (Recommended)
-You can download this plugin from the official [Godot asset library](https://godotengine.org/asset-library/asset) using the AssetLib tab in your godot editor. Once installed, you're ready to get started
+You can download this plugin from the official [Godot asset library](https://godotengine.org/asset-library/asset/2039) using the AssetLib tab in your godot editor. Once installed, you're ready to get started
 ##  Manual 
 To manually install the plugin, create an **"addons"** folder at the root of your Godot project and then download the contents from the **"addons"** folder of this repository
 # 🐱‍🏍Getting started
