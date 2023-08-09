@@ -59,10 +59,17 @@ signal inverted_gravity(inverted: bool)
 @export var wall_slide_gravity: float = 50.0
 
 @export_group("Wall Climb")
+## Enable the wall climb action
 @export var wall_climb_enabled: bool = false
+## The speed when climb upwards
 @export var wall_climb_speed_up: float = 450.0
+## The speed when climb downwards
 @export var wall_climb_speed_down: float = 500.0
+## The force applied when the time it can climb reachs the timeout
+@export var wall_climb_knockback: float = 150.0
+## Window time range in which where you can be climbing without getting tired of it
 @export var time_it_can_climb: float = 3.0
+## Time that the climb action is disabled when the fatigue timeout is triggered.
 @export var time_disabled_when_timeout: float = 0.7
 
 @onready var jump_velocity: float = calculate_jump_velocity()
@@ -283,7 +290,10 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 			gravity_enabled = false
 			wall_slide_enabled = false
 			wall_climb_started.emit()
-			
+		
+		if wall_climb_timer.is_stopped():
+			wall_climb_timer.start()
+				
 		var wall_climb_speed_direction = wall_climb_speed_down
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
 		
@@ -300,7 +310,8 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 			gravity_enabled = true
 			wall_slide_enabled = true
 			wall_climb_finished.emit()
-	
+			
+			
 func wall_sliding():
 	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
 	
@@ -318,7 +329,7 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 
 func check_coyote_jump_time_window(was_on_floor: bool = true):
 	if coyote_jump_enabled:
-		var just_left_ledge = was_on_floor and not body.is_on_floor() and velocity.y >= 0
+		var just_left_ledge = was_on_floor and not body.is_on_floor() and (velocity.y >= 0 or (is_inverted_gravity and velocity.y <= 0))
 		
 		if just_left_ledge:
 			coyote_timer.start()
@@ -366,10 +377,11 @@ func _create_coyote_timer():
 	add_child(coyote_timer)
 
 func _create_wall_climbing_timer(time: float = time_it_can_climb):
-	if wall_climb_timer and time == time_it_can_climb:
+	if wall_climb_timer:
 		return
 		
 	wall_climb_timer = Timer.new()
+	wall_climb_timer.name = "WallClimbTimer"
 	wall_climb_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
 	wall_climb_timer.wait_time = time
 	wall_climb_timer.one_shot = true
@@ -393,6 +405,9 @@ func on_wall_climb_timer_timeout():
 	wall_climb_enabled = false
 	wall_climb_finished.emit()
 	
-	await (get_tree().create_timer(time_disabled_when_timeout)).timeout
+	knockback(body.get_wall_normal(), wall_climb_knockback)
 	
+	if time_disabled_when_timeout > 0:
+		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
+
 	wall_climb_enabled = true
