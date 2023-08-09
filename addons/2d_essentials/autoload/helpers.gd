@@ -1,6 +1,6 @@
 @tool
-extends Node
-class_name Utilities
+
+class_name Utilities extends Node
 
 signal frame_freezed
 
@@ -31,13 +31,14 @@ func generate_random_directions_on_angle_range(origin: Vector2 = Vector2.UP, min
 func generate_random_angle(min_angle_range: float = 0.0, max_angle_range: float = 360.0) -> float:
 	return lerp(min_angle_range, max_angle_range, randf())
 
-func generate_random_direction():
+func generate_random_direction() -> Vector2:
 	return Vector2(random_number_generator.randi_range(-1, 1), random_number_generator.randi_range(-1, 1)).normalized()
-	
 	
 func frame_freeze(time_scale: float, duration: float):
 	frame_freezed.emit()
 	
+	var original_value: float = Engine.time_scale
+	
 	Engine.time_scale = time_scale
 	await get_tree().create_timer(duration * time_scale).timeout
-	Engine.time_scale = 1.0
+	Engine.time_scale = original_value
