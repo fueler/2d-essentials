@@ -107,6 +107,20 @@ func move():
 		reset_jump_queue()
 		
 	return self
+	
+func move_and_collide() -> KinematicCollision2D:
+	if body:
+		var was_on_floor: bool = body.is_on_floor()
+	
+		body.velocity = velocity
+		var collision: KinematicCollision2D = body.move_and_collide(body.velocity * get_physics_process_delta_time())
+		
+		check_coyote_jump_time_window(was_on_floor)
+		reset_jump_queue()
+		
+		return collision
+	
+	return null
 
 func accelerate_in_direction(direction: Vector2):
 	if !direction.is_equal_approx(Vector2.ZERO):

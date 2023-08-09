@@ -7,7 +7,6 @@ extends CharacterBody2D
 
 func _ready():
 	animation_tree.active = true
-	
 	health_component.died.connect(on_player_died)
 	
 func _physics_process(_delta):
