@@ -118,6 +118,5 @@ wall_jump_enabled = true
 maximum_permissible_wall_angle = 10.0
 wall_slide_enabled = true
 wall_climb_enabled = true
-wall_climb_knockback = null
 time_it_can_climb = 1.0
 time_disabled_when_timeout = 1.0

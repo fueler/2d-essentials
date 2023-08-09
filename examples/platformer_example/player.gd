@@ -16,7 +16,7 @@ func _physics_process(delta):
 	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
 	var horizontal_direction: Vector2 = translate_x_axis_to_vector(input_axis)
 	
-	
+
 	apply_gravity()
 	handle_jump()
 	handle_wall_sliding()
@@ -40,8 +40,12 @@ func handle_jump():
 		var actual_velocity_y = velocity_component_2d.velocity.y
 		var new_jump_velocity = velocity_component_2d.jump_velocity / 2
 	
-		if actual_velocity_y < new_jump_velocity or velocity_component_2d.is_inverted_gravity and actual_velocity_y > new_jump_velocity:
-			velocity_component_2d.velocity.y = new_jump_velocity
+		if velocity_component_2d.is_inverted_gravity:
+			if actual_velocity_y > new_jump_velocity:
+				velocity_component_2d.velocity.y = new_jump_velocity
+		else:
+			if actual_velocity_y < new_jump_velocity:
+				velocity_component_2d.velocity.y = new_jump_velocity
 
 
 func handle_wall_jump(direction: Vector2):

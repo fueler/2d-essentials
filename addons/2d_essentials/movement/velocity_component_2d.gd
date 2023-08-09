@@ -4,7 +4,7 @@ class_name VelocityComponent2D extends Node2D
 
 ############ SIGNALS ############
 signal dashed
-signal knockback_received
+signal knockback_received(direction: Vector2)
 signal jumped
 signal wall_jumped
 signal wall_climb_started
@@ -66,7 +66,7 @@ signal inverted_gravity(inverted: bool)
 ## The speed when climb downwards
 @export var wall_climb_speed_down: float = 500.0
 ## The force applied when the time it can climb reachs the timeout
-@export var wall_climb_knockback: float = 150.0
+@export var wall_climb_knockback: float = 50.0
 ## Window time range in which where you can be climbing without getting tired of it
 @export var time_it_can_climb: float = 3.0
 ## Time that the climb action is disabled when the fatigue timeout is triggered.
@@ -175,13 +175,13 @@ func decelerate():
 	
 	return self
 	
-func knockback(from: Vector2, power: int = knockback_power):
-	var knockback_direction: Vector2 = (from - velocity).normalized() * power
-
+func knockback(direction: Vector2, power: int = knockback_power):
+	
+	var knockback_direction: Vector2 = (direction if direction.is_normalized() else direction.normalized()) * max(1, power)
 	velocity = knockback_direction
-
 	move()
-	knockback_received.emit()		
+	
+	knockback_received.emit(direction)		
 	
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
@@ -253,12 +253,12 @@ func jump():
 			if jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps:
 				apply_jump()
 	
-			
+	
 func apply_jump():
 	jump_queue.append(global_position)
 	
 	if jump_queue.size() > 1 and height_reduced_by_jump > 0:
-		var height_reduced: int =  (jump_queue.size() - 1) * height_reduced_by_jump
+		var height_reduced: int =  max(0, jump_queue.size() - 1) * height_reduced_by_jump
 		velocity.y = calculate_jump_velocity(jump_height - height_reduced)
 	else:
 		velocity.y = jump_velocity
@@ -283,7 +283,7 @@ func wall_jump(direction: Vector2):
 
 func wall_climb(direction: Vector2 = Vector2.ZERO):
 	is_wall_climbing = (direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling() and wall_climb_enabled
-	
+
 	if is_wall_climbing:
 				# This conditional allows us to know when the climb is started as gravity and wall slide are active.
 		if gravity_enabled and wall_slide_enabled:
@@ -294,15 +294,11 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 		if wall_climb_timer.is_stopped():
 			wall_climb_timer.start()
 				
-		var wall_climb_speed_direction = wall_climb_speed_down
+		var wall_climb_speed_direction = wall_climb_speed_down if direction.is_equal_approx(Vector2.DOWN) else wall_climb_speed_up			
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
-		
-		if direction.is_equal_approx(Vector2.UP):
-			wall_climb_speed_direction = wall_climb_speed_up
-			climb_force = (wall_climb_speed_direction * get_physics_process_delta_time()) * -1
 
+#
 		velocity.y += climb_force
-		velocity.y = max(velocity.y, wall_climb_speed_direction) if is_inverted_gravity else min(velocity.y, wall_climb_speed_direction)
 
 	else:
 		# This conditional allows us to know when the climb is finished as gravity and wall slide were disabled.
@@ -310,6 +306,7 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 			gravity_enabled = true
 			wall_slide_enabled = true
 			wall_climb_finished.emit()
+			wall_climb_timer.stop()
 			
 			
 func wall_sliding():
@@ -404,7 +401,7 @@ func on_dash_duration_timer_timeout(timer: Timer):
 func on_wall_climb_timer_timeout():
 	wall_climb_enabled = false
 	wall_climb_finished.emit()
-	
+
 	knockback(body.get_wall_normal(), wall_climb_knockback)
 	
 	if time_disabled_when_timeout > 0:
