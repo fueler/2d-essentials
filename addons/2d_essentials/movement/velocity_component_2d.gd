@@ -85,7 +85,7 @@ var last_faced_direction: Vector2 = Vector2.DOWN
 var jump_queue: Array[Vector2] = []
 
 var is_wall_sliding: bool =  false
-var is_climbing: bool = false
+var is_wall_climbing: bool = false
 var coyote_timer: Timer
 var wall_climb_timer: Timer
 
@@ -235,7 +235,7 @@ func reset_jump_queue():
 
 	
 func jump():
-	if not is_wall_sliding:
+	if not is_wall_sliding and not is_wall_climbing:
 		if body.is_on_floor() or coyote_timer.time_left > 0.0:
 			apply_jump()
 		else:
@@ -262,7 +262,7 @@ func wall_jump(direction: Vector2):
 		var left_angle = abs(wall_normal.angle_to(Vector2.LEFT))
 		var right_angle = abs(wall_normal.angle_to(Vector2.RIGHT))
 		
-		if is_wall_sliding:
+		if is_wall_sliding or is_wall_climbing:
 			apply_wall_jump_direction(wall_normal)
 		elif direction.is_equal_approx(Vector2.LEFT) and (wall_normal.is_equal_approx(Vector2.LEFT) or left_angle <= maximum_permissible_wall_angle):
 			apply_wall_jump_direction(wall_normal)
@@ -271,14 +271,12 @@ func wall_jump(direction: Vector2):
 			
 
 func wall_climb(direction: Vector2 = Vector2.ZERO):
-	is_climbing = (direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling() and wall_climb_enabled
+	is_wall_climbing = (direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling() and wall_climb_enabled
 	
-	if is_climbing:
+	if is_wall_climbing:
 		gravity_enabled = false
 		wall_slide_enabled = false
-		
-		if wall_climb_timer.is_stopped():
-			wall_climb_timer.start()
+	
 		
 		var wall_climb_speed_direction = wall_climb_speed_down
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
@@ -296,7 +294,7 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 func wall_sliding():
 	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
 	
-	if not is_climbing and is_wall_sliding:
+	if not is_wall_climbing and is_wall_sliding:
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
 		velocity.y = max(velocity.y, wall_slide_gravity) if is_inverted_gravity else min(velocity.y, wall_slide_gravity)
 
@@ -358,17 +356,17 @@ func _create_coyote_timer():
 	add_child(coyote_timer)
 
 func _create_wall_climbing_timer(time: float = time_it_can_climb):
-	if wall_climb_timer:
+	if wall_climb_timer and time == time_it_can_climb:
 		return
 		
-	var wall_climb_duration_timer = Timer.new()
-	wall_climb_duration_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
-	wall_climb_duration_timer.wait_time = time
-	wall_climb_duration_timer.one_shot = true
-	wall_climb_duration_timer.autostart = false
+	wall_climb_timer = Timer.new()
+	wall_climb_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	wall_climb_timer.wait_time = time
+	wall_climb_timer.one_shot = true
+	wall_climb_timer.autostart = false
 	
-	add_child(wall_climb_duration_timer)
-	wall_climb_duration_timer.timeout.connect(on_wall_climb_timer_timeout)
+	add_child(wall_climb_timer)
+	wall_climb_timer.timeout.connect(on_wall_climb_timer_timeout)
 
 func on_dash_cooldown_timer_timeout(timer: Timer):
 	dash_queue.pop_back()
