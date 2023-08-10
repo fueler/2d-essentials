@@ -227,6 +227,8 @@ func apply_gravity():
 		else:
 			velocity.y += gravity_force
 	
+	return self
+	
 func invert_gravity():
 	if body and gravity_enabled:
 		jump_velocity = -jump_velocity
@@ -246,13 +248,15 @@ func reset_jump_queue():
 
 	
 func jump():
-	if not is_wall_sliding and not is_wall_climbing:
-		if body.is_on_floor() or coyote_timer.time_left > 0.0:
-			apply_jump()
-		else:
-			if jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps:
-				apply_jump()
+	if not is_wall_sliding and not is_wall_climbing and can_jump():
+		apply_jump()
+		
 	
+func can_jump() -> bool:
+	if body.is_on_floor() or coyote_timer.time_left > 0.0:
+		return true
+	else:
+		return jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps
 	
 func apply_jump():
 	jump_queue.append(global_position)
