@@ -25,11 +25,9 @@ func _physics_process(delta):
 	actor.move()
 	
 	if not actor.velocity.is_zero_approx():
-		animation_player.stop()
 		get_parent().change_state(run_state)
 		
 	if Input.is_action_just_pressed("jump"):
-		animation_player.stop()
 		get_parent().change_state(jump_state)
 		
 

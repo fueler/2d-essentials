@@ -4,6 +4,7 @@ class_name JumpState extends State
 
 @onready var falling_state = $"../FallingState"
 @onready var animation_player: AnimationPlayer = actor.body.get_node("AnimationPlayer")
+@onready var animated_sprite: AnimatedSprite2D = actor.body.get_node("AnimatedSprite2D")
 
 func _ready():
 	set_physics_process(false)
