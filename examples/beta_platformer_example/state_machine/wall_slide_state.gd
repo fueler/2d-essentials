@@ -24,6 +24,7 @@ func _physics_process(delta):
 	
 	if actor.body.is_on_floor():
 		get_parent().change_state(idle_state)
+		return
 		
 	if Input.is_action_just_pressed("jump"):
 		get_parent().change_state(jump_state)
@@ -31,5 +32,6 @@ func _physics_process(delta):
 		
 	if actor.can_wall_climb(actor.body.input_direction):
 		get_parent().change_state(wall_climb_state)
+		return
 	
 	actor.move()

@@ -7,6 +7,7 @@ extends CharacterBody2D
 @onready var finite_state_machine = $FiniteStateMachine as FiniteStateMachine
 @onready var jump_state = $FiniteStateMachine/JumpState
 @onready var wall_slide_state = $FiniteStateMachine/WallSlideState
+@onready var falling_state = $FiniteStateMachine/FallingState
 
 var input_axis: float = 0.0
 var input_direction: Vector2 = Vector2.ZERO

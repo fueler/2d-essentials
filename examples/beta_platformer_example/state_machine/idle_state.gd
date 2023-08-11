@@ -26,4 +26,5 @@ func _physics_process(delta):
 	
 	if Input.is_action_just_pressed("jump") and actor.can_jump():
 		get_parent().change_state(jump_state)
+		return
 		
