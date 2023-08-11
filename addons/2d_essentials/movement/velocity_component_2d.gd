@@ -431,6 +431,7 @@ func on_dash_duration_timer_timeout(timer: Timer):
 	timer.queue_free()
 	
 func on_wall_climb_timer_timeout():
+	gravity_enabled = true
 	wall_climb_enabled = false
 	wall_climb_finished.emit()
 
@@ -440,7 +441,6 @@ func on_wall_climb_timer_timeout():
 		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
 
 	wall_climb_enabled = true
-	gravity_enabled = true
 
 func on_jumped():
 	var previous_is_wall_sliding = is_wall_sliding

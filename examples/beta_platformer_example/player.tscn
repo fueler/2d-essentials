@@ -855,6 +855,10 @@ coyote_jump_enabled = true
 wall_jump_enabled = true
 wall_slide_enabled = true
 wall_climb_enabled = true
+wall_climb_speed_up = 300.0
+wall_climb_speed_down = 350.0
+wall_climb_knockback = 100.0
+time_it_can_climb = 2.0
 knockback_power = 300
 
 [node name="Camera2D" type="Camera2D" parent="."]

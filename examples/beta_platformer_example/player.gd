@@ -6,14 +6,11 @@ extends CharacterBody2D
 
 @onready var finite_state_machine = $FiniteStateMachine as FiniteStateMachine
 @onready var jump_state = $FiniteStateMachine/JumpState
-@onready var wall_slide_state = $FiniteStateMachine/WallSlideState
-@onready var falling_state = $FiniteStateMachine/FallingState
 
 var input_axis: float = 0.0
 var input_direction: Vector2 = Vector2.ZERO
 var horizontal_direction: Vector2 = Vector2.ZERO
 var is_left_direction: bool = false
-
 
 func _physics_process(delta):
 	if not is_on_floor():
@@ -33,7 +30,7 @@ func handle_horizontal_movement():
 		else:
 			velocity_component_2d.accelerate_in_direction(horizontal_direction)
 		
-	# Avoid assigning the variable when it's the same to avoid blinked animations
+	# Avoid assigning the flip_h property when it's the same to avoid blinked animations
 	if is_left_direction != animated_sprite_2d.flip_h:
 		animated_sprite_2d.flip_h = is_left_direction
 
