@@ -14,9 +14,10 @@ func _physics_process(delta):
 func dash_effect():
 	var sprite: Sprite2D = Sprite2D.new()
 	sprite.texture = self.sprite_frames.get_frame_texture(self.animation, self.frame)
-	get_parent().add_child(sprite)
 	
-	sprite.position = position
+	get_tree().root.add_child(sprite)
+	
+	sprite.global_position = global_position
 	sprite.scale = scale
 	sprite.flip_h = flip_h
 	
