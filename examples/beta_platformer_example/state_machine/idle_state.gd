@@ -23,11 +23,11 @@ func _exit_state():
 	state_finished.emit()
 	
 func _physics_process(delta):
-	if Input.is_action_just_pressed("jump") and actor.can_jump():
-		get_parent().change_state(jump_state)
-		
 	actor.body.handle_horizontal_movement()
 	
 	if not actor.body.horizontal_direction.is_zero_approx():
 		get_parent().change_state(run_state)
 	
+	if Input.is_action_just_pressed("jump") and actor.can_jump():
+		get_parent().change_state(jump_state)
+		

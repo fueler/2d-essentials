@@ -5,6 +5,8 @@ extends CharacterBody2D
 @onready var animated_sprite_2d = $AnimatedSprite2D
 
 @onready var finite_state_machine = $FiniteStateMachine as FiniteStateMachine
+@onready var jump_state = $FiniteStateMachine/JumpState
+@onready var wall_slide_state = $FiniteStateMachine/WallSlideState
 
 var input_axis: float = 0.0
 var input_direction: Vector2 = Vector2.ZERO
@@ -20,7 +22,7 @@ func handle_horizontal_movement():
 	input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
 	horizontal_direction = translate_x_axis_to_vector(input_axis)
 
-	if horizontal_direction.is_equal_approx(Vector2.ZERO) and is_on_floor():
+	if horizontal_direction.is_zero_approx() and is_on_floor() and not finite_state_machine.current_state_is(jump_state):
 		velocity_component_2d.decelerate()
 	else:
 		velocity_component_2d.accelerate_in_direction(horizontal_direction)

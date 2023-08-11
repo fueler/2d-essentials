@@ -2,24 +2,27 @@ class_name JumpState extends State
 
 @export var actor: VelocityComponent2D
 
-@onready var falling_state = $"../FallingState"
-@onready var wall_climb_state = $"../WallClimbState"
+@onready var falling_state = $"../FallingState" as FallingState
+@onready var wall_slide_state = $"../WallSlideState" as WallSlideState
 
 @onready var animation_player: AnimationPlayer = actor.body.get_node("AnimationPlayer")
 @onready var animated_sprite: AnimatedSprite2D = actor.body.get_node("AnimatedSprite2D")
 
 func _ready():
+	actor.jumped.connect(on_jump)
+	actor.wall_jumped.connect(on_jump)
+	
 	set_physics_process(false)
 
 func _enter_state() -> void:
-	actor.jumped.connect(on_jump)
-	actor.jump()
-	actor.move()
+	if actor.wall_jump_enabled and actor.body.is_on_wall():
+		actor.wall_jump(actor.body.horizontal_direction)
+	else:
+		actor.jump()
 	
 	set_physics_process(true)
 
 func _exit_state():
-	actor.jumped.disconnect(on_jump)
 	set_physics_process(false)
 	state_finished.emit()
 
@@ -38,7 +41,7 @@ func _physics_process(_delta):
 		get_parent().change_state(falling_state)
 		
 	if actor.wall_slide_enabled and actor.body.is_on_wall() and not actor.body.is_on_floor() and not actor.body.is_on_ceiling():
-		get_parent().change_state(wall_climb_state)
+		get_parent().change_state(wall_slide_state)
 
 
 func short_jump():

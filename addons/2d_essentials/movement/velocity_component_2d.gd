@@ -115,6 +115,13 @@ func _ready():
 	_create_coyote_timer()
 	_create_wall_climbing_timer()
 	
+	jumped.connect(on_jumped)
+	wall_jumped.connect(on_jumped)
+
+func on_jumped():
+	is_wall_climbing = false
+	is_wall_sliding = false
+	
 func move():
 	if body:
 		var was_on_floor: bool = body.is_on_floor()
@@ -253,13 +260,15 @@ func jump():
 		
 	
 func can_jump() -> bool:
-	if body.is_on_floor() or coyote_timer.time_left > 0.0:
+	if body.is_on_floor() or (coyote_jump_enabled and coyote_timer.time_left > 0.0):
 		return true
 	else:
 		return jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps
 	
 func apply_jump():
 	jump_queue.append(global_position)
+	is_wall_sliding = false
+	is_wall_climbing = false
 	
 	if jump_queue.size() > 1 and height_reduced_by_jump > 0:
 		var height_reduced: int =  max(0, jump_queue.size() - 1) * height_reduced_by_jump
@@ -271,12 +280,12 @@ func apply_jump():
 	
 	
 func wall_jump(direction: Vector2):
-	if body.is_on_wall() and not body.is_on_ceiling() and wall_jump_enabled:
+	if wall_jump_enabled and body.is_on_wall() and not body.is_on_ceiling():
 		
 		var wall_normal = body.get_wall_normal()
 		var left_angle = abs(wall_normal.angle_to(Vector2.LEFT))
 		var right_angle = abs(wall_normal.angle_to(Vector2.RIGHT))
-		
+
 		if is_wall_sliding or is_wall_climbing:
 			apply_wall_jump_direction(wall_normal)
 		elif direction.is_equal_approx(Vector2.LEFT) and (wall_normal.is_equal_approx(Vector2.LEFT) or left_angle <= maximum_permissible_wall_angle):
@@ -284,7 +293,14 @@ func wall_jump(direction: Vector2):
 		elif direction.is_equal_approx(Vector2.RIGHT) and (wall_normal.is_equal_approx(Vector2.RIGHT) or right_angle <= maximum_permissible_wall_angle):
 			apply_wall_jump_direction(wall_normal)
 			
+			
+func apply_wall_jump_direction(wall_normal: Vector2):
+	velocity.x = wall_normal.x * max_speed
+	velocity.y = jump_velocity
+	jump_queue.append(global_position)
 
+	wall_jumped.emit()
+	
 func wall_climb(direction: Vector2 = Vector2.ZERO):
 	is_wall_climbing = (direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling() and wall_climb_enabled
 
@@ -320,13 +336,6 @@ func wall_sliding():
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
 		velocity.y = max(velocity.y, wall_slide_gravity) if is_inverted_gravity else min(velocity.y, wall_slide_gravity)
 
-	
-func apply_wall_jump_direction(wall_normal: Vector2):
-	velocity.x = wall_normal.x * max_speed
-	velocity.y = jump_velocity
-	jump_queue.append(global_position)
-	wall_jumped.emit()
-	
 
 func check_coyote_jump_time_window(was_on_floor: bool = true):
 	if coyote_jump_enabled:

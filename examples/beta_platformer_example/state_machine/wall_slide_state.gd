@@ -1,8 +1,9 @@
-class_name WallClimbState extends State
+class_name WallSlideState extends State
 
 @export var actor: VelocityComponent2D
 @onready var animation_player: AnimationPlayer = actor.body.get_node("AnimationPlayer")
 @onready var idle_state = $"../IdleState"
+@onready var jump_state = $"../JumpState"
 
 func _ready():
 	set_physics_process(false)
@@ -25,4 +26,4 @@ func _physics_process(delta):
 		get_parent().change_state(idle_state)
 		
 	if Input.is_action_just_pressed("jump"):
-		actor.wall_jump(actor.body.horizontal_direction)
+		get_parent().change_state(jump_state)

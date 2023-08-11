@@ -3,8 +3,8 @@ class_name FallingState extends State
 @export var actor: VelocityComponent2D
 @onready var jump_state = $"../JumpState" as JumpState
 @onready var idle_state = $"../IdleState" as IdleState
-@onready var land_state = $"../LandState"
-@onready var wall_climb_state = $"../WallClimbState"
+@onready var land_state = $"../LandState" as LandState
+@onready var wall_slide_state = $"../WallSlideState"
 
 @onready var animation_player: AnimationPlayer = actor.body.get_node("AnimationPlayer")
 
@@ -29,5 +29,5 @@ func _physics_process(_delta):
 			get_parent().change_state(jump_state)
 	
 	if actor.wall_slide_enabled and actor.body.is_on_wall() and not actor.body.is_on_floor() and not actor.body.is_on_ceiling():
-		get_parent().change_state(wall_climb_state)
+		get_parent().change_state(wall_slide_state)
 

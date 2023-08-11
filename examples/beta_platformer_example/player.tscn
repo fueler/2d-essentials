@@ -1,4 +1,4 @@
-[gd_scene load_steps=59 format=3 uid="uid://qu2xpt64k1ul"]
+[gd_scene load_steps=61 format=3 uid="uid://qu2xpt64k1ul"]
 
 [ext_resource type="Script" path="res://examples/beta_platformer_example/player.gd" id="1_6eank"]
 [ext_resource type="Texture2D" uid="uid://bdw8doal78u37" path="res://examples/beta_platformer_example/assets/animations/Character Idle 48x48.png" id="1_6jkb0"]
@@ -13,7 +13,8 @@
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/run_state.gd" id="8_y3tu8"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/falling_state.gd" id="9_rtg5i"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/land_state.gd" id="12_ecd4s"]
-[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/wall_climb_state.gd" id="13_wf2ma"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/wall_slide_state.gd" id="14_vr4u6"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_control.gd" id="15_eud41"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cr48v"]
 atlas = ExtResource("2_i4j7b")
@@ -714,6 +715,9 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kn3qn"]
 size = Vector2(13.9375, 29)
 
+[sub_resource type="LabelSettings" id="LabelSettings_uelfg"]
+font_size = 12
+
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
 script = ExtResource("1_6eank")
@@ -778,6 +782,25 @@ script = ExtResource("12_ecd4s")
 actor = NodePath("../../VelocityComponent2D")
 animation_player = NodePath("../../AnimationPlayer")
 
-[node name="WallClimbState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("actor")]
-script = ExtResource("13_wf2ma")
+[node name="WallSlideState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("actor")]
+script = ExtResource("14_vr4u6")
 actor = NodePath("../../VelocityComponent2D")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("15_eud41")
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = -16.0
+offset_top = -49.0
+offset_right = 24.0
+offset_bottom = -26.0
+scale = Vector2(0.873821, 0.97832)
+text = "State"
+label_settings = SubResource("LabelSettings_uelfg")
+horizontal_alignment = 1
+vertical_alignment = 1
