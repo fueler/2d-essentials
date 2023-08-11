@@ -28,3 +28,7 @@ func _physics_process(delta):
 		get_parent().change_state(jump_state)
 		return
 		
+	if not actor.body.is_on_floor():
+		get_parent().change_state(falling_state)
+		return
+		
