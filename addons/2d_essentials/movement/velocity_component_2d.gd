@@ -148,7 +148,7 @@ func move_and_collide() -> KinematicCollision2D:
 	return null
 
 func accelerate_in_direction(direction: Vector2):
-	if !direction.is_equal_approx(Vector2.ZERO):
+	if not direction.is_zero_approx():
 		last_faced_direction = direction
 		
 	facing_direction = direction
@@ -235,7 +235,7 @@ func apply_gravity():
 			velocity.y -= gravity_force
 		else:
 			velocity.y += gravity_force
-	
+			
 	return self
 	
 func invert_gravity():

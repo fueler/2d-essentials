@@ -22,7 +22,6 @@ func _exit_state():
 	
 func _physics_process(delta):
 	var was_on_floor: bool = actor.body.is_on_floor()
-	actor.body.handle_horizontal_movement()
 
 	if actor.velocity.is_zero_approx():
 		get_parent().change_state(idle_state)
@@ -35,5 +34,5 @@ func _physics_process(delta):
 		
 	if was_on_floor and not actor.body.is_on_floor():
 		get_parent().change_state(falling_state)
-		
+	
 	actor.move()

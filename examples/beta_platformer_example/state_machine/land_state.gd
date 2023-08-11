@@ -21,9 +21,6 @@ func _exit_state():
 	state_finished.emit()
 
 func _physics_process(delta):
-	actor.body.handle_horizontal_movement()
-	actor.move()
-	
 	if not actor.velocity.is_zero_approx():
 		get_parent().change_state(run_state)
 		

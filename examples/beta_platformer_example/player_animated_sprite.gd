@@ -20,13 +20,17 @@ func dash_effect():
 	sprite.global_position = global_position
 	sprite.scale = scale
 	sprite.flip_h = flip_h
+	sprite.flip_v = flip_v
 	
+#	sprite.material = ShaderMaterial.new()
+#	sprite.material.shader = ''
+
 	var tween: Tween = create_tween()
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.7).set_trans(tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	tween.tween_callback(sprite.queue_free)
 
 func on_dash_entered():
-	dash_effect_active = true
+	dash_effect_active =  true
 	
 func on_dash_finished():
 	dash_effect_active = false

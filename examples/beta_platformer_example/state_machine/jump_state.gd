@@ -27,9 +27,7 @@ func _exit_state():
 	set_physics_process(false)
 	state_finished.emit()
 
-func _physics_process(_delta):
-	actor.body.handle_horizontal_movement()
-	
+func _physics_process(_delta):	
 	if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
 		get_parent().change_state(dash_state)
 		

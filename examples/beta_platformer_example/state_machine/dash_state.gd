@@ -20,9 +20,6 @@ func _exit_state():
 	set_physics_process(false)
 	
 func _physics_process(delta):
-	actor.body.handle_horizontal_movement()
-	actor.move()
-	
 	if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
 		actor.dash(actor.body.input_direction)
 	

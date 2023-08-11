@@ -20,9 +20,7 @@ func _exit_state() -> void:
 	set_physics_process(false)
 	state_finished.emit()
 
-func _physics_process(_delta):
-	actor.body.handle_horizontal_movement()
-	
+func _physics_process(_delta):	
 	if actor.body.is_on_floor():
 		get_parent().change_state(land_state)
 	else:
