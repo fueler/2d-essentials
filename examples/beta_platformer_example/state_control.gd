@@ -7,5 +7,5 @@ extends Control
 func _ready():
 	finite_state_machine.state_changed.connect(on_state_changed)
 
-func on_state_changed(state: State):
+func on_state_changed(from_state: State, state: State):
 	label.text = state.name

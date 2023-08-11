@@ -10,6 +10,7 @@ signal wall_jumped
 signal wall_climb_started
 signal wall_climb_finished
 
+signal gravity_changed(enabled: bool)
 signal inverted_gravity(inverted: bool)
 
 ########## EDITABLE PARAMETERS ##########
@@ -27,7 +28,7 @@ signal inverted_gravity(inverted: bool)
 @export_range(1, 5, 1, "or_greater") var times_can_dash: int = 1
 ## The time it takes for the dash ability to become available again.
 @export var dash_cooldown: float = 1.5
-@export var dash_gravity_time_disabled:float = 0.1
+@export var dash_gravity_time_disabled:float = 0.2
 
 @export_group("Jump")
 
@@ -83,7 +84,7 @@ signal inverted_gravity(inverted: bool)
 
 @onready var body = get_parent()
 
-var gravity_enabled: bool = true
+var gravity_enabled: bool = true 
 var is_inverted_gravity: bool = false
 
 var can_dash: bool = false
@@ -190,9 +191,11 @@ func knockback(direction: Vector2, power: int = knockback_power):
 	
 	knockback_received.emit(direction)		
 	
+func allowed_to_dash() -> bool:
+	return !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
-	if !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash:
+	if allowed_to_dash():
 		gravity_enabled = false
 		dash_queue.append(global_position)
 		

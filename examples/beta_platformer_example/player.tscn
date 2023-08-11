@@ -1,4 +1,4 @@
-[gd_scene load_steps=61 format=3 uid="uid://qu2xpt64k1ul"]
+[gd_scene load_steps=62 format=3 uid="uid://qu2xpt64k1ul"]
 
 [ext_resource type="Script" path="res://examples/beta_platformer_example/player.gd" id="1_6eank"]
 [ext_resource type="Texture2D" uid="uid://bdw8doal78u37" path="res://examples/beta_platformer_example/assets/animations/Character Idle 48x48.png" id="1_6jkb0"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/falling_state.gd" id="9_rtg5i"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/land_state.gd" id="12_ecd4s"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/wall_slide_state.gd" id="14_vr4u6"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/dash_state.gd" id="15_8gmhq"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_control.gd" id="15_eud41"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cr48v"]
@@ -362,6 +363,47 @@ tracks/5/keys = {
 "values": [Vector2(1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_wj4ba"]
+resource_name = "falling"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"falling"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 0.95), Vector2(0.9, 1), Vector2(1, 0.95), Vector2(0.9, 1), Vector2(1, 0.95)]
+}
+
 [sub_resource type="Animation" id="Animation_m5xwe"]
 resource_name = "idle"
 length = 0.9
@@ -660,47 +702,6 @@ tracks/2/keys = {
 "values": [false]
 }
 
-[sub_resource type="Animation" id="Animation_wj4ba"]
-resource_name = "falling"
-length = 0.4
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatedSprite2D:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"falling"]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("AnimatedSprite2D:frame")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D:scale")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(1, 0.95), Vector2(0.9, 1), Vector2(1, 0.95), Vector2(0.9, 1), Vector2(1, 0.95)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mdk6e"]
 _data = {
 "RESET": SubResource("Animation_mlmg7"),
@@ -742,6 +743,8 @@ script = ExtResource("5_3wwcg")
 max_speed = 120
 acceleration = 500.0
 friction = 0.0
+dash_speed_multiplier = 2.3
+times_can_dash = 2
 jump_height = 85.0
 jump_time_to_fall = 0.35
 allowed_jumps = 2
@@ -784,6 +787,10 @@ animation_player = NodePath("../../AnimationPlayer")
 
 [node name="WallSlideState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("actor")]
 script = ExtResource("14_vr4u6")
+actor = NodePath("../../VelocityComponent2D")
+
+[node name="DashState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("actor")]
+script = ExtResource("15_8gmhq")
 actor = NodePath("../../VelocityComponent2D")
 
 [node name="Control" type="Control" parent="."]

@@ -12,6 +12,7 @@ var input_axis: float = 0.0
 var input_direction: Vector2 = Vector2.ZERO
 var horizontal_direction: Vector2 = Vector2.ZERO
 
+
 func _physics_process(delta):
 	if not is_on_floor():
 		velocity_component_2d.apply_gravity().move()

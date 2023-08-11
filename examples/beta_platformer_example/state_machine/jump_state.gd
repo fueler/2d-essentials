@@ -4,6 +4,7 @@ class_name JumpState extends State
 
 @onready var falling_state = $"../FallingState" as FallingState
 @onready var wall_slide_state = $"../WallSlideState" as WallSlideState
+@onready var dash_state = $"../DashState"
 
 @onready var animation_player: AnimationPlayer = actor.body.get_node("AnimationPlayer")
 @onready var animated_sprite: AnimatedSprite2D = actor.body.get_node("AnimatedSprite2D")
@@ -29,12 +30,15 @@ func _exit_state():
 func _physics_process(_delta):
 	actor.body.handle_horizontal_movement()
 	
+	if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
+		get_parent().change_state(dash_state)
+		
 	if Input.is_action_just_pressed("jump"):
 		actor.jump()
 	
 	if Input.is_action_just_released("jump"):
 		short_jump()
-		
+	
 	actor.move()
 
 	if actor.velocity.y > 0:
@@ -42,6 +46,8 @@ func _physics_process(_delta):
 		
 	if actor.wall_slide_enabled and actor.body.is_on_wall() and not actor.body.is_on_floor() and not actor.body.is_on_ceiling():
 		get_parent().change_state(wall_slide_state)
+		
+		
 
 
 func short_jump():

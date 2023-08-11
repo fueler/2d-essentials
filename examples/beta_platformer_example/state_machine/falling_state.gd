@@ -5,6 +5,7 @@ class_name FallingState extends State
 @onready var idle_state = $"../IdleState" as IdleState
 @onready var land_state = $"../LandState" as LandState
 @onready var wall_slide_state = $"../WallSlideState"
+@onready var dash_state = $"../DashState"
 
 @onready var animation_player: AnimationPlayer = actor.body.get_node("AnimationPlayer")
 
@@ -27,6 +28,9 @@ func _physics_process(_delta):
 	else:
 		if Input.is_action_just_pressed("jump") and actor.can_jump():
 			get_parent().change_state(jump_state)
+			
+		if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
+			get_parent().change_state(dash_state)
 	
 	if actor.wall_slide_enabled and actor.body.is_on_wall() and not actor.body.is_on_floor() and not actor.body.is_on_ceiling():
 		get_parent().change_state(wall_slide_state)

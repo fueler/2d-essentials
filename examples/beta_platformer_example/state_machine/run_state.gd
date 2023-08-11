@@ -5,6 +5,7 @@ class_name RunState extends State
 @onready var jump_state = $"../JumpState"
 @onready var idle_state = $"../IdleState"
 @onready var falling_state = $"../FallingState"
+@onready var dash_state = $"../DashState"
 
 @onready var animation_player: AnimationPlayer = actor.body.get_node("AnimationPlayer")
 
@@ -29,6 +30,9 @@ func _physics_process(delta):
 	
 	if Input.is_action_just_pressed("jump") and actor.can_jump():
 		get_parent().change_state(jump_state)
+	
+	if Input.is_action_just_pressed("dash"):
+		get_parent().change_state(dash_state)
 		
 	if was_on_floor and not actor.body.is_on_floor():
 		get_parent().change_state(falling_state)
