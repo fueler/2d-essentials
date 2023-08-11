@@ -18,6 +18,7 @@ func change_state(new_state: State, force: bool = false):
 		
 	new_state._enter_state()
 	
+	new_state.state_entered.emit()
 	state_changed.emit(current_state, new_state)
 	
 	current_state = new_state

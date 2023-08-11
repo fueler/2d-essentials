@@ -5,6 +5,7 @@ class_name DashState extends State
 @onready var idle_state = $"../IdleState"
 
 @onready var animation_player: AnimationPlayer = actor.body.get_node("AnimationPlayer")
+@onready var animated_sprite: AnimatedSprite2D = actor.body.get_node("AnimatedSprite2D")
 
 func _ready():
 	actor.dashed.connect(on_dashed)
@@ -14,7 +15,7 @@ func _ready():
 func _enter_state():
 	set_physics_process(true)
 	actor.dash(actor.body.input_direction)
-	
+
 func _exit_state():
 	set_physics_process(false)
 	
