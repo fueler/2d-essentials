@@ -855,6 +855,7 @@ coyote_jump_enabled = true
 wall_jump_enabled = true
 wall_slide_enabled = true
 wall_climb_enabled = true
+knockback_power = 300
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(0.5, 0.5)

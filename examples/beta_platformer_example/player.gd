@@ -20,7 +20,6 @@ func _physics_process(delta):
 	
 	handle_horizontal_movement()
 		
-
 func handle_horizontal_movement():
 	input_axis = Input.get_axis("ui_left", "ui_right")
 	input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()

@@ -20,11 +20,11 @@ signal inverted_gravity(inverted: bool)
 @export var max_speed: int = 100
 ## This value makes smoother the time it takes to reach maximum speed  
 @export var acceleration: float = 400.0
-@export var friction: float =  800.0
+@export var friction: float =  500.0
 
 @export_group("Dash")
 ## The speed multiplier would be applied to the player velocity on runtime
-@export var dash_speed_multiplier: float = 3.0
+@export var dash_speed_multiplier: float = 2.1
 ## The times this character can dash until the cooldown is activated
 @export_range(1, 5, 1, "or_greater") var times_can_dash: int = 1
 ## The time it takes for the dash ability to become available again.
@@ -80,7 +80,7 @@ signal inverted_gravity(inverted: bool)
 
 @export_group("Knockback")
 ## The amount of power the character is pushed in the direction of the force source
-@export var knockback_power: int = 300
+@export var knockback_power: int = 250
 #################################################
 
 @onready var body = get_parent()
@@ -88,7 +88,6 @@ signal inverted_gravity(inverted: bool)
 var gravity_enabled: bool = true 
 var is_inverted_gravity: bool = false
 
-var can_dash: bool = false
 var dash_queue: Array[Vector2] = []
 
 var velocity: Vector2 = Vector2.ZERO
@@ -98,10 +97,12 @@ var last_faced_direction: Vector2 = Vector2.DOWN
 
 var jump_queue: Array[Vector2] = []
 
-var is_wall_sliding: bool =  false
-var is_wall_climbing: bool = false
 var coyote_timer: Timer
 var wall_climb_timer: Timer
+
+var is_wall_sliding: bool =  false
+var is_wall_climbing: bool = false
+
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings: PackedStringArray = []
@@ -190,11 +191,11 @@ func knockback(direction: Vector2, power: int = knockback_power):
 	
 	knockback_received.emit(direction)		
 	
-func allowed_to_dash() -> bool:
-	return !velocity.is_zero_approx() and can_dash and dash_queue.size() < times_can_dash
+func can_dash() -> bool:
+	return dash_queue.size() < times_can_dash and dash_cooldown > 0 and times_can_dash > 0 and not velocity.is_zero_approx()
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
-	if allowed_to_dash():
+	if can_dash():
 		dash_queue.append(global_position)
 		
 		velocity += target_direction * (max_speed * speed_multiplier)
@@ -256,18 +257,20 @@ func reset_jump_queue():
 	if body.is_on_floor() and jump_queue.size() > 0:
 		jump_queue.clear()
 
-	
+func can_jump() -> bool:
+	if not is_wall_sliding and not is_wall_climbing:
+		if body.is_on_floor() or (coyote_jump_enabled and coyote_timer.time_left > 0.0):
+			return true
+		else:
+			return jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps
+	return false
+
+
 func jump():
-	if not is_wall_sliding and not is_wall_climbing and can_jump():
+	if can_jump():
 		apply_jump()
 		
-	
-func can_jump() -> bool:
-	if body.is_on_floor() or (coyote_jump_enabled and coyote_timer.time_left > 0.0):
-		return true
-	else:
-		return jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps
-	
+		
 func apply_jump():
 	jump_queue.append(global_position)
 	is_wall_sliding = false
@@ -277,16 +280,17 @@ func apply_jump():
 		var height_reduced: int =  max(0, jump_queue.size() - 1) * height_reduced_by_jump
 		velocity.y = calculate_jump_velocity(jump_height - height_reduced)
 	else:
-		velocity.y = jump_velocity
+		velocity.y = calculate_jump_velocity(jump_height)
 
 	jumped.emit()
+
 
 func can_wall_jump() -> bool:
 	return wall_jump_enabled and body.is_on_wall() and not body.is_on_ceiling() and not velocity.y == 0
 	
+
 func wall_jump(direction: Vector2):
-	if wall_jump_enabled and body.is_on_wall() and not body.is_on_ceiling():
-		
+	if can_wall_jump():
 		var wall_normal = body.get_wall_normal()
 		var left_angle = abs(wall_normal.angle_to(Vector2.LEFT))
 		var right_angle = abs(wall_normal.angle_to(Vector2.RIGHT))
@@ -313,7 +317,7 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 	is_wall_climbing = can_wall_climb(direction)
 	
 	if is_wall_climbing:
-		# This conditional allows us to know when the climb is started as gravity and wall slide are active.
+		
 		if gravity_enabled:
 			gravity_enabled = false
 			wall_climb_started.emit()
@@ -325,13 +329,16 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 		var wall_climb_speed_direction = wall_climb_speed_up if is_climbing_up else wall_climb_speed_down			
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
 #		
-		if is_climbing_up:
-			climb_force *= -1
+		if is_inverted_gravity:
+			if not is_climbing_up:
+				climb_force *= -1
+		else:
+			if is_climbing_up:
+				climb_force *= -1
 			
 		velocity.y += climb_force
 
 	else:
-		# This conditional allows us to know when the climb is finished as gravity and wall slide were disabled.
 		if not gravity_enabled:
 			gravity_enabled = true
 			wall_climb_finished.emit()
@@ -362,9 +369,8 @@ func check_coyote_jump_time_window(was_on_floor: bool = true):
 	
 	
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
-	can_dash =  cooldown > 0 and times_can_dash > 0
+	dash_cooldown = cooldown
 	times_can_dash = times
-
 
 func _create_dash_cooldown_timer(time: float = dash_cooldown):
 	var dash_cooldown_timer: Timer = Timer.new()
@@ -393,7 +399,6 @@ func _create_coyote_timer():
 		return
 	
 	coyote_timer = Timer.new()
-	
 	coyote_timer.name = "CoyoteTimer"
 	coyote_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
 	coyote_timer.wait_time = coyote_jump_time_window
@@ -418,11 +423,9 @@ func _create_wall_climbing_timer(time: float = time_it_can_climb):
 
 func on_dash_cooldown_timer_timeout(timer: Timer):
 	dash_queue.pop_back()
-	can_dash = dash_queue.size() < times_can_dash
-
 	timer.queue_free()
 	
-	
+
 func on_dash_duration_timer_timeout(timer: Timer):
 	gravity_enabled = true
 	timer.queue_free()

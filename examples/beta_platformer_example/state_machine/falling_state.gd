@@ -26,7 +26,7 @@ func _physics_process(_delta):
 		if Input.is_action_just_pressed("jump") and actor.can_jump():
 			get_parent().change_state(jump_state)
 			
-		if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
+		if Input.is_action_just_pressed("dash") and actor.can_dash():
 			get_parent().change_state(dash_state)
 	
 	if actor.can_wall_slide():
