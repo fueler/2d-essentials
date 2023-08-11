@@ -31,8 +31,10 @@ func _physics_process(delta):
 	
 	if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
 		get_parent().change_state(dash_state)
-		
+
+	actor.move()
+	
 	if was_on_floor and not actor.body.is_on_floor():
 		get_parent().change_state(falling_state)
 	
-	actor.move()
+

@@ -18,7 +18,6 @@ func _enter_state() -> void:
 	
 func _exit_state() -> void:
 	set_physics_process(false)
-	state_finished.emit()
 
 func _physics_process(_delta):	
 	if actor.body.is_on_floor():
@@ -30,6 +29,6 @@ func _physics_process(_delta):
 		if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
 			get_parent().change_state(dash_state)
 	
-	if actor.wall_slide_enabled and actor.body.is_on_wall() and not actor.body.is_on_floor() and not actor.body.is_on_ceiling():
+	if actor.can_wall_slide():
 		get_parent().change_state(wall_slide_state)
 

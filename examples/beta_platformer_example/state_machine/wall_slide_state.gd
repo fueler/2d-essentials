@@ -21,7 +21,6 @@ func _exit_state():
 	
 func _physics_process(delta):
 	actor.wall_sliding()
-	actor.move()
 	
 	if actor.body.is_on_floor():
 		get_parent().change_state(idle_state)
@@ -31,3 +30,5 @@ func _physics_process(delta):
 		
 	if (actor.body.input_direction.is_equal_approx(Vector2.UP) or actor.body.input_direction.is_equal_approx(Vector2.DOWN)) and actor.wall_climb_enabled:
 		get_parent().change_state(wall_climb_state)
+	
+	actor.move()

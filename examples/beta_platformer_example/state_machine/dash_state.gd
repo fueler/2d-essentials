@@ -23,6 +23,7 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
 		actor.dash(actor.body.input_direction)
 	
+	actor.move()
 
 func on_animation_finished(name):
 	if name == 'roll':

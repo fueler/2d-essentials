@@ -92,6 +92,7 @@ var can_dash: bool = false
 var dash_queue: Array[Vector2] = []
 
 var velocity: Vector2 = Vector2.ZERO
+
 var facing_direction: Vector2 = Vector2.ZERO
 var last_faced_direction: Vector2 = Vector2.DOWN
 
@@ -279,7 +280,9 @@ func apply_jump():
 		velocity.y = jump_velocity
 
 	jumped.emit()
-	
+
+func can_wall_jump() -> bool:
+	return wall_jump_enabled and body.is_on_wall() and not body.is_on_ceiling() and not velocity.y == 0
 	
 func wall_jump(direction: Vector2):
 	if wall_jump_enabled and body.is_on_wall() and not body.is_on_ceiling():
@@ -305,37 +308,42 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 	
 func wall_climb(direction: Vector2 = Vector2.ZERO):
 	is_wall_climbing = (direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling() and wall_climb_enabled
-
+	
 	if is_wall_climbing:
-				# This conditional allows us to know when the climb is started as gravity and wall slide are active.
-		if gravity_enabled and wall_slide_enabled:
+		# This conditional allows us to know when the climb is started as gravity and wall slide are active.
+		if gravity_enabled:
 			gravity_enabled = false
-			wall_slide_enabled = false
 			wall_climb_started.emit()
 		
-		if wall_climb_timer.is_stopped():
-			wall_climb_timer.start()
-				
-		var wall_climb_speed_direction = wall_climb_speed_down if direction.is_equal_approx(Vector2.DOWN) else wall_climb_speed_up			
+			if wall_climb_timer.is_stopped():
+				wall_climb_timer.start()
+		
+		var is_climbing_up = direction.is_equal_approx(Vector2.UP)
+		var wall_climb_speed_direction = wall_climb_speed_up if is_climbing_up else wall_climb_speed_down			
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
-#
+#		
+		if is_climbing_up:
+			climb_force *= -1
+			
 		velocity.y += climb_force
 
 	else:
 		# This conditional allows us to know when the climb is finished as gravity and wall slide were disabled.
-		if not gravity_enabled and not wall_slide_enabled:
+		if not gravity_enabled:
 			gravity_enabled = true
-			wall_slide_enabled = true
 			wall_climb_finished.emit()
 			wall_climb_timer.stop()
 			
 
+func can_wall_slide() -> bool:
+	return wall_slide_enabled and not is_wall_climbing and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
+	
 func wall_sliding():
 	var previous_is_wall_sliding = is_wall_sliding
-	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
+	is_wall_sliding = can_wall_slide()
 	
 	if previous_is_wall_sliding != is_wall_sliding:
-		wall_slide_started
+		wall_slide_started.emit()
 		
 	if not is_wall_climbing and is_wall_sliding:
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
@@ -426,6 +434,7 @@ func on_wall_climb_timer_timeout():
 		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
 
 	wall_climb_enabled = true
+	gravity_enabled = true
 
 func on_jumped():
 	var previous_is_wall_sliding = is_wall_sliding

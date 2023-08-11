@@ -16,18 +16,18 @@ func _ready():
 	set_physics_process(false)
 
 func _enter_state() -> void:
-	if actor.wall_jump_enabled and actor.body.is_on_wall():
+	if actor.can_wall_jump():
 		actor.wall_jump(actor.body.horizontal_direction)
 	else:
 		actor.jump()
-	
+		
 	set_physics_process(true)
 
 func _exit_state():
 	set_physics_process(false)
 	state_finished.emit()
 
-func _physics_process(_delta):	
+func _physics_process(_delta):
 	if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
 		get_parent().change_state(dash_state)
 		
@@ -42,7 +42,7 @@ func _physics_process(_delta):
 	if actor.velocity.y > 0:
 		get_parent().change_state(falling_state)
 		
-	if actor.wall_slide_enabled and actor.body.is_on_wall() and not actor.body.is_on_floor() and not actor.body.is_on_ceiling():
+	if actor.can_wall_slide():
 		get_parent().change_state(wall_slide_state)
 		
 
