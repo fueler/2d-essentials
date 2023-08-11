@@ -15,12 +15,10 @@ func _ready():
 
 func _enter_state():
 	animation_player.play("idle")
-	
 	set_physics_process(true)	
 
 func _exit_state():
 	set_physics_process(false)
-	state_finished.emit()
 	
 func _physics_process(delta):
 	if not actor.body.horizontal_direction.is_zero_approx():

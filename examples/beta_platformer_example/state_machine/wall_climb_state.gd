@@ -17,7 +17,7 @@ func _enter_state():
 func _exit_state():
 	actor.is_wall_climbing = false
 	actor.gravity_enabled = true
-	
+
 	set_physics_process(false)
 
 func _physics_process(delta):
@@ -26,9 +26,10 @@ func _physics_process(delta):
 	if actor.body.is_on_floor():
 		get_parent().change_state(idle_state)
 		
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed("jump") and actor.can_wall_jump():
 		get_parent().change_state(jump_state)
-
+		return
+		
 	if actor.can_wall_slide():
 		get_parent().change_state(wall_slide_state)
 

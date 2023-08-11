@@ -306,8 +306,11 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 
 	wall_jumped.emit()
 	
+func can_wall_climb(direction: Vector2) -> bool:
+	return wall_climb_enabled and(direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling()
+	
 func wall_climb(direction: Vector2 = Vector2.ZERO):
-	is_wall_climbing = (direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling() and wall_climb_enabled
+	is_wall_climbing = can_wall_climb(direction)
 	
 	if is_wall_climbing:
 		# This conditional allows us to know when the climb is started as gravity and wall slide are active.
