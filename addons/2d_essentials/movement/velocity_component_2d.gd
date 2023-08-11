@@ -312,7 +312,7 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 			wall_climb_finished.emit()
 			wall_climb_timer.stop()
 			
-			
+
 func wall_sliding():
 	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
 	
