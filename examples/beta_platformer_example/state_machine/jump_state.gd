@@ -47,8 +47,6 @@ func _physics_process(_delta):
 	if actor.wall_slide_enabled and actor.body.is_on_wall() and not actor.body.is_on_floor() and not actor.body.is_on_ceiling():
 		get_parent().change_state(wall_slide_state)
 		
-		
-
 
 func short_jump():
 	var actual_velocity_y = actor.velocity.y

@@ -4,12 +4,13 @@ class_name VelocityComponent2D extends Node2D
 
 ############ SIGNALS ############
 signal dashed
-signal knockback_received(direction: Vector2)
 signal jumped
 signal wall_jumped
+signal wall_slide_started
+signal wall_slide_finished
 signal wall_climb_started
 signal wall_climb_finished
-
+signal knockback_received(direction: Vector2)
 signal gravity_changed(enabled: bool)
 signal inverted_gravity(inverted: bool)
 
@@ -118,10 +119,7 @@ func _ready():
 	
 	jumped.connect(on_jumped)
 	wall_jumped.connect(on_jumped)
-
-func on_jumped():
-	is_wall_climbing = false
-	is_wall_sliding = false
+	dashed.connect(on_dashed)
 	
 func move():
 	if body:
@@ -196,15 +194,16 @@ func allowed_to_dash() -> bool:
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
 	if allowed_to_dash():
-		gravity_enabled = false
 		dash_queue.append(global_position)
 		
 		velocity += target_direction * (max_speed * speed_multiplier)
 		facing_direction = target_direction
-		move()
 		
 		_create_dash_cooldown_timer()
 		_create_dash_duration_timer()
+		
+		move()
+				
 		dashed.emit()
 
 
@@ -319,7 +318,6 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 				
 		var wall_climb_speed_direction = wall_climb_speed_down if direction.is_equal_approx(Vector2.DOWN) else wall_climb_speed_up			
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
-
 #
 		velocity.y += climb_force
 
@@ -333,8 +331,12 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 			
 
 func wall_sliding():
+	var previous_is_wall_sliding = is_wall_sliding
 	is_wall_sliding = wall_slide_enabled and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
 	
+	if previous_is_wall_sliding != is_wall_sliding:
+		wall_slide_started
+		
 	if not is_wall_climbing and is_wall_sliding:
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
 		velocity.y = max(velocity.y, wall_slide_gravity) if is_inverted_gravity else min(velocity.y, wall_slide_gravity)
@@ -424,3 +426,21 @@ func on_wall_climb_timer_timeout():
 		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
 
 	wall_climb_enabled = true
+
+func on_jumped():
+	var previous_is_wall_sliding = is_wall_sliding
+	var previous_is_wall_climbing = is_wall_climbing
+	
+	is_wall_climbing = false
+	is_wall_sliding = false
+	
+	if previous_is_wall_sliding != is_wall_sliding:
+		wall_slide_finished.emit()
+		
+	if previous_is_wall_climbing != is_wall_climbing:
+		wall_climb_finished.emit()
+		
+
+func on_dashed():
+	gravity_enabled = false
+	

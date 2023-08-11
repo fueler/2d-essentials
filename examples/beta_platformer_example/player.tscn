@@ -1,4 +1,4 @@
-[gd_scene load_steps=62 format=3 uid="uid://qu2xpt64k1ul"]
+[gd_scene load_steps=71 format=3 uid="uid://qu2xpt64k1ul"]
 
 [ext_resource type="Script" path="res://examples/beta_platformer_example/player.gd" id="1_6eank"]
 [ext_resource type="Texture2D" uid="uid://bdw8doal78u37" path="res://examples/beta_platformer_example/assets/animations/Character Idle 48x48.png" id="1_6jkb0"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://jsemptfsqrqm" path="res://examples/beta_platformer_example/assets/animations/run cycle 48x48.png" id="2_pgi4e"]
 [ext_resource type="Texture2D" uid="uid://chrjk6v71x2yl" path="res://examples/beta_platformer_example/assets/animations/player land 48x48.png" id="4_lkkwo"]
 [ext_resource type="Script" path="res://addons/2d_essentials/movement/velocity_component_2d.gd" id="5_3wwcg"]
+[ext_resource type="Texture2D" uid="uid://bg6pjumm28iuy" path="res://examples/beta_platformer_example/assets/animations/Player Roll 48x48.png" id="5_5kdf5"]
 [ext_resource type="Texture2D" uid="uid://7mm3unwh1pcf" path="res://examples/beta_platformer_example/assets/animations/Wall Slide 48x48.png" id="6_b7rm8"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/finite_state_machine.gd" id="6_k0mxy"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/idle_state.gd" id="7_8lvnx"]
@@ -108,6 +109,34 @@ region = Rect2(336, 0, 48, 48)
 [sub_resource type="AtlasTexture" id="AtlasTexture_qborh"]
 atlas = ExtResource("4_lkkwo")
 region = Rect2(384, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_esome"]
+atlas = ExtResource("5_5kdf5")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_37tsk"]
+atlas = ExtResource("5_5kdf5")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ipjvm"]
+atlas = ExtResource("5_5kdf5")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y1e0e"]
+atlas = ExtResource("5_5kdf5")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kha5m"]
+atlas = ExtResource("5_5kdf5")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wukt5"]
+atlas = ExtResource("5_5kdf5")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nm8et"]
+atlas = ExtResource("5_5kdf5")
+region = Rect2(288, 0, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jjias"]
 atlas = ExtResource("2_pgi4e")
@@ -243,6 +272,32 @@ animations = [{
 "loop": true,
 "name": &"land",
 "speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_esome")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_37tsk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ipjvm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y1e0e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kha5m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wukt5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nm8et")
+}],
+"loop": true,
+"name": &"roll",
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -702,6 +757,70 @@ tracks/2/keys = {
 "values": [false]
 }
 
+[sub_resource type="Animation" id="Animation_nexrs"]
+resource_name = "roll"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:animation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"roll"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:flip_h")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CollisionShape2D:shape:size")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(18.9688, 21), Vector2(24, 24), Vector2(24, 17), Vector2(27, 14), Vector2(25, 23), Vector2(16, 23)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CollisionShape2D:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(2.51563, -10.5), Vector2(2, -12), Vector2(2, -8.5), Vector2(-2.5, -7), Vector2(-2.5, -11.5), Vector2(1, -11.5)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mdk6e"]
 _data = {
 "RESET": SubResource("Animation_mlmg7"),
@@ -709,6 +828,7 @@ _data = {
 "idle": SubResource("Animation_m5xwe"),
 "jump": SubResource("Animation_ui2yb"),
 "land": SubResource("Animation_idr6g"),
+"roll": SubResource("Animation_nexrs"),
 "run": SubResource("Animation_s7li2"),
 "wall_slide": SubResource("Animation_hvq4g")
 }
