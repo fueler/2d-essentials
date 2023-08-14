@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://bnkfk6yk7wvuc" path="res://addons/2d_essentials/update/download_update_panel.tscn" id="2_6pjyg"]
 
 [node name="UpdatePluginButton" type="Button"]
-visible = false
 text = "update"
 flat = true
 script = ExtResource("1_jorwk")

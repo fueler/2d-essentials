@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bnkfk6yk7wvuc"]
+[gd_scene load_steps=4 format=3 uid="uid://bnkfk6yk7wvuc"]
 
 [ext_resource type="Script" path="res://addons/2d_essentials/update/download_update_panel.gd" id="1_ib7xt"]
 [ext_resource type="Texture2D" uid="uid://c3g42vnqq86ju" path="res://addons/2d_essentials/2d_essentials_logo_resized.png" id="2_kk6n8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r543i"]
 
 [node name="DownloadUpdatePanel" type="Control"]
 layout_mode = 3
@@ -11,6 +13,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ib7xt")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -44,6 +48,9 @@ layout_mode = 2
 
 [node name="ReadReleasesNotesButton" type="Button" parent="VBoxContainer/CenterContainer2"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_r543i")
 text = "Read release notes..."
 
+[connection signal="request_completed" from="HTTPRequest" to="." method="_on_http_request_request_completed"]
+[connection signal="pressed" from="VBoxContainer/CenterContainer/DownloadVersionButton" to="." method="_on_download_version_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/CenterContainer2/ReadReleasesNotesButton" to="." method="_on_read_releases_notes_button_pressed"]
