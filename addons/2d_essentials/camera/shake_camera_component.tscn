@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dhad17bd0w8hu"]
-
-[ext_resource type="Script" path="res://addons/2d_essentials/camera/shake_camera_component.gd" id="1_txxxd"]
-
-[node name="ShakeCameraComponent2D" type="Node2D"]
-script = ExtResource("1_txxxd")
-default_fade = 10.0

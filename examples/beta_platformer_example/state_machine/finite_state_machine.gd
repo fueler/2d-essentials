@@ -13,16 +13,24 @@ func change_state(new_state: State, force: bool = false):
 		return
 		
 	if current_state is State:
-		current_state._exit_state()
-		current_state.state_finished.emit()
+		exit_state(current_state)
 		
-	new_state._enter_state()
+	enter_state(new_state)
 	
-	new_state.state_entered.emit()
 	state_changed.emit(current_state, new_state)
-	
 	current_state = new_state
 	
 	
+func enter_state(state: State):
+	state._enter_state()
+	state.state_entered.emit()
+	
+
+func exit_state(state: State):
+	state._exit_state()
+	state.state_finished.emit()
+		
 func current_state_is(state: State) -> bool:
 	return state.name.to_lower() == current_state.name.to_lower()
+
+

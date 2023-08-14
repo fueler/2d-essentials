@@ -347,7 +347,8 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 
 func can_wall_slide() -> bool:
 	return wall_slide_enabled and not is_wall_climbing and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
-	
+
+
 func wall_sliding():
 	var previous_is_wall_sliding = is_wall_sliding
 	is_wall_sliding = can_wall_slide()
@@ -421,6 +422,7 @@ func _create_wall_climbing_timer(time: float = time_it_can_climb):
 	add_child(wall_climb_timer)
 	wall_climb_timer.timeout.connect(on_wall_climb_timer_timeout)
 
+
 func on_dash_cooldown_timer_timeout(timer: Timer):
 	dash_queue.pop_back()
 	timer.queue_free()
@@ -430,6 +432,7 @@ func on_dash_duration_timer_timeout(timer: Timer):
 	gravity_enabled = true
 	timer.queue_free()
 	
+
 func on_wall_climb_timer_timeout():
 	gravity_enabled = true
 	wall_climb_enabled = false
@@ -441,14 +444,15 @@ func on_wall_climb_timer_timeout():
 		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
 
 	wall_climb_enabled = true
-
+	
+	
 func on_jumped():
 	var previous_is_wall_sliding = is_wall_sliding
 	var previous_is_wall_climbing = is_wall_climbing
 	
 	is_wall_climbing = false
 	is_wall_sliding = false
-	
+	TYPE_ARRAY
 	if previous_is_wall_sliding != is_wall_sliding:
 		wall_slide_finished.emit()
 		

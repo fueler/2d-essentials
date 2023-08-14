@@ -15,7 +15,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var childrens = get_child_count()
 	
 	if (parent_node == null or parent_node and not parent_node is Node2D) and childrens == 0:
-			warnings.append("This component needs a Node2D parent or at aleast 1 child in order to work")
+			warnings.append("This component needs a Node2D parent or at least 1 child in order to work")
 	
 	return warnings
 	

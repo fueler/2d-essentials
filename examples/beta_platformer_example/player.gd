@@ -12,7 +12,7 @@ var input_direction: Vector2 = Vector2.ZERO
 var horizontal_direction: Vector2 = Vector2.ZERO
 var is_left_direction: bool = false
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if not is_on_floor():
 		velocity_component_2d.apply_gravity().move()
 	
