@@ -1,25 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://b08kmaj6yrh7l"]
+[gd_scene load_steps=2 format=3 uid="uid://b08kmaj6yrh7l"]
 
 [ext_resource type="Script" path="res://addons/2d_essentials/update/update_plugin_button.gd" id="1_jorwk"]
-[ext_resource type="PackedScene" uid="uid://bnkfk6yk7wvuc" path="res://addons/2d_essentials/update/download_update_panel.tscn" id="2_6pjyg"]
 
 [node name="UpdatePluginButton" type="Button"]
-visible = false
-text = "update"
-flat = true
 script = ExtResource("1_jorwk")
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
 
 [node name="DownloadDialog" type="AcceptDialog" parent="."]
-title = ""
-position = Vector2i(0, 36)
-
-[node name="DownloadUpdatePanel" parent="DownloadDialog" instance=ExtResource("2_6pjyg")]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -49.0
+visible = true
 
 [connection signal="pressed" from="." to="." method="_on_pressed"]
 [connection signal="request_completed" from="HTTPRequest" to="." method="_on_http_request_request_completed"]
