@@ -15,7 +15,7 @@ var TEMPORARY_FILE_NAME = OS.get_user_data_dir() + "2d_essentials_temp.zip"
 var next_version_release: Dictionary:
 	set(value):
 		next_version_release = value
-		available_version_download_label.text = value.tag_name.substr(1) + " is available for download"
+		available_version_download_label.text = value.tag_name.substr(1) + " is available for download!"
 	get:
 		return next_version_release
 
@@ -39,7 +39,22 @@ func install_new_addon_version():
 		
 		var downloaded_version_files: PackedStringArray = zip_reader.get_files()
 		
-		print(downloaded_version_files)
+		var base_path: String = downloaded_version_files[1]
+		
+		# Remove the root base path and the addons base path
+		# godotessentials-2d-essentials-e68fb3a/,
+		# godotessentials-2d-essentials-e68fb3a/addons/
+		downloaded_version_files.remove_at(0)
+		downloaded_version_files.remove_at(0)
+		
+		for path in downloaded_version_files:
+			var new_file_path: String = path.replace(base_path, "")
+			if path.ends_with("/"):
+				DirAccess.make_dir_recursive_absolute("res://addons/%s" % new_file_path)
+			else:
+				var file: FileAccess = FileAccess.open("res://addons/%s" % new_file_path, FileAccess.WRITE)
+				file.store_buffer(zip_reader.read_file(path))
+
 		zip_reader.close()
 	
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
@@ -47,7 +62,6 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 		failed.emit()
 		return
 
-	print(TEMPORARY_FILE_NAME)
 	save_downloaded_version_zip_file(body)
 	#remove_old_addon_version()
 	install_new_addon_version()

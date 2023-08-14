@@ -11,8 +11,9 @@ func _enter_tree():
 	add_custom_type("RotatorComponent", "Node2D", preload("res://addons/2d_essentials/movement/rotator_component.gd"), preload("res://addons/2d_essentials/CD.png"))
 
 func _exit_tree():
+	remove_autoload_singleton(HELPERS_AUTOLOAD)
 	remove_custom_type("HealthComponent")
 	remove_custom_type("VelocityComponent2D")
 	remove_custom_type("ShakeCameraComponent2D")
 	remove_custom_type("RotatorComponent")
-	remove_autoload_singleton(HELPERS_AUTOLOAD)
+

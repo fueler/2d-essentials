@@ -12,7 +12,11 @@ const ADDON_LOCAL_CONFIG_PATH = "res://addons/2d_essentials/plugin.cfg"
 var editor_plugin: EditorPlugin
 
 func _ready():
+	hide()
+	download_dialog.hide()
+	
 	check_for_update()
+
 
 func check_for_update() -> void:
 	http_request.request(REMOTE_RELEASES_URL)
@@ -26,11 +30,13 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 	
 	if response and typeof(response) == TYPE_ARRAY:
 		var current_plugin_version: String = _get_plugin_version()
-		var latest_version = _latest_release_version(response as Array, current_plugin_version)
+		var available_latest_version = _latest_release_version(response as Array, current_plugin_version)
 
-		if latest_version:
-			var version_number = latest_version.tag_name.substr(1)
-			download_update_panel.next_version_release = latest_version
+		if available_latest_version:
+			var version_number = available_latest_version.tag_name.substr(1)
+			download_update_panel.next_version_release = available_latest_version
+			
+			show_update_dialog()
 			
 
 func _latest_release_version(releases: Array, current_version: String):
@@ -44,11 +50,13 @@ func _latest_release_version(releases: Array, current_version: String):
 	
 	return null
 
+
 func _get_plugin_version() -> Variant:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(ADDON_LOCAL_CONFIG_PATH)
 
 	return config.get_value("plugin", "version")
+
 
 func _version_to_number(version: String) -> int:
 	var bits = version.split(".")
@@ -56,7 +64,10 @@ func _version_to_number(version: String) -> int:
 
 
 func _on_pressed():
-#	var scale: float = editor_plugin.get_editor_interface().get_editor_scale()
-	download_dialog.min_size = Vector2(300, 250) * 1.0
-	download_dialog.popup_centered()
+	show_update_dialog()
 	
+func show_update_dialog():
+	var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
+	download_dialog.min_size = Vector2(300, 250) * scale
+	download_dialog.popup_centered_ratio(0.5)
+	download_dialog.popup_centered()

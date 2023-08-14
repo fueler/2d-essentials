@@ -1,5 +1,3 @@
-@tool
-
 class_name ShakeCameraComponent2D extends Node2D 
 
 @onready var camera2d: Camera2D = get_parent()

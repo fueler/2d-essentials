@@ -1,5 +1,3 @@
-@tool
-
 class_name VelocityComponent2D extends Node2D
 
 ############ SIGNALS ############

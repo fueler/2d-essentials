@@ -26,11 +26,12 @@ window/size/viewport_height=180
 window/size/no_focus=true
 window/size/window_width_override=1280
 window/size/window_height_override=720
+window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/2d_essentials/plugin.cfg")
 
 [input]
 
