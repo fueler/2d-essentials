@@ -8,18 +8,26 @@ const ADDON_LOCAL_CONFIG_PATH = "res://addons/2d_essentials/plugin.cfg"
 @onready var http_request: HTTPRequest = $HTTPRequest
 @onready var download_dialog = $DownloadDialog
 @onready var download_update_panel = $DownloadDialog/DownloadUpdatePanel
+@onready var update_checker_timer = $UpdateCheckerTimer
 
 var editor_plugin: EditorPlugin
 
 func _ready():
 	hide()
 	download_dialog.hide()
+	_prepare_update_checker_timer()
 	
 	check_for_update()
 
 
 func check_for_update() -> void:
 	http_request.request(REMOTE_RELEASES_URL)
+
+
+func show_update_dialog():
+	var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
+	download_dialog.min_size = Vector2(300, 250) * scale
+	download_dialog.popup_centered_ratio(0.5)
 
 
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
@@ -66,8 +74,10 @@ func _version_to_number(version: String) -> int:
 func _on_pressed():
 	show_update_dialog()
 	
-func show_update_dialog():
-	var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
-	download_dialog.min_size = Vector2(300, 250) * scale
-	download_dialog.popup_centered_ratio(0.5)
-	download_dialog.popup_centered()
+func _prepare_update_checker_timer():
+	update_checker_timer.process_callback = Timer.TIMER_PROCESS_IDLE
+	update_checker_timer.autostart = true
+	update_checker_timer.one_shot = false
+	update_checker_timer.wait_time = (60 * 60 * 12)
+	
+	update_checker_timer.timeout.connect(check_for_update)
