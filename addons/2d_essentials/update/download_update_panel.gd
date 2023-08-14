@@ -64,20 +64,28 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 
 	save_downloaded_version_zip_file(body)
 	#remove_old_addon_version()
-	install_new_addon_version()
+#	install_new_addon_version()
 	#remove_downloaded_version_temporary_file()
 	
 	updated.emit(next_version_release.tag_name.substr(1))
 
 func _on_download_version_button_pressed():
+	if FileAccess.file_exists("res://examples/click-point-movement/world.tscn"): 
+		push_error("You can't update the 2d essentials addon from within itself.")
+		failed.emit()
+		return
+		
 	if not next_version_release.is_empty():
 		http_request.request(next_version_release.zipball_url)
 		
 		download_version_button.disabled = true
 		download_version_button.text = "Downloading..."
+	else:
+		push_warning("You're up to date with the latest version of 2d essentials plugin")
 
 func _on_read_releases_notes_button_pressed():
-	OS.shell_open(next_version_release.html_url)
+	if not next_version_release.is_empty():
+		OS.shell_open(next_version_release.html_url)
 
 
 ### EXAMPLE NEXT VERSION RELEASE DICTIONARY FROM GITHUB API
