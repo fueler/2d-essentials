@@ -2,7 +2,7 @@
 
 extends Control
 
-signal failed
+signal failed(response_code: int)
 signal updated(new_version: String)
 
 @onready var available_version_download_label = %VersionReleaseLabel
@@ -60,7 +60,7 @@ func install_new_addon_version():
 	
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS:
-		failed.emit()
+		failed.emit(response_code)
 		return
 
 	download_version_button.disabled = false

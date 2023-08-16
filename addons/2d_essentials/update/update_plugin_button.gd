@@ -6,8 +6,15 @@ const REMOTE_RELEASES_URL = "https://api.github.com/repos/godotessentials/2d-ess
 const ADDON_LOCAL_CONFIG_PATH = "res://addons/2d_essentials/plugin.cfg"
 
 @onready var http_request: HTTPRequest = $HTTPRequest
+
 @onready var download_dialog = $DownloadDialog
+@onready var updated_version_dialog = $UpdatedVersionDialog
+@onready var failed_download_dialog = $FailedDownloadDialog
+
 @onready var download_update_panel = $DownloadDialog/DownloadUpdatePanel
+@onready var updated_version_panel = $UpdatedVersionDialog/UpdatedVersionPanel
+@onready var failed_download_panel = $FailedDownloadDialog/FailedDownloadPanel
+
 @onready var update_checker_timer = $UpdateCheckerTimer
 
 var editor_plugin: EditorPlugin
@@ -15,10 +22,12 @@ var editor_plugin: EditorPlugin
 func _ready():
 	hide()
 	download_dialog.hide()
-	_prepare_update_checker_timer()
+	updated_version_dialog.hide()
+	failed_download_dialog.hide()
 	
 	download_update_panel.updated.connect(on_updated_version)
 	
+	_prepare_update_checker_timer()
 	check_for_update()
 
 
@@ -45,6 +54,10 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 		if available_latest_version:
 			var version_number = available_latest_version.tag_name.substr(1)
 			download_update_panel.next_version_release = available_latest_version
+			
+			var updated_version_label = updated_version_panel.get_node("%UpdatedVersionLabel") as Label
+			if updated_version_label:
+				updated_version_label.text = available_latest_version.tag_name.substr(1) + " successfully updated"
 			
 			show_update_dialog()
 			
@@ -87,3 +100,13 @@ func _on_pressed():
 
 func on_updated_version(new_version: String):
 	download_dialog.hide()
+	updated_version_dialog.show()
+
+
+func _on_download_update_panel_failed(response_code: int):
+	var failed_download_label = failed_download_panel.get_node("%ErrorLabel") as Label
+	
+	if failed_download_label:
+		failed_download_label.text = "The download failed with code {code}".format({"code": response_code})
+	
+	failed_download_dialog.show()
