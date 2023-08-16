@@ -35,11 +35,11 @@ func check_for_update() -> void:
 	http_request.request(REMOTE_RELEASES_URL)
 
 
-func show_update_dialog():
-	if not download_dialog.visible:
-		var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
-		download_dialog.min_size = Vector2(300, 250) * scale
-		download_dialog.popup_centered_ratio(0.5)
+func show_dialog(dialog: Window):
+	if not dialog.visible:
+#		var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
+#		dialog.min_size = Vector2(300, 250) * scale
+		dialog.popup_centered_ratio(0.5)
 
 
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
@@ -60,7 +60,7 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 			if updated_version_label:
 				updated_version_label.text = available_latest_version.tag_name.substr(1) + " successfully updated"
 			
-			show_update_dialog()
+			show_dialog(download_dialog)
 			
 
 func _latest_release_version(releases: Array, current_version: String):
@@ -97,11 +97,11 @@ func _prepare_update_checker_timer():
 
 
 func _on_pressed():
-	show_update_dialog()
+	show_dialog(download_dialog)
 
 func on_updated_version(new_version: String):
 	download_dialog.hide()
-	updated_version_dialog.show()
+	show_dialog(updated_version_dialog)
 
 
 func _on_download_update_panel_failed(response_code: int):
@@ -110,4 +110,4 @@ func _on_download_update_panel_failed(response_code: int):
 	if failed_download_label:
 		failed_download_label.text = "The download failed with code {code}".format({"code": response_code})
 	
-	failed_download_dialog.show()
+	show_dialog(failed_download_dialog)
