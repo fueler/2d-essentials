@@ -19,8 +19,8 @@ func _exit_state():
 
 func _physics_process(delta):
 	if not horizontal_direction.is_zero_approx():
-		return finite_state_machine.change_state(run_state)
+		return finite_state_machine.change_state_by_name("RunState")
 
 func on_land_animation_finished(animation_name: String):
 	if animation_name == "land":
-		finite_state_machine.change_state(idle_state)
+		finite_state_machine.change_state_by_name("IdleState")

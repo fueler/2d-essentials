@@ -18,7 +18,10 @@ signal inverted_gravity(inverted: bool)
 @export var max_speed: int = 100
 ## This value makes smoother the time it takes to reach maximum speed  
 @export var acceleration: float = 400.0
+## The force applied to slow down the character's movement
 @export var friction: float =  500.0
+## The maximum vertical velocity while falling to control fall speed
+@export var maximum_fall_velocity: float = 300.0
 
 @export_group("Dash")
 ## The speed multiplier would be applied to the player velocity on runtime
@@ -52,6 +55,8 @@ signal inverted_gravity(inverted: bool)
 @export_group("Wall Jump")
 ## Enable the wall jump action
 @export var wall_jump_enabled : bool = false
+## Defines whether the wall jump is counted as a jump in the overall count.
+@export var wall_jump_count_as_jump: bool = false
 ## The maximum angle of deviation that a wall can have to allow the jump to be executed.
 @export var maximum_permissible_wall_angle : float = 0.0
 ## Enable the sliding when the character is on a wall
@@ -237,6 +242,8 @@ func apply_gravity():
 		else:
 			velocity.y += gravity_force
 		
+		velocity.y = max(velocity.y, -maximum_fall_velocity) if is_inverted_gravity else min(velocity.y, maximum_fall_velocity)
+	
 	return self
 	
 func invert_gravity():
@@ -261,7 +268,7 @@ func can_jump() -> bool:
 		if body.is_on_floor() or (coyote_jump_enabled and coyote_timer.time_left > 0.0):
 			return true
 		else:
-			return (velocity.y < jump_velocity_threshold or (is_inverted_gravity and velocity.y < -jump_velocity_threshold)) and jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps
+			return (velocity.y < abs(jump_velocity_threshold) or (is_inverted_gravity and velocity.y < -abs(jump_velocity_threshold))) and jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps
 			
 	return false
 
@@ -306,7 +313,9 @@ func wall_jump(direction: Vector2):
 func apply_wall_jump_direction(wall_normal: Vector2):
 	velocity.x = wall_normal.x * max_speed
 	velocity.y = jump_velocity
-	jump_queue.append(global_position)
+	
+	if wall_jump_count_as_jump:
+		jump_queue.append(global_position)
 
 	wall_jumped.emit()
 	
@@ -319,10 +328,8 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 	if is_wall_climbing:
 		
 		if gravity_enabled:
-			gravity_enabled = false
 			wall_climb_started.emit()
 				
-		
 		var is_climbing_up = direction.is_equal_approx(Vector2.UP)
 		var wall_climb_speed_direction = wall_climb_speed_up if is_climbing_up else wall_climb_speed_down			
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
@@ -338,7 +345,6 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 
 	else:
 		if not gravity_enabled:
-			gravity_enabled = true
 			wall_climb_finished.emit()
 			
 
@@ -356,6 +362,8 @@ func wall_slide():
 	if not is_wall_climbing and is_wall_sliding:
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
 		velocity.y = max(velocity.y, wall_slide_gravity) if is_inverted_gravity else min(velocity.y, wall_slide_gravity)
+		
+	return self
 
 
 func check_coyote_jump_time_window(was_on_floor: bool = true):
@@ -433,7 +441,6 @@ func on_dash_duration_timer_timeout(timer: Timer):
 	
 
 func on_wall_climb_timer_timeout():
-	gravity_enabled = true
 	wall_climb_enabled = false
 	wall_climb_finished.emit()
 
@@ -459,7 +466,9 @@ func on_jumped():
 		wall_climb_finished.emit()
 
 func on_wall_climb_started():
+	gravity_enabled = false
 	wall_climb_timer.start()
 	
 func on_wall_climb_finished():
+	gravity_enabled = true
 	wall_climb_timer.stop()

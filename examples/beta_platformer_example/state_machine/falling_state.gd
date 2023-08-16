@@ -16,6 +16,8 @@ func _physics_process(delta):
 	actor.apply_gravity().move()
 		
 	if actor.body.is_on_floor():
-		return finite_state_machine.change_state(land_state)
+		return finite_state_machine.change_state_by_name("LandState")
 	
+	if actor.can_wall_slide():
+		return finite_state_machine.change_state_by_name("WallSlideState")
 		
