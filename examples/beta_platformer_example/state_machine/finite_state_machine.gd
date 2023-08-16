@@ -16,10 +16,10 @@ func change_state(new_state: State, force: bool = false):
 		exit_state(current_state)
 		
 	enter_state(new_state)
-	
+
 	state_changed.emit(current_state, new_state)
 	current_state = new_state
-	
+
 	
 func enter_state(state: State):
 	state._enter_state()
@@ -31,6 +31,10 @@ func exit_state(state: State):
 	state.state_finished.emit()
 		
 func current_state_is(state: State) -> bool:
-	return state.name.to_lower() == current_state.name.to_lower()
+	if state:
+		print(state.name, current_state.name)
+		return state.name.to_lower() == current_state.name.to_lower()
+		
+	return false
 
 

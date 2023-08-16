@@ -8,5 +8,5 @@ func _ready():
 	finite_state_machine.state_changed.connect(on_state_changed)
 	label.text = finite_state_machine.current_state.name
 
-func on_state_changed(from_state: State, state: State):
+func on_state_changed(_from_state: State, state: State):
 	label.text = state.name
