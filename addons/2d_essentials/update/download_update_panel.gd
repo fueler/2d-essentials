@@ -83,7 +83,7 @@ func _on_download_version_button_pressed():
 		http_request.request(next_version_release.zipball_url)
 		
 		download_version_button.disabled = true
-		download_version_button.text = "Downloading..."
+		download_version_button.text = "Downloading new version..."
 	else:
 		push_warning("You're up to date with the latest version of 2d essentials plugin")
 

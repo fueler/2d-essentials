@@ -1,7 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://bnkfk6yk7wvuc"]
+[gd_scene load_steps=4 format=3 uid="uid://behrceg6tb7ns"]
 
 [ext_resource type="Script" path="res://addons/2d_essentials/update/download_update_panel.gd" id="1_ib7xt"]
-[ext_resource type="Texture2D" uid="uid://bvior2tib26b3" path="res://addons/2d_essentials/Godot-2D-Essentials-Title.png" id="2_83u21"]
+[ext_resource type="Texture2D" uid="uid://bvior2tib26b3" path="res://addons/2d_essentials/icons/Godot-2D-Essentials-Title.png" id="2_xiwd4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_43ky8"]
 
@@ -35,7 +35,7 @@ size_flags_vertical = 0
 
 [node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-texture = ExtResource("2_83u21")
+texture = ExtResource("2_xiwd4")
 
 [node name="VersionReleaseLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true

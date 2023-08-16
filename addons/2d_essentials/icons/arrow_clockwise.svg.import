@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bk8lcibu0to5r"
-path="res://.godot/imported/MagnifyingGlass.png-20316f48c35523c9c2d8d49919735275.ctex"
+uid="uid://5ly7ra3x10qc"
+path="res://.godot/imported/arrow_clockwise.svg-309623f426e703131f59840e76469339.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/2d_essentials/MagnifyingGlass.png"
-dest_files=["res://.godot/imported/MagnifyingGlass.png-20316f48c35523c9c2d8d49919735275.ctex"]
+source_file="res://addons/2d_essentials/icons/arrow_clockwise.svg"
+dest_files=["res://.godot/imported/arrow_clockwise.svg-309623f426e703131f59840e76469339.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

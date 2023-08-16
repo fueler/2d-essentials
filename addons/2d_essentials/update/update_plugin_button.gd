@@ -7,15 +7,15 @@ const ADDON_LOCAL_CONFIG_PATH = "res://addons/2d_essentials/plugin.cfg"
 
 @onready var http_request: HTTPRequest = $HTTPRequest
 
-@onready var download_dialog = $DownloadDialog as AcceptDialog
-@onready var updated_version_dialog = $UpdatedVersionDialog
-@onready var failed_download_dialog = $FailedDownloadDialog
+@onready var download_dialog: AcceptDialog = $DownloadDialog
+@onready var updated_version_dialog: AcceptDialog = $UpdatedVersionDialog
+@onready var failed_download_dialog: AcceptDialog = $FailedDownloadDialog
 
-@onready var download_update_panel = $DownloadDialog/DownloadUpdatePanel
-@onready var updated_version_panel = $UpdatedVersionDialog/UpdatedVersionPanel
-@onready var failed_download_panel = $FailedDownloadDialog/FailedDownloadPanel
+@onready var download_update_panel: Control = $DownloadDialog/DownloadUpdatePanel
+@onready var updated_version_panel: Control = $UpdatedVersionDialog/UpdatedVersionPanel
+@onready var failed_download_panel: Control = $FailedDownloadDialog/FailedDownloadPanel
 
-@onready var update_checker_timer = $UpdateCheckerTimer
+@onready var update_checker_timer: Timer = $UpdateCheckerTimer
 
 var editor_plugin: EditorPlugin
 
@@ -37,9 +37,8 @@ func check_for_update() -> void:
 
 func show_dialog(dialog: Window):
 	if not dialog.visible:
-#		var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
-#		dialog.min_size = Vector2(300, 250) * scale
-		dialog.popup_centered_ratio(0.5)
+		var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
+		dialog.popup_centered(Vector2i(150, 150) * scale)
 
 
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
@@ -111,3 +110,9 @@ func _on_download_update_panel_failed(response_code: int):
 		failed_download_label.text = "The download failed with code {code}".format({"code": response_code})
 	
 	show_dialog(failed_download_dialog)
+
+
+func _on_updated_version_dialog_confirmed():
+	if editor_plugin:
+		editor_plugin.get_editor_interface().restart_editor(true)
+

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b4vte1qfgj2de"]
 
-[ext_resource type="Texture2D" uid="uid://bvior2tib26b3" path="res://addons/2d_essentials/Godot-2D-Essentials-Title.png" id="1_picb6"]
+[ext_resource type="Texture2D" uid="uid://bvior2tib26b3" path="res://addons/2d_essentials/icons/Godot-2D-Essentials-Title.png" id="1_picb6"]
 
 [node name="FailedDownloadPanel" type="Control"]
 layout_mode = 3

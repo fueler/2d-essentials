@@ -1,6 +1,4 @@
-extends Control
-
-@onready var updated_version_label = %UpdatedVersionLabel
+extends AcceptDialog
 
 
 # Called when the node enters the scene tree for the first time.

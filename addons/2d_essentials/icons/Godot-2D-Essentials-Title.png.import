@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://230rtqvlvp0x"
-path="res://.godot/imported/Backpack.png-3b8f641e5927d56cf1f64b67b61190d3.ctex"
+uid="uid://bvior2tib26b3"
+path="res://.godot/imported/Godot-2D-Essentials-Title.png-9698d5dac1f363e5f3cfd9170ca2a2c3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/2d_essentials/Backpack.png"
-dest_files=["res://.godot/imported/Backpack.png-3b8f641e5927d56cf1f64b67b61190d3.ctex"]
+source_file="res://addons/2d_essentials/icons/Godot-2D-Essentials-Title.png"
+dest_files=["res://.godot/imported/Godot-2D-Essentials-Title.png-9698d5dac1f363e5f3cfd9170ca2a2c3.ctex"]
 
 [params]
 
