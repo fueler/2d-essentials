@@ -7,7 +7,7 @@ const ADDON_LOCAL_CONFIG_PATH = "res://addons/2d_essentials/plugin.cfg"
 
 @onready var http_request: HTTPRequest = $HTTPRequest
 
-@onready var download_dialog = $DownloadDialog
+@onready var download_dialog = $DownloadDialog as AcceptDialog
 @onready var updated_version_dialog = $UpdatedVersionDialog
 @onready var failed_download_dialog = $FailedDownloadDialog
 
@@ -36,9 +36,10 @@ func check_for_update() -> void:
 
 
 func show_update_dialog():
-	var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
-	download_dialog.min_size = Vector2(300, 250) * scale
-	download_dialog.popup_centered_ratio(0.5)
+	if not download_dialog.visible:
+		var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
+		download_dialog.min_size = Vector2(300, 250) * scale
+		download_dialog.popup_centered_ratio(0.5)
 
 
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:

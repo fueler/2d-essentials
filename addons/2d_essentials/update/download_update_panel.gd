@@ -76,7 +76,7 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 func _on_download_version_button_pressed():
 	if FileAccess.file_exists("res://examples/click-point-movement/world.tscn"): 
 		push_error("You can't update the 2d essentials addon from within itself.")
-		failed.emit()
+		failed.emit(401)
 		return
 		
 	if not next_version_release.is_empty():

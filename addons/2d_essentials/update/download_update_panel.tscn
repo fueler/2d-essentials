@@ -60,4 +60,5 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_43ky8")
 text = "Read release notes..."
 
 [connection signal="request_completed" from="HTTPRequest" to="." method="_on_http_request_request_completed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/DownloadVersionButton" to="." method="_on_download_version_button_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/MarginContainer/ReadReleaseNotesButton" to="." method="_on_read_release_notes_button_pressed"]
