@@ -19,7 +19,7 @@ func _exit_state():
 	set_physics_process(false)
 
 func _physics_process(delta):
-	actor.move()
+	actor.decelerate().move()
 	
 	if not actor.body.horizontal_direction.is_zero_approx():
 		get_parent().change_state(run_state)

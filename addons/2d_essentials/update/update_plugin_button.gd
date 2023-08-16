@@ -17,6 +17,8 @@ func _ready():
 	download_dialog.hide()
 	_prepare_update_checker_timer()
 	
+	download_update_panel.updated.connect(on_updated_version)
+	
 	check_for_update()
 
 
@@ -71,9 +73,6 @@ func _version_to_number(version: String) -> int:
 	return bits[0].to_int() * 1000000 + bits[1].to_int() * 1000 + bits[2].to_int()
 
 
-func _on_pressed():
-	show_update_dialog()
-	
 func _prepare_update_checker_timer():
 	update_checker_timer.process_callback = Timer.TIMER_PROCESS_IDLE
 	update_checker_timer.autostart = true
@@ -81,3 +80,10 @@ func _prepare_update_checker_timer():
 	update_checker_timer.wait_time = (60 * 60 * 12)
 	
 	update_checker_timer.timeout.connect(check_for_update)
+
+
+func _on_pressed():
+	show_update_dialog()
+
+func on_updated_version(new_version: String):
+	download_dialog.hide()

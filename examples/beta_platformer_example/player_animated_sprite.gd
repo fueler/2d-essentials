@@ -22,9 +22,6 @@ func dash_effect():
 	sprite.flip_h = flip_h
 	sprite.flip_v = flip_v
 	
-#	sprite.material = ShaderMaterial.new()
-#	sprite.material.shader = ''
-
 	var tween: Tween = create_tween()
 	tween.tween_property(sprite, "modulate:a", 0.0, 0.7).set_trans(tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	tween.tween_callback(sprite.queue_free)

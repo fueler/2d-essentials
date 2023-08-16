@@ -53,7 +53,7 @@ func handle_wall_jump(direction: Vector2):
 		velocity_component_2d.wall_jump(direction)
 	
 func handle_wall_sliding():
-	velocity_component_2d.wall_sliding()
+	velocity_component_2d.wall_slide()
 
 func handle_wall_climb(direction: Vector2):
 	velocity_component_2d.wall_climb(direction)

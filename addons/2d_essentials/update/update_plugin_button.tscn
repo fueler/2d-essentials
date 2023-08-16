@@ -24,6 +24,8 @@ offset_right = -8.0
 offset_bottom = -49.0
 
 [node name="UpdateCheckerTimer" type="Timer" parent="."]
+wait_time = 43200.0
+autostart = true
 
 [connection signal="pressed" from="." to="." method="_on_pressed"]
 [connection signal="request_completed" from="HTTPRequest" to="." method="_on_http_request_request_completed"]

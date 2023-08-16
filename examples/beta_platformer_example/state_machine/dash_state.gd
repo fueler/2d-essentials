@@ -20,7 +20,7 @@ func _exit_state():
 	set_physics_process(false)
 	
 func _physics_process(delta):
-	if Input.is_action_just_pressed("dash") and actor.allowed_to_dash():
+	if Input.is_action_just_pressed("dash") and actor.can_dash():
 		actor.dash(actor.body.input_direction)
 	
 	actor.move()

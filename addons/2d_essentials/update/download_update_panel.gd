@@ -5,9 +5,10 @@ extends Control
 signal failed
 signal updated(new_version: String)
 
-@onready var available_version_download_label = %Label
+@onready var available_version_download_label = %VersionReleaseLabel
 @onready var download_version_button = %DownloadVersionButton
 @onready var http_request = $HTTPRequest
+
 
 const ADDON_PATH = "res://addons/2d_essentials"
 var TEMPORARY_FILE_NAME = OS.get_user_data_dir() + "2d_essentials_temp.zip"
@@ -62,10 +63,13 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 		failed.emit()
 		return
 
+	download_version_button.disabled = false
+	download_version_button.text = "Download update"
+	
 	save_downloaded_version_zip_file(body)
-	#remove_old_addon_version()
-#	install_new_addon_version()
-	#remove_downloaded_version_temporary_file()
+	remove_old_addon_version()
+	install_new_addon_version()
+	remove_downloaded_version_temporary_file()
 	
 	updated.emit(next_version_release.tag_name.substr(1))
 
@@ -83,9 +87,11 @@ func _on_download_version_button_pressed():
 	else:
 		push_warning("You're up to date with the latest version of 2d essentials plugin")
 
-func _on_read_releases_notes_button_pressed():
+
+func _on_read_release_notes_button_pressed():
 	if not next_version_release.is_empty():
 		OS.shell_open(next_version_release.html_url)
+
 
 
 ### EXAMPLE NEXT VERSION RELEASE DICTIONARY FROM GITHUB API
@@ -158,3 +164,5 @@ func _on_read_releases_notes_button_pressed():
 #  "godotessentials-2d-essentials-e68fb3a/addons/2d_essentials/survivability/health_component.gd",
 #  "godotessentials-2d-essentials-e68fb3a/addons/2d_essentials/survivability/health_component.tscn"
 #]
+
+

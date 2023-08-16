@@ -182,7 +182,6 @@ func decelerate():
 	return self
 	
 func knockback(direction: Vector2, power: int = knockback_power):
-	
 	var knockback_direction: Vector2 = (direction if direction.is_normalized() else direction.normalized()) * max(1, power)
 	velocity = knockback_direction
 	move()
@@ -347,7 +346,7 @@ func can_wall_slide() -> bool:
 	return wall_slide_enabled and not is_wall_climbing and body.is_on_wall() and not body.is_on_floor() and not body.is_on_ceiling()
 
 
-func wall_sliding():
+func wall_slide():
 	var previous_is_wall_sliding = is_wall_sliding
 	is_wall_sliding = can_wall_slide()
 	
@@ -393,6 +392,7 @@ func _create_dash_duration_timer(time: float = dash_gravity_time_disabled):
 	add_child(dash_duration_timer)
 	dash_duration_timer.timeout.connect(on_dash_duration_timer_timeout.bind(dash_duration_timer))
 
+
 func _create_coyote_timer():
 	if coyote_timer:
 		return
@@ -405,6 +405,7 @@ func _create_coyote_timer():
 	coyote_timer.autostart = false
 
 	add_child(coyote_timer)
+
 
 func _create_wall_climbing_timer(time: float = time_it_can_climb):
 	if wall_climb_timer:

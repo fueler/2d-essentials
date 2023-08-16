@@ -20,7 +20,7 @@ func _exit_state():
 	state_finished.emit()
 	
 func _physics_process(delta):
-	actor.wall_sliding()
+	actor.wall_slide()
 	
 	if actor.body.is_on_floor():
 		get_parent().change_state(idle_state)
