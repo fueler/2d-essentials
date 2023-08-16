@@ -1,6 +1,6 @@
 @tool
 
-extends Button
+class_name UpdateGodot2DEssentialsButton extends Button
 
 const REMOTE_RELEASES_URL = "https://api.github.com/repos/godotessentials/2d-essentials/releases"
 const ADDON_LOCAL_CONFIG_PATH = "res://addons/2d_essentials/plugin.cfg"
@@ -38,7 +38,8 @@ func check_for_update() -> void:
 func show_dialog(dialog: Window):
 	if not dialog.visible:
 		var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
-		dialog.popup_centered(Vector2i(150, 150) * scale)
+		dialog.gui_embed_subwindows = false
+		dialog.popup_centered(Vector2i(200, 200) * scale)
 
 
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:

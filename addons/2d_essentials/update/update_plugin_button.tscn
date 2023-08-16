@@ -30,6 +30,7 @@ wait_time = 43200.0
 autostart = true
 
 [node name="UpdatedVersionDialog" type="AcceptDialog" parent="."]
+ok_button_text = "Restart"
 
 [node name="UpdatedVersionPanel" parent="UpdatedVersionDialog" instance=ExtResource("3_oatl0")]
 

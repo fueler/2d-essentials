@@ -55,7 +55,7 @@ theme_override_constants/margin_top = 5
 
 [node name="ReadReleaseNotesButton" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxEmpty_43ky8")
 text = "Read release notes..."
 
