@@ -5,9 +5,6 @@ func _ready():
 	set_physics_process(false)
 
 func _enter_state():
-	if actor.body.horizontal_direction.is_zero_approx():
-		actor.velocity = Vector2.ZERO
-		
 	set_physics_process(true)
 
 func _exit_state():

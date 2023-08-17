@@ -19,7 +19,7 @@ func _unhandled_input(event):
 		return finite_state_machine.change_state_by_name("JumpState")
 
 func _physics_process(_delta):
-	actor.wall_climb(input_direction)
+	actor.wall_climb(input_direction).move()
 	
 	if actor.body.is_on_floor():
 		return finite_state_machine.change_state_by_name("IdleState")
@@ -28,7 +28,5 @@ func _physics_process(_delta):
 		return finite_state_machine.change_state_by_name("WallSlideState")
 		
 	if not actor.body.is_on_wall():
-		actor.velocity.x = 0
 		return finite_state_machine.change_state_by_name("FallingState")
 
-	actor.move()

@@ -24,11 +24,11 @@ func change_state(new_state: State, force: bool = false):
 	
 	if current_state is State:
 		exit_state(current_state)
-		
-	enter_state(new_state)
-
+	
 	state_changed.emit(current_state, new_state)
 	current_state = new_state
+	
+	enter_state(new_state)
 
 func change_state_by_name(name: String):
 	var new_state = get_state(name)

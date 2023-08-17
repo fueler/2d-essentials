@@ -5,7 +5,7 @@ func _ready():
 	
 func _enter_state():
 	actor.velocity = Vector2.ZERO
-	
+
 	set_physics_process(true)	
 
 func _exit_state():

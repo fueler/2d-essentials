@@ -12,6 +12,7 @@ func _exit_state():
 
 func _physics_process(delta):
 	if Input.is_action_just_pressed("jump"):
+		print("jumpy jumpy ", actor.can_jump())
 		jump()
 
 	if Input.is_action_just_released("jump"):

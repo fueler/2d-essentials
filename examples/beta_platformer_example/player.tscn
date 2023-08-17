@@ -843,21 +843,16 @@ shape = SubResource("RectangleShape2D_kn3qn")
 
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("5_3wwcg")
-max_speed = 120
 acceleration = 450.0
-friction = 200.0
-dash_speed_multiplier = 1.5
-times_can_dash = 2
-jump_height = 85.0
-jump_time_to_fall = 0.4
-allowed_jumps = 2
-coyote_jump_enabled = true
+friction = 500.0
+dash_speed_multiplier = 2.1
 wall_jump_enabled = true
 wall_slide_enabled = true
 wall_slide_gravity = 80.0
 wall_climb_enabled = true
 wall_climb_speed_up = 100.0
 wall_climb_speed_down = 80.0
+wall_climb_fatigue_knockback = 150.0
 time_it_can_climb = 2.0
 knockback_power = 300
 
