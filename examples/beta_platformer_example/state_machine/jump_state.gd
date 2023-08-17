@@ -10,7 +10,6 @@ func _exit_state():
 	set_physics_process(false)
 
 func _physics_process(delta):
-	super._physics_process(delta)
 	
 	if Input.is_action_just_pressed("jump"):
 		jump()
@@ -18,15 +17,14 @@ func _physics_process(delta):
 	if Input.is_action_just_released("jump"):
 		short_jump()
 	
+	super._physics_process(delta)
+
 	if not actor.is_withing_jumping_threshold():
 		return finite_state_machine.change_state_by_name("FallingState")
 
-#	if actor.can_wall_slide():
-#		return finite_state_machine.change_state_by_name("WallSlideState")
-	
 func jump():
 	if actor.can_wall_jump():
-		actor.wall_jump(actor.body.horizontal_direction)
+		actor.wall_jump(horizontal_direction)
 	else:
 		actor.jump()
 			

@@ -30,6 +30,8 @@ func update_animations(state: State):
 			animation_player.play("land")
 		"JumpState":
 			animation_player.play("jump")
+		"RollingState":
+			animation_player.play("roll")
 		"FallingState":
 			animation_player.play("falling")
 		"WallSlideState":
@@ -43,5 +45,8 @@ func on_state_changed(_current_state: State, new_state: State):
 
 func on_animation_finished(animation_name: String):
 	if animation_name == "land" and finite_state_machine.current_state_name_is("LandState"):
+		finite_state_machine.change_state_by_name("IdleState")
+		
+	if animation_name == "roll" and finite_state_machine.current_state_name_is("RollingState"):
 		finite_state_machine.change_state_by_name("IdleState")
 

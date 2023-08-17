@@ -1,4 +1,4 @@
-[gd_scene load_steps=78 format=3 uid="uid://qu2xpt64k1ul"]
+[gd_scene load_steps=79 format=3 uid="uid://babeth31ovi6m"]
 
 [ext_resource type="Script" path="res://examples/beta_platformer_example/player.gd" id="1_6eank"]
 [ext_resource type="Texture2D" uid="uid://bdw8doal78u37" path="res://examples/beta_platformer_example/assets/animations/Character Idle 48x48.png" id="1_6jkb0"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/run_state.gd" id="8_y3tu8"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/jump_state.gd" id="14_qeaxj"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/land_state.gd" id="14_yfl5g"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/rolling_state.gd" id="15_7dxbc"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_control.gd" id="15_eud41"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/falling_state.gd" id="15_kbc0r"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/wall_slide_state.gd" id="18_1k1ky"]
@@ -879,6 +880,10 @@ actor = NodePath("../../../VelocityComponent2D")
 
 [node name="LandState" type="Node" parent="FiniteStateMachine/Ground" node_paths=PackedStringArray("actor")]
 script = ExtResource("14_yfl5g")
+actor = NodePath("../../../VelocityComponent2D")
+
+[node name="RollingState" type="Node" parent="FiniteStateMachine/Ground" node_paths=PackedStringArray("actor")]
+script = ExtResource("15_7dxbc")
 actor = NodePath("../../../VelocityComponent2D")
 
 [node name="Air" type="Node" parent="FiniteStateMachine"]

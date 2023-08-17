@@ -197,14 +197,14 @@ func accelerate_to_position(position: Vector2):
 	
 	return accelerate_in_direction(target_direction)
 
-				
-func decelerate():
-	if friction > 0:
+
+func decelerate(force_stop: bool = false):
+	if force_stop or friction == 0:
+		velocity.x = 0
+	else:
 		velocity.x -= sign(velocity.x) * friction * get_physics_process_delta_time()
 		velocity.x = clamp(velocity.x, -max_speed, max_speed)
-	else:
-		velocity.x = 0
-
+		
 	return self
 	
 func knockback(direction: Vector2, power: int = knockback_power):

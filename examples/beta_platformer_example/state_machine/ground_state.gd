@@ -5,14 +5,15 @@ class_name GroundState extends State
 
 var horizontal_direction: Vector2 = Vector2.ZERO
 
-	
 func _unhandled_key_input(event):
 	horizontal_direction = Helpers.translate_x_axis_to_vector(Input.get_axis("ui_left", "ui_right"))
 	
 	if event.is_action_pressed("jump") and can_transition_to_jump():
 		return finite_state_machine.change_state_by_name("JumpState")
 	
-
+	if event.is_action_pressed("dash") and can_transition_to_rolling():
+		return finite_state_machine.change_state_by_name("RollingState")
+	
 func _physics_process(delta):
 	var was_on_floor: bool = actor.body.is_on_floor()
 	
@@ -27,12 +28,19 @@ func _physics_process(delta):
 	actor.move()
 	
 	if was_on_floor and not actor.body.is_on_floor():
-		finite_state_machine.change_state_by_name("FallingState")
+		return finite_state_machine.change_state_by_name("FallingState")
+		
 	
-func can_transition_to_jump():
+func can_transition_to_jump() -> bool:
 	if actor.coyote_timer.time_left > 0:
 		return true
 		
 	var current_state = finite_state_machine.current_state
 	
-	return not current_state is AirState #and not current_state is WallState
+	return not current_state is AirState
+	
+func can_transition_to_rolling() -> bool:
+	return not horizontal_direction.is_zero_approx() and actor.velocity.x != 0 \
+		and actor.can_dash() \
+		and not finite_state_machine.current_state is AirState \
+		and not finite_state_machine.current_state is WallState 
