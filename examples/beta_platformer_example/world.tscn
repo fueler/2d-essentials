@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dfpf47wboukoh"]
+[gd_scene load_steps=3 format=3 uid="uid://dfpf47wboukoh"]
 
 [ext_resource type="PackedScene" uid="uid://c6csfw3medker" path="res://examples/beta_platformer_example/tutorial.tscn" id="1_pca75"]
 [ext_resource type="PackedScene" uid="uid://qu2xpt64k1ul" path="res://examples/beta_platformer_example/player.tscn" id="2_xl6fn"]
-[ext_resource type="PackedScene" uid="uid://bcfmirmp3ba68" path="res://examples/beta_platformer_example/normal_player.tscn" id="3_16irc"]
 
 [node name="World" type="Node2D"]
 
@@ -11,9 +10,4 @@ layer_0/tile_data = PackedInt32Array(655360, 0, 2, 655361, 65536, 2, 655362, 655
 layer_1/tile_data = PackedInt32Array(196614, 196608, 1, 655366, 65536, 1, 393216, 65536, 5, 458752, 196608, 5, 393226, 196608, 5, 589836, 196608, 9, 196608, 65536, 9, -1769440, 655360, 4, -393200, 0, 13, -327664, 0, 13, -851952, 0, 13, -1703907, 196608, 15, -2097131, 65536, 15, -2031580, 65536, 15, -1441773, 65536, 15, -1834971, 131072, 15, -1966044, 131072, 15, -2031595, 131072, 15, -1507310, 131072, 15, -1507313, 131072, 15, 327700, 458752, 1, 393236, 458752, 2)
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_xl6fn")]
-process_mode = 4
-visible = false
 position = Vector2(51, 173)
-
-[node name="NormalPlayer" parent="." instance=ExtResource("3_16irc")]
-position = Vector2(110, 158)

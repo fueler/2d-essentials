@@ -34,7 +34,18 @@ func generate_random_angle(min_angle_range: float = 0.0, max_angle_range: float 
 
 func generate_random_direction() -> Vector2:
 	return Vector2(random_number_generator.randi_range(-1, 1), random_number_generator.randi_range(-1, 1)).normalized()
+
+func translate_x_axis_to_vector(axis: float) -> Vector2:
+	var horizontal_direction = Vector2.ZERO
 	
+	match axis:
+		-1.0:
+			horizontal_direction = Vector2.LEFT 
+		1.0:
+			horizontal_direction = Vector2.RIGHT
+			
+	return horizontal_direction
+		
 
 func frame_freeze(time_scale: float, duration: float):
 	frame_freezed.emit()

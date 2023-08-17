@@ -2,12 +2,16 @@ extends CharacterBody2D
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var velocity_component_2d = $VelocityComponent2D as VelocityComponent2D
+@onready var camera_2d = $Camera2D
 
 var input_axis: float = 0.0
 var input_direction: Vector2 = Vector2.ZERO
 var horizontal_direction: Vector2 = Vector2.ZERO
 var is_left_direction: bool = false
 
+func _ready():
+	camera_2d.make_current()
+	
 func _unhandled_key_input(event):
 	input_axis = Input.get_axis("ui_left", "ui_right")
 	input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
@@ -21,9 +25,6 @@ func _process(delta):
 		animated_sprite_2d.flip_h = is_left_direction
 
 func _physics_process(delta):
-	if Input.is_action_just_pressed("dash"):
-		velocity_component_2d.dash(input_direction)
-
 	if not is_on_floor():
 		velocity_component_2d.apply_gravity()
 
@@ -37,6 +38,10 @@ func _physics_process(delta):
 			velocity_component_2d.wall_jump(horizontal_direction)
 		else:
 			velocity_component_2d.jump()
+			
+	if Input.is_action_just_pressed("dash"):
+		velocity_component_2d.dash(input_direction)
+
 			
 	velocity_component_2d.wall_climb(input_direction).wall_slide().move()
 

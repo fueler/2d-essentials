@@ -71,11 +71,11 @@ signal inverted_gravity(inverted: bool)
 ## Enable the wall climb action
 @export var wall_climb_enabled: bool = false
 ## The speed when climb upwards
-@export var wall_climb_speed_up: float = 450.0
+@export var wall_climb_speed_up: float = 200.0
 ## The speed when climb downwards
-@export var wall_climb_speed_down: float = 500.0
+@export var wall_climb_speed_down: float = 250.0
 ## The force applied when the time it can climb reachs the timeout
-@export var wall_climb_fatigue_knockback: float = 50.0
+@export var wall_climb_fatigue_knockback: float = 100.0
 ## Window time range in which where you can be climbing without getting tired of it
 @export var time_it_can_climb: float = 3.0
 ## Time that the climb action is disabled when the fatigue timeout is triggered.
@@ -170,17 +170,19 @@ func accelerate_in_direction(direction: Vector2, only_horizontal: bool = false):
 			accelerate_horizontally(direction)
 		else:
 			if acceleration > 0:
-				velocity = velocity.move_toward(facing_direction * max_speed, acceleration * get_physics_process_delta_time())
+				velocity = velocity.move_toward(direction * max_speed, acceleration * get_physics_process_delta_time())
 			else:
-				velocity = facing_direction * max_speed
+				velocity = direction * max_speed
 
 	return self
 
 func accelerate_horizontally(direction: Vector2):
 	if acceleration > 0:
-		velocity.x = lerp(velocity.x, facing_direction.x * max_speed, (acceleration / 100) * get_physics_process_delta_time())
+		velocity.x = lerp(velocity.x, direction.x * max_speed, (acceleration / 100) * get_physics_process_delta_time())
 	else:
-		velocity.x = facing_direction.x * max_speed
+		print("entro correcto ", velocity.x)
+		velocity.x = direction.x * max_speed
+		print("entro correcto 2", velocity.x)
 	
 	return self
 

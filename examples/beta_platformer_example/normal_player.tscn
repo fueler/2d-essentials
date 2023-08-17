@@ -89,6 +89,14 @@ animations = [{
 position = Vector2(0, -16)
 script = ExtResource("1_6mm7w")
 
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.5, 0.5)
+process_callback = 0
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, 1.5)
 shape = SubResource("RectangleShape2D_ignt4")
@@ -99,5 +107,7 @@ sprite_frames = SubResource("SpriteFrames_jkbuu")
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("2_d5i0g")
 max_speed = 120.0
+dash_speed_multiplier = 2.5
 wall_jump_enabled = true
 wall_slide_enabled = true
+wall_climb_enabled = true
