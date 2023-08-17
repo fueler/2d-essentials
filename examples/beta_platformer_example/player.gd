@@ -15,10 +15,11 @@ func _ready():
 
 func _process(delta):
 	is_left_direction = velocity_component_2d.last_faced_direction.is_equal_approx(Vector2.LEFT)
-
+	
 	if animated_sprite_2d and is_left_direction != animated_sprite_2d.flip_h:
 		animated_sprite_2d.flip_h = is_left_direction
 		
+#
 func update_animations(state: State):
 	match state.name:
 		"IdleState": 
@@ -39,7 +40,6 @@ func update_animations(state: State):
 
 func on_state_changed(_current_state: State, new_state: State):
 	update_animations(new_state)
-	print(_current_state.name, new_state.name)
 
 func on_animation_finished(animation_name: String):
 	if animation_name == "land" and finite_state_machine.current_state_name_is("LandState"):

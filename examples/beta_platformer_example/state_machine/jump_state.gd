@@ -1,5 +1,4 @@
-class_name JumpState extends MoveState
-
+class_name JumpState extends AirState
 
 func _ready():
 	set_physics_process(false)
@@ -11,25 +10,20 @@ func _exit_state():
 	set_physics_process(false)
 
 func _physics_process(delta):
+	super._physics_process(delta)
+	
 	if Input.is_action_just_pressed("jump"):
-		print("jumpy jumpy ", actor.can_jump())
 		jump()
 
 	if Input.is_action_just_released("jump"):
 		short_jump()
 	
-	if not actor.body.horizontal_direction.is_zero_approx():
-		actor.accelerate_in_direction(actor.body.horizontal_direction, true)
-		
-	actor.apply_gravity().move()
-	
-	if actor.velocity.y > 0 or (actor.is_inverted_gravity and actor.velocity.y < 0):
+	if not actor.is_withing_jumping_threshold():
 		return finite_state_machine.change_state_by_name("FallingState")
-	
-	if actor.can_wall_slide():
-		return finite_state_machine.change_state_by_name("WallSlideState")
-	
 
+#	if actor.can_wall_slide():
+#		return finite_state_machine.change_state_by_name("WallSlideState")
+	
 func jump():
 	if actor.can_wall_jump():
 		actor.wall_jump(actor.body.horizontal_direction)

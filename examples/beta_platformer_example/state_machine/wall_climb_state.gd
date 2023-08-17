@@ -1,6 +1,4 @@
-class_name WallClimbState extends MoveState
-
-@onready var input_direction: Vector2 = Vector2.ZERO
+class_name WallClimbState extends WallState
 
 func _ready():
 	set_physics_process(false)
@@ -12,15 +10,9 @@ func _enter_state():
 func _exit_state():
 	set_physics_process(false)
 
-func _unhandled_input(event):
-	input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
-
-	if event.is_action_pressed("jump"):
-		return finite_state_machine.change_state_by_name("JumpState")
-
-func _physics_process(_delta):
+func _physics_process(delta):
 	actor.wall_climb(input_direction).move()
-	
+
 	if actor.body.is_on_floor():
 		return finite_state_machine.change_state_by_name("IdleState")
 		

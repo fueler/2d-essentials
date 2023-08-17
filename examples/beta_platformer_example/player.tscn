@@ -1,4 +1,4 @@
-[gd_scene load_steps=74 format=3 uid="uid://qu2xpt64k1ul"]
+[gd_scene load_steps=78 format=3 uid="uid://qu2xpt64k1ul"]
 
 [ext_resource type="Script" path="res://examples/beta_platformer_example/player.gd" id="1_6eank"]
 [ext_resource type="Texture2D" uid="uid://bdw8doal78u37" path="res://examples/beta_platformer_example/assets/animations/Character Idle 48x48.png" id="1_6jkb0"]
@@ -13,8 +13,12 @@
 [ext_resource type="Texture2D" uid="uid://d2jdvmi6qvopk" path="res://examples/beta_platformer_example/assets/animations/Player Side-Climb 48x48.png" id="7_ccxc1"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/player_animated_sprite.gd" id="8_nvwye"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/run_state.gd" id="8_y3tu8"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/jump_state.gd" id="14_qeaxj"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/land_state.gd" id="14_yfl5g"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_control.gd" id="15_eud41"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/falling_state.gd" id="15_kbc0r"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/wall_slide_state.gd" id="18_1k1ky"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/wall_climb_state.gd" id="18_pxxg7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cr48v"]
 atlas = ExtResource("2_i4j7b")
@@ -839,6 +843,8 @@ shape = SubResource("RectangleShape2D_kn3qn")
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("5_3wwcg")
 dash_speed_multiplier = 2.1
+jump_velocity_threshold = 150.0
+allowed_jumps = 2
 wall_jump_enabled = true
 wall_slide_enabled = true
 wall_slide_gravity = 80.0
@@ -873,6 +879,26 @@ actor = NodePath("../../../VelocityComponent2D")
 
 [node name="LandState" type="Node" parent="FiniteStateMachine/Ground" node_paths=PackedStringArray("actor")]
 script = ExtResource("14_yfl5g")
+actor = NodePath("../../../VelocityComponent2D")
+
+[node name="Air" type="Node" parent="FiniteStateMachine"]
+
+[node name="JumpState" type="Node" parent="FiniteStateMachine/Air" node_paths=PackedStringArray("actor")]
+script = ExtResource("14_qeaxj")
+actor = NodePath("../../../VelocityComponent2D")
+
+[node name="FallingState" type="Node" parent="FiniteStateMachine/Air" node_paths=PackedStringArray("actor")]
+script = ExtResource("15_kbc0r")
+actor = NodePath("../../../VelocityComponent2D")
+
+[node name="Wall" type="Node" parent="FiniteStateMachine"]
+
+[node name="WallSlideState" type="Node" parent="FiniteStateMachine/Wall" node_paths=PackedStringArray("actor")]
+script = ExtResource("18_1k1ky")
+actor = NodePath("../../../VelocityComponent2D")
+
+[node name="WallClimbState" type="Node" parent="FiniteStateMachine/Wall" node_paths=PackedStringArray("actor")]
+script = ExtResource("18_pxxg7")
 actor = NodePath("../../../VelocityComponent2D")
 
 [node name="Control" type="Control" parent="."]

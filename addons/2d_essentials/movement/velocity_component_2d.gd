@@ -163,9 +163,9 @@ func move_and_collide() -> KinematicCollision2D:
 func accelerate_in_direction(direction: Vector2, only_horizontal: bool = false):
 	facing_direction = direction
 	
-	if not facing_direction.is_zero_approx():
+	if not direction.is_zero_approx():
 		last_faced_direction = direction
-		
+
 		if only_horizontal:
 			accelerate_horizontally(direction)
 		else:
@@ -177,13 +177,14 @@ func accelerate_in_direction(direction: Vector2, only_horizontal: bool = false):
 	return self
 
 func accelerate_horizontally(direction: Vector2):
-	if acceleration > 0:
-		velocity.x = lerp(velocity.x, direction.x * max_speed, (acceleration / 100) * get_physics_process_delta_time())
-	else:
-		print("entro correcto ", velocity.x)
-		velocity.x = direction.x * max_speed
-		print("entro correcto 2", velocity.x)
-	
+	if not direction.is_zero_approx():
+		last_faced_direction = direction
+		
+		if acceleration > 0:
+			velocity.x = lerp(velocity.x, direction.x * max_speed, (acceleration / 100) * get_physics_process_delta_time())
+		else:
+			velocity.x = direction.x * max_speed
+		
 	return self
 
 func accelerate_to_target(target: Node2D):
@@ -301,9 +302,17 @@ func can_jump() -> bool:
 		if body.is_on_floor() or (coyote_jump_enabled and coyote_timer.time_left > 0.0):
 			return true
 		else:
-			return (velocity.y < abs(jump_velocity_threshold) or (is_inverted_gravity and velocity.y < -abs(jump_velocity_threshold))) and jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps
+			return (velocity.y < abs(jump_velocity_threshold) or (is_inverted_gravity and velocity.y < -abs(jump_velocity_threshold))) and jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps 
 
 	return false
+
+func is_withing_jumping_threshold() -> bool:
+	var is_withing_threshold = jump_velocity_threshold > 0 and velocity.y < jump_velocity_threshold
+
+	if is_inverted_gravity:
+		is_withing_threshold = jump_velocity_threshold < 0 and velocity.y > jump_velocity_threshold
+		
+	return is_withing_threshold
 
 
 func jump():
