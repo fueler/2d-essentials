@@ -21,7 +21,7 @@ func _ready():
 func change_state(new_state: State, force: bool = false):
 	if not force and current_state_is(new_state):
 		return
-		
+	
 	if current_state is State:
 		exit_state(current_state)
 		
@@ -62,6 +62,10 @@ func current_state_is(state: State) -> bool:
 		
 	return false
 
+func current_state_name_is(name: String) -> bool:
+	return current_state_is(get_state(name))
+	
+		
 func _add_state_to_dictionary(state: State):
 	if state.is_inside_tree():
 		states[state.name] = get_node(state.get_path())

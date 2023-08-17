@@ -1,21 +1,13 @@
-class_name WallSlideState extends State
+class_name WallSlideState extends MoveState
 
-@export var actor: VelocityComponent2D
-@export var animation_player: AnimationPlayer
-
-@onready var finite_state_machine = get_tree().get_first_node_in_group("finite_state_machine") as FiniteStateMachine
 @onready var input_direction: Vector2 = Vector2.ZERO
 
 func _ready():
 	set_physics_process(false)
-	set_process_unhandled_key_input(false)
 
 func _enter_state():
 	actor.velocity.y = actor.wall_slide_gravity
 	
-	if animation_player:
-		animation_player.play("wall_slide")
-
 	set_physics_process(true)
 	
 func _exit_state():
@@ -35,5 +27,9 @@ func _physics_process(_delta):
 		
 	if actor.can_wall_climb(input_direction):
 		return finite_state_machine.change_state_by_name("WallClimbState")
+
+	if not actor.can_wall_slide():
+		actor.velocity.x = 0
+		return finite_state_machine.change_state_by_name("FallingState")
 
 	actor.move()
