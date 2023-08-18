@@ -362,6 +362,8 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 	
 	if wall_jump_count_as_jump:
 		jump_queue.append(global_position)
+	else:
+		reset_jump_queue()
 
 	wall_jumped.emit()
 	

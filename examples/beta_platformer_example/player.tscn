@@ -1,4 +1,4 @@
-[gd_scene load_steps=79 format=3 uid="uid://babeth31ovi6m"]
+[gd_scene load_steps=80 format=3 uid="uid://babeth31ovi6m"]
 
 [ext_resource type="Script" path="res://examples/beta_platformer_example/player.gd" id="1_6eank"]
 [ext_resource type="Texture2D" uid="uid://bdw8doal78u37" path="res://examples/beta_platformer_example/assets/animations/Character Idle 48x48.png" id="1_6jkb0"]
@@ -20,6 +20,7 @@
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/falling_state.gd" id="15_kbc0r"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/wall_slide_state.gd" id="18_1k1ky"]
 [ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/wall_climb_state.gd" id="18_pxxg7"]
+[ext_resource type="Script" path="res://examples/beta_platformer_example/state_machine/dash_state.gd" id="18_w8n7v"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cr48v"]
 atlas = ExtResource("2_i4j7b")
@@ -894,6 +895,10 @@ actor = NodePath("../../../VelocityComponent2D")
 
 [node name="FallingState" type="Node" parent="FiniteStateMachine/Air" node_paths=PackedStringArray("actor")]
 script = ExtResource("15_kbc0r")
+actor = NodePath("../../../VelocityComponent2D")
+
+[node name="DashState" type="Node" parent="FiniteStateMachine/Air" node_paths=PackedStringArray("actor")]
+script = ExtResource("18_w8n7v")
 actor = NodePath("../../../VelocityComponent2D")
 
 [node name="Wall" type="Node" parent="FiniteStateMachine"]
