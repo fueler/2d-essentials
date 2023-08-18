@@ -15,7 +15,7 @@ var health_regen_timer: Timer
 ## The amount of health regenerated each second
 @export var health_regen_per_second: int = 0
 ## The invulnerability flag, when is true no damage is received but can be healed
-@export var is_invulnerable:bool = false
+@export var is_invulnerable: bool = false
 @export var invulnerability_time: float = 1.0
 
 enum TYPES {
@@ -33,6 +33,7 @@ func _ready():
 	enable_health_regen(health_regen_per_second)
 	
 	health_changed.connect(on_health_changed)
+	died.connect(on_died)
 
 
 func damage(amount: int):
@@ -88,7 +89,7 @@ func enable_health_regen(amount_per_second: int = health_regen_per_second):
 	health_regen_per_second = amount_per_second
 	
 	if health_regen_timer:
-		if current_health == max_health and health_regen_timer.time_left > 0:
+		if current_health == max_health and health_regen_timer.time_left > 0 or amount_per_second <= 0:
 			health_regen_timer.stop()
 			return
 		
@@ -130,7 +131,10 @@ func on_health_changed(amount: int, type: TYPES):
 		enable_health_regen()
 		Callable(check_is_dead).call_deferred()
 
-
+func on_died():
+	health_regen_timer.stop()
+	invulnerability_timer.stop()
+	
 func on_health_regen_timer_timeout():
 	health(health_regen_per_second, TYPES.REGEN)
 	

@@ -846,6 +846,7 @@ shape = SubResource("RectangleShape2D_kn3qn")
 script = ExtResource("5_3wwcg")
 dash_speed_multiplier = 2.1
 times_can_dash = 2
+dash_gravity_time_disabled = 0.3
 jump_velocity_threshold = 150.0
 allowed_jumps = 2
 wall_jump_enabled = true

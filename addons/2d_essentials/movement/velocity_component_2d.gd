@@ -166,7 +166,7 @@ func accelerate_in_direction(direction: Vector2, only_horizontal: bool = false):
 	if not direction.is_zero_approx():
 		last_faced_direction = direction
 
-		if only_horizontal:
+		if only_horizontal or (acceleration == 0 and friction == 0):
 			accelerate_horizontally(direction)
 		else:
 			if acceleration > 0:
@@ -203,8 +203,11 @@ func decelerate(force_stop: bool = false):
 		velocity.x = 0
 	else:
 		velocity.x -= sign(velocity.x) * friction * get_physics_process_delta_time()
+		if is_inverted_gravity:
+			velocity.x *= -1
 		velocity.x = clamp(velocity.x, -max_speed, max_speed)
-		
+	
+	
 	return self
 	
 func knockback(direction: Vector2, power: int = knockback_power):
