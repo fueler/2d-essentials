@@ -5,7 +5,6 @@ func _ready():
 	set_physics_process(false)
 	
 func _enter_state():
-	actor.decelerate(true).dash(input_direction)
 	set_physics_process(true)
 
 func _exit_state():
@@ -15,10 +14,10 @@ func _physics_process(delta):
 	actor.move()
 	
 	if Input.is_action_just_pressed("dash") and actor.can_dash():
-		actor.decelerate().dash(input_direction)
+		actor.decelerate(true).dash(input_direction)
 
 func on_dashed_finished():
-	# This is because dash action it's used for rolling also
-	if finite_state_machine.current_state_name_is("DashState"):
+	# This is because dash action it's used for rolling
+	if finite_state_machine.current_state is DashState:
 		finite_state_machine.change_state_by_name("FallingState")
 	

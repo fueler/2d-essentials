@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chrjk6v71x2yl"
-path="res://.godot/imported/player land 48x48.png-a605cced4ce50058578ff83726f18db8.ctex"
+uid="uid://jsemptfsqrqm"
+path="res://.godot/imported/run cycle 48x48.png-0ec09b11a44a32d4fe89a30b2911cfa6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://examples/beta_platformer_example/assets/animations/player land 48x48.png"
-dest_files=["res://.godot/imported/player land 48x48.png-a605cced4ce50058578ff83726f18db8.ctex"]
+source_file="res://examples/finite-state-machine-example/assets/animations/run cycle 48x48.png"
+dest_files=["res://.godot/imported/run cycle 48x48.png-0ec09b11a44a32d4fe89a30b2911cfa6.ctex"]
 
 [params]
 

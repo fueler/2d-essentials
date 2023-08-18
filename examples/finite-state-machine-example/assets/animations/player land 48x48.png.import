@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://by551x1d5xwwv"
-path="res://.godot/imported/fantasy_4colors_tileset_frame_0.png-29d5e701af86b975aad7ad648a99bc35.ctex"
+uid="uid://chrjk6v71x2yl"
+path="res://.godot/imported/player land 48x48.png-616e69b68798ebf10a8ecdf751a29bc9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://examples/beta_platformer_example/assets/fantasy_4colors_tileset_frame_0.png"
-dest_files=["res://.godot/imported/fantasy_4colors_tileset_frame_0.png-29d5e701af86b975aad7ad648a99bc35.ctex"]
+source_file="res://examples/finite-state-machine-example/assets/animations/player land 48x48.png"
+dest_files=["res://.godot/imported/player land 48x48.png-616e69b68798ebf10a8ecdf751a29bc9.ctex"]
 
 [params]
 

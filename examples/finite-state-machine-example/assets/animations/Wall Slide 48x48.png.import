@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bg6pjumm28iuy"
-path="res://.godot/imported/Player Roll 48x48.png-35bc4bd506ca493c3f858474769b76ee.ctex"
+uid="uid://7mm3unwh1pcf"
+path="res://.godot/imported/Wall Slide 48x48.png-1d61a5e07113374832bd1dbcc9a5cafa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://examples/beta_platformer_example/assets/animations/Player Roll 48x48.png"
-dest_files=["res://.godot/imported/Player Roll 48x48.png-35bc4bd506ca493c3f858474769b76ee.ctex"]
+source_file="res://examples/finite-state-machine-example/assets/animations/Wall Slide 48x48.png"
+dest_files=["res://.godot/imported/Wall Slide 48x48.png-1d61a5e07113374832bd1dbcc9a5cafa.ctex"]
 
 [params]
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dfpf47wboukoh"]
 
-[ext_resource type="PackedScene" uid="uid://c6csfw3medker" path="res://examples/beta_platformer_example/tutorial.tscn" id="1_pca75"]
-[ext_resource type="PackedScene" uid="uid://babeth31ovi6m" path="res://examples/beta_platformer_example/player.tscn" id="2_xl6fn"]
+[ext_resource type="PackedScene" uid="uid://c6csfw3medker" path="res://examples/finite-state-machine-example/tutorial.tscn" id="1_pca75"]
+[ext_resource type="PackedScene" uid="uid://babeth31ovi6m" path="res://examples/finite-state-machine-example/player.tscn" id="2_xl6fn"]
 
 [node name="World" type="Node2D"]
 

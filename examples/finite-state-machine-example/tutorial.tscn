@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c6csfw3medker"]
 
-[ext_resource type="Texture2D" uid="uid://by551x1d5xwwv" path="res://examples/beta_platformer_example/assets/fantasy_4colors_tileset_frame_0.png" id="1_8nbvs"]
+[ext_resource type="Texture2D" uid="uid://by551x1d5xwwv" path="res://examples/finite-state-machine-example/assets/fantasy_4colors_tileset_frame_0.png" id="1_8nbvs"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_scwfn"]
 texture = ExtResource("1_8nbvs")

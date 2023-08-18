@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7mm3unwh1pcf"
-path="res://.godot/imported/Wall Slide 48x48.png-70f95c2a27397be04259e76bb2264158.ctex"
+uid="uid://d2jdvmi6qvopk"
+path="res://.godot/imported/Player Side-Climb 48x48.png-d12530f01edac26353305187f3837e07.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://examples/beta_platformer_example/assets/animations/Wall Slide 48x48.png"
-dest_files=["res://.godot/imported/Wall Slide 48x48.png-70f95c2a27397be04259e76bb2264158.ctex"]
+source_file="res://examples/finite-state-machine-example/assets/animations/Player Side-Climb 48x48.png"
+dest_files=["res://.godot/imported/Player Side-Climb 48x48.png-d12530f01edac26353305187f3837e07.ctex"]
 
 [params]
 

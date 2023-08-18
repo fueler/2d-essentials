@@ -6,17 +6,21 @@ extends CharacterBody2D
 @onready var camera_2d = $Camera2D
 @onready var shake_camera_component_2d = $Camera2D/ShakeCameraComponent2D
 
+var input_axis: float =  0.0
+var input_direction: Vector2 = Vector2.ZERO
+var horizontal_direction: Vector2 = Vector2.ZERO
+
 func _process(delta):
 	if Input.is_action_just_pressed("shake"):
 		$Camera2D/ShakeCameraComponent2D.shake() 
 
-		
-func _physics_process(delta):
-	var input_axis = Input.get_axis("ui_left", "ui_right")
-	var input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
-	var horizontal_direction: Vector2 = translate_x_axis_to_vector(input_axis)
+func _input(event):
+	input_axis = Input.get_axis("ui_left", "ui_right")
+	input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
+	horizontal_direction = translate_x_axis_to_vector(input_axis)
 	
 
+func _physics_process(delta):
 	apply_gravity()
 	handle_jump()
 	handle_wall_sliding()
@@ -62,7 +66,7 @@ func handle_horizontal_movement(direction: Vector2):
 	if direction.is_equal_approx(Vector2.ZERO) and is_on_floor():
 		velocity_component_2d.decelerate()
 	else:
-		velocity_component_2d.accelerate_in_direction(direction)
+		velocity_component_2d.accelerate_in_direction(direction, true)
 		
 		
 func translate_x_axis_to_vector(input_axis: float) -> Vector2:

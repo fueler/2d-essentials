@@ -6,15 +6,10 @@ signal state_changed(from_state: State, state: State)
 
 var states: Dictionary = {}
 
+
 func _ready():
-	for child in get_children(true):
-		if child is State:
-			_add_state_to_dictionary(child)
-		else:
-			for nested_child in child.get_children():
-				if nested_child is State:
-					_add_state_to_dictionary(nested_child)
-		
+	_initialize_states_nodes()
+	
 	if current_state is State:
 		change_state(current_state, true)
 	
@@ -66,6 +61,15 @@ func current_state_name_is(name: String) -> bool:
 	return current_state_is(get_state(name))
 	
 		
+func _initialize_states_nodes(node: Node = null):
+	var childrens = node.get_children(true) if node else get_children(true)
+	
+	for child in childrens:
+		if child is State:
+			_add_state_to_dictionary(child)
+		else:
+			_initialize_states_nodes(child)
+
 func _add_state_to_dictionary(state: State):
 	if state.is_inside_tree():
 		states[state.name] = get_node(state.get_path())

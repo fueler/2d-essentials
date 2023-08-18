@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://bcfmirmp3ba68"]
 
-[ext_resource type="Script" path="res://examples/beta_platformer_example/normal_player.gd" id="1_6mm7w"]
-[ext_resource type="Texture2D" uid="uid://bdw8doal78u37" path="res://examples/beta_platformer_example/assets/animations/Character Idle 48x48.png" id="1_l3sxx"]
+[ext_resource type="Script" path="res://examples/finite-state-machine-example/normal_player.gd" id="1_6mm7w"]
+[ext_resource type="Texture2D" uid="uid://bdw8doal78u37" path="res://examples/finite-state-machine-example/assets/animations/Character Idle 48x48.png" id="1_l3sxx"]
 [ext_resource type="Script" path="res://addons/2d_essentials/movement/velocity_component_2d.gd" id="2_d5i0g"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ignt4"]

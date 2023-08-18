@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2jdvmi6qvopk"
-path="res://.godot/imported/Player Side-Climb 48x48.png-ed8c043357062069eb2833ea2fd82eb5.ctex"
+uid="uid://by551x1d5xwwv"
+path="res://.godot/imported/fantasy_4colors_tileset_frame_0.png-7cc09920c633f30b2782a0c92beb9d18.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://examples/beta_platformer_example/assets/animations/Player Side-Climb 48x48.png"
-dest_files=["res://.godot/imported/Player Side-Climb 48x48.png-ed8c043357062069eb2833ea2fd82eb5.ctex"]
+source_file="res://examples/finite-state-machine-example/assets/fantasy_4colors_tileset_frame_0.png"
+dest_files=["res://.godot/imported/fantasy_4colors_tileset_frame_0.png-7cc09920c633f30b2782a0c92beb9d18.ctex"]
 
 [params]
 

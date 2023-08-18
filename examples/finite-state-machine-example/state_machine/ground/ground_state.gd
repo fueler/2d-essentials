@@ -34,10 +34,8 @@ func _physics_process(delta):
 func can_transition_to_jump() -> bool:
 	if actor.coyote_timer.time_left > 0:
 		return true
-		
-	var current_state = finite_state_machine.current_state
 	
-	return not current_state is AirState
+	return not finite_state_machine.current_state is AirState
 	
 func can_transition_to_rolling() -> bool:
 	return not horizontal_direction.is_zero_approx() and actor.velocity.x != 0 \
