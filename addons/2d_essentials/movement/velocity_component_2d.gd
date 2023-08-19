@@ -129,9 +129,26 @@ var dash_duration_timer: Timer
 var wall_climb_timer: Timer
 
 var is_dashing: bool = false
-var is_wall_sliding: bool =  false
-var is_wall_climbing: bool = false
 
+var is_wall_sliding: bool = false:
+	set(value):
+		if value != is_wall_sliding:
+			if value:
+				wall_slide_started.emit()
+			else:
+				wall_slide_finished.emit()
+				
+		is_wall_sliding = value
+		
+var is_wall_climbing: bool = false:
+	set(value):
+		if value != is_wall_climbing:
+			if value:
+				wall_climb_started.emit()
+			else:
+				wall_climb_finished.emit()
+				
+		is_wall_climbing = value
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings: PackedStringArray = []
@@ -232,6 +249,8 @@ func decelerate(force_stop: bool = false):
 	
 func knockback(direction: Vector2, power: int = knockback_power):
 	var knockback_direction: Vector2 = (direction if direction.is_normalized() else direction.normalized()) * max(1, power)
+	
+	decelerate(true)
 	velocity = knockback_direction
 
 	move()
@@ -245,27 +264,34 @@ func can_dash(direction: Vector2 = Vector2.ZERO) -> bool:
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
 	if can_dash(target_direction):
-		is_dashing = true
-		dash_duration_timer.start()
+		facing_direction = target_direction if target_direction.is_normalized() else target_direction.normalized()
 		gravity_enabled = false
+		is_dashing = true
+		is_wall_climbing = false
+		is_wall_sliding = false
 		dash_queue.append(global_position)
+		dash_duration_timer.start()
 		
 		decelerate(true)
 		velocity = target_direction * (max_speed * max(1, absf(speed_multiplier)))
 		apply_air_friction()
-		
-		facing_direction = target_direction
 		
 		_create_dash_cooldown_timer()
 		
 		dashed.emit()
 	
 	return self
+	
+func cancel_dash():
+	if is_dashing:
+		dash_duration_timer.stop()
+		dash_duration_timer.timeout.emit()
+
 
 func apply_air_friction(friction_factor: float = air_friction_factor):
 	if air_friction_factor > 0 and not body.is_on_floor() and not body.is_on_wall():
 		velocity.x *= friction_factor
-		velocity.x = sign(velocity.x) * max(0, abs(velocity.x))
+		velocity.x = sign(velocity.x) * max(0, absf(velocity.x))
 		
 	return self
 
@@ -432,12 +458,8 @@ func can_wall_slide() -> bool:
 
 
 func wall_slide():
-	var previous_is_wall_sliding = is_wall_sliding
 	is_wall_sliding = can_wall_slide()
 	
-	if previous_is_wall_sliding != is_wall_sliding:
-		wall_slide_started.emit()
-		
 	if not is_wall_climbing and is_wall_sliding:
 		velocity.y += wall_slide_gravity * get_physics_process_delta_time()
 		velocity.y = max(velocity.y, wall_slide_gravity) if is_inverted_gravity else min(velocity.y, wall_slide_gravity)
@@ -536,17 +558,9 @@ func on_wall_climb_timer_timeout():
 	
 	
 func on_jumped():
-	var previous_is_wall_sliding = is_wall_sliding
-	var previous_is_wall_climbing = is_wall_climbing
-	
 	is_wall_climbing = false
 	is_wall_sliding = false
-	
-	if previous_is_wall_sliding != is_wall_sliding:
-		wall_slide_finished.emit()
-		
-	if previous_is_wall_climbing != is_wall_climbing:
-		wall_climb_finished.emit()
+
 
 func on_wall_jumped(normal: Vector2):
 	if not normal.is_zero_approx():

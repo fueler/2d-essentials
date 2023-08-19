@@ -8,5 +8,5 @@ var input_direction: Vector2 = Vector2.ZERO
 func _unhandled_input(event):
 	input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
 	
-	if event.is_action_pressed("jump"):
+	if event.is_action_pressed("jump") and actor.can_jump():
 		return finite_state_machine.change_state_by_name("JumpState")

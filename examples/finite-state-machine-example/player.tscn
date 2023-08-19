@@ -847,6 +847,7 @@ script = ExtResource("5_3wwcg")
 dash_speed_multiplier = 2.1
 times_can_dash = 2
 dash_gravity_time_disabled = 0.3
+air_friction_factor = 0.95
 jump_height = 100.0
 jump_time_to_peak = 0.45
 jump_velocity_threshold = 150.0

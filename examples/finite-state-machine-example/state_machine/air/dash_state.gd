@@ -11,6 +11,11 @@ func _exit_state():
 	set_physics_process(false)
 
 func _physics_process(delta):
+	super._physics_process(delta)
+		
+	if Input.is_action_just_pressed("cancel_dash"):
+		return actor.cancel_dash()
+	
 	if Input.is_action_just_pressed("dash"):
 		actor.dash(input_direction)
 
