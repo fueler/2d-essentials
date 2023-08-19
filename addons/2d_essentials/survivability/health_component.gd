@@ -16,6 +16,7 @@ var health_regen_timer: Timer
 @export var health_regen_per_second: int = 0
 ## The invulnerability flag, when is true no damage is received but can be healed
 @export var is_invulnerable: bool = false
+## How long the invulnerability will last
 @export var invulnerability_time: float = 1.0
 
 enum TYPES {
