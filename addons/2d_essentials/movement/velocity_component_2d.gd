@@ -3,7 +3,7 @@ class_name VelocityComponent2D extends Node2D
 ############ SIGNALS ############
 signal dashed
 signal jumped
-signal wall_jumped
+signal wall_jumped(normal: Vector2)
 signal wall_slide_started
 signal wall_slide_finished
 signal wall_climb_started
@@ -126,9 +126,9 @@ var jump_queue: Array[Vector2] = []
 
 var coyote_timer: Timer
 var dash_duration_timer: Timer
-var dash_gravity_timer: Timer
 var wall_climb_timer: Timer
 
+var is_dashing: bool = false
 var is_wall_sliding: bool =  false
 var is_wall_climbing: bool = false
 
@@ -152,7 +152,7 @@ func _ready():
 	wall_jumped.connect(on_jumped)
 	wall_climb_started.connect(on_wall_climb_started)
 	wall_climb_finished.connect(on_wall_climb_finished)
-
+	wall_jumped.connect(on_wall_jumped)
 	
 func move():
 	if body:
@@ -240,11 +240,12 @@ func knockback(direction: Vector2, power: int = knockback_power):
 	
 	return self	
 	
-func can_dash() -> bool:
-	return dash_queue.size() < times_can_dash and dash_cooldown > 0 and times_can_dash > 0 and not velocity.is_zero_approx()
+func can_dash(direction: Vector2 = Vector2.ZERO) -> bool:
+	return not direction.is_zero_approx() and dash_queue.size() < times_can_dash and dash_cooldown > 0 and times_can_dash > 0 and not velocity.is_zero_approx()
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
-	if can_dash() and not target_direction.is_zero_approx():
+	if can_dash(target_direction):
+		is_dashing = true
 		dash_duration_timer.start()
 		gravity_enabled = false
 		dash_queue.append(global_position)
@@ -389,7 +390,7 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 	else:
 		reset_jump_queue()
 
-	wall_jumped.emit()
+	wall_jumped.emit(wall_normal)
 	
 func can_wall_climb(direction: Vector2 = facing_direction) -> bool:
 	return wall_climb_enabled and(direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling()
@@ -518,6 +519,7 @@ func on_dash_cooldown_timer_timeout(timer: Timer):
 
 func on_dash_duration_timer_timeout():
 	gravity_enabled = true
+	is_dashing = false
 	
 
 func on_wall_climb_timer_timeout():
@@ -546,6 +548,11 @@ func on_jumped():
 	if previous_is_wall_climbing != is_wall_climbing:
 		wall_climb_finished.emit()
 
+func on_wall_jumped(normal: Vector2):
+	if not normal.is_zero_approx():
+		facing_direction = normal
+		last_faced_direction = normal
+		
 func on_wall_climb_started():
 	gravity_enabled = false
 	wall_climb_timer.start()

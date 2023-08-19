@@ -39,6 +39,6 @@ func can_transition_to_jump() -> bool:
 	
 func can_transition_to_rolling() -> bool:
 	return not horizontal_direction.is_zero_approx() and actor.velocity.x != 0 \
-		and actor.can_dash() \
+		and actor.can_dash(horizontal_direction) \
 		and not finite_state_machine.current_state is AirState \
 		and not finite_state_machine.current_state is WallState 

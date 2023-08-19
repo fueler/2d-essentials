@@ -22,7 +22,7 @@ func _physics_process(delta):
 	
 	
 func can_transition_to_dash() -> bool:
-	return actor.can_dash() \
+	return actor.can_dash(input_direction) \
 		and finite_state_machine.current_state is AirState \
 		and not finite_state_machine.current_state_name_is("DashState") 
 	
