@@ -10,11 +10,11 @@ func _enter_state():
 func _exit_state():
 	set_physics_process(false)
 
-func _physics_process(delta):	
+func _physics_process(delta):
+	if Input.is_action_just_pressed("dash"):
+		actor.dash(input_direction)
+
 	actor.move()
-	
-	if Input.is_action_just_pressed("dash") and actor.can_dash():
-		actor.decelerate(true).dash(input_direction)
 
 func on_dashed_finished():
 	# This is because dash action it's used for rolling

@@ -244,12 +244,13 @@ func can_dash() -> bool:
 	return dash_queue.size() < times_can_dash and dash_cooldown > 0 and times_can_dash > 0 and not velocity.is_zero_approx()
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
-	if can_dash():
+	if can_dash() and not target_direction.is_zero_approx():
 		dash_duration_timer.start()
 		gravity_enabled = false
 		dash_queue.append(global_position)
 		
-		velocity += target_direction * (max_speed * max(1, absf(speed_multiplier)))
+		decelerate(true)
+		velocity = target_direction * (max_speed * max(1, absf(speed_multiplier)))
 		apply_air_friction()
 		
 		facing_direction = target_direction
