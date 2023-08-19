@@ -10,7 +10,7 @@ var is_left_direction: bool = false
 func _ready():
 	finite_state_machine.state_changed.connect(on_state_changed)
 	animation_player.animation_finished.connect(on_animation_finished)
-
+	
 	update_animations(finite_state_machine.current_state)
 
 func _process(delta):

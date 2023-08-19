@@ -36,13 +36,33 @@ signal inverted_gravity(inverted: bool)
 @export_range(0.0 ,1.0, 0.001) var air_friction_factor: float = 0.995
 
 @export_group("Jump")
-
 ## The maximum height the character can reach
-@export var jump_height: float = 85
+@export var jump_height: float = 85:
+	set(value):
+		jump_height = value
+		jump_velocity = calculate_jump_velocity(jump_height, jump_time_to_peak)
+		jump_gravity = calculate_jump_gravity(jump_height, jump_time_to_peak )
+		fall_gravity = calculate_fall_gravity(jump_height, jump_time_to_fall)
+	get:
+		return jump_height
+		
 ## Time it takes to reach the maximum jump height
-@export var jump_time_to_peak: float = 0.4
+@export var jump_time_to_peak: float = 0.4:
+	set(value):
+		jump_time_to_peak = value
+		jump_velocity = calculate_jump_velocity(jump_height, jump_time_to_peak)
+		jump_gravity = calculate_jump_gravity(jump_height, jump_time_to_peak )
+	get:
+		return jump_time_to_peak
+		
 ## Time it takes to reach the floor after jump
-@export var jump_time_to_fall: float = 0.4
+@export var jump_time_to_fall: float = 0.4:
+	set(value):
+		jump_time_to_fall = value
+		fall_gravity = calculate_fall_gravity(jump_height, jump_time_to_fall)
+	get:
+		return jump_time_to_fall
+		
 ## The value represents a velocity threshold that determines whether the character can jump
 @export var jump_velocity_threshold: float = 300.0
 ## Jumps allowed to perform in a row
@@ -229,7 +249,7 @@ func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float 
 		gravity_enabled = false
 		dash_queue.append(global_position)
 		
-		velocity += target_direction * (max_speed * speed_multiplier)
+		velocity += target_direction * (max_speed * max(1, absf(speed_multiplier)))
 		apply_air_friction()
 		
 		facing_direction = target_direction
@@ -277,7 +297,7 @@ func apply_gravity():
 			velocity.y += gravity_force
 
 		if maximum_fall_velocity > 0:
-			velocity.y = max(velocity.y, -maximum_fall_velocity) if is_inverted_gravity else min(velocity.y, abs(maximum_fall_velocity))
+			velocity.y = max(velocity.y, -maximum_fall_velocity) if is_inverted_gravity else min(velocity.y, absf(maximum_fall_velocity))
 
 	return self
 	
@@ -305,7 +325,7 @@ func can_jump() -> bool:
 		if body.is_on_floor() or (coyote_jump_enabled and coyote_timer.time_left > 0.0):
 			return true
 		else:
-			return (velocity.y < abs(jump_velocity_threshold) or (is_inverted_gravity and velocity.y < -abs(jump_velocity_threshold))) and jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps 
+			return (velocity.y < absf(jump_velocity_threshold) or (is_inverted_gravity and velocity.y < -absf(jump_velocity_threshold))) and jump_queue.size() >= 1 and jump_queue.size() < allowed_jumps 
 
 	return false
 
@@ -345,9 +365,9 @@ func can_wall_jump() -> bool:
 
 func wall_jump(direction: Vector2):
 	if can_wall_jump():
-		var wall_normal = body.get_wall_normal()
-		var left_angle = abs(wall_normal.angle_to(Vector2.LEFT))
-		var right_angle = abs(wall_normal.angle_to(Vector2.RIGHT))
+		var wall_normal: Vector2 = body.get_wall_normal()
+		var left_angle: float = absf(wall_normal.angle_to(Vector2.LEFT))
+		var right_angle: float = absf(wall_normal.angle_to(Vector2.RIGHT))
 		
 		if is_wall_sliding or is_wall_climbing:
 			apply_wall_jump_direction(wall_normal)

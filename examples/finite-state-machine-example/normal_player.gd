@@ -12,7 +12,7 @@ var is_left_direction: bool = false
 func _ready():
 	camera_2d.make_current()
 	
-func _unhandled_key_input(event):
+func _unhandled_input(event):
 	input_axis = Input.get_axis("ui_left", "ui_right")
 	input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
 	horizontal_direction = _translate_x_axis_to_vector(input_axis)

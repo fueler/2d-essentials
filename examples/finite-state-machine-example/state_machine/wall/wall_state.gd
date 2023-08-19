@@ -5,7 +5,7 @@ class_name WallState extends State
 
 var input_direction: Vector2 = Vector2.ZERO
 
-func _unhandled_key_input(event):
+func _unhandled_input(event):
 	input_direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down").normalized()
 	
 	if event.is_action_pressed("jump"):
