@@ -260,7 +260,7 @@ func knockback(direction: Vector2, power: int = knockback_power):
 	return self	
 	
 func can_dash(direction: Vector2 = Vector2.ZERO) -> bool:
-	return not direction.is_zero_approx() and dash_queue.size() < times_can_dash and dash_cooldown > 0 and times_can_dash > 0 and not velocity.is_zero_approx()
+	return not direction.is_zero_approx() and dash_queue.size() < times_can_dash and dash_cooldown > 0 and times_can_dash > 0
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
 	if can_dash(target_direction):
@@ -345,8 +345,11 @@ func invert_gravity():
 
 
 func reset_jump_queue():
-	if body.is_on_floor() and jump_queue.size() > 0:
-		jump_queue.clear()
+	jump_queue.clear()
+
+func reset_dash_queue():
+	dash_queue.clear()
+	
 
 func can_jump() -> bool:
 	if not can_wall_slide() and not can_wall_climb():
@@ -431,7 +434,7 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 		var is_climbing_up = direction.is_equal_approx(Vector2.UP)
 		var wall_climb_speed_direction = wall_climb_speed_up if is_climbing_up else wall_climb_speed_down			
 		var climb_force = wall_climb_speed_direction * get_physics_process_delta_time()
-#		
+	
 		if is_inverted_gravity:
 			if not is_climbing_up:
 				climb_force *= -1
@@ -560,6 +563,7 @@ func on_wall_climb_timer_timeout():
 func on_jumped():
 	is_wall_climbing = false
 	is_wall_sliding = false
+	is_dashing = false
 
 
 func on_wall_jumped(normal: Vector2):
