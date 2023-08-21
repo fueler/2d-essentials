@@ -2,6 +2,7 @@ class_name VelocityComponent2D extends Node2D
 
 ############ SIGNALS ############
 signal dashed
+signal coyote_time_started
 signal jumped
 signal wall_jumped(normal: Vector2)
 signal wall_slide_started
@@ -118,7 +119,7 @@ var gravity_enabled: bool = true:
 			gravity_changed.emit(value)
 			
 		gravity_enabled = value
-		
+
 var is_inverted_gravity: bool = false
 
 var dash_queue: Array[Vector2] = []
@@ -171,6 +172,7 @@ func _ready():
 	_create_dash_duration_timer()
 	_create_wall_climbing_timer()
 	
+	gravity_changed.connect(on_gravity_changed)
 	jumped.connect(on_jumped)
 	wall_jumped.connect(on_jumped)
 	wall_climb_started.connect(on_wall_climb_started)
@@ -273,7 +275,7 @@ func can_dash(direction: Vector2 = Vector2.ZERO) -> bool:
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
 	if can_dash(target_direction):
 		facing_direction = target_direction if target_direction.is_normalized() else target_direction.normalized()
-		gravity_enabled = false
+		gravity_enabled = abs(dash_gravity_time_disabled) == 0
 		is_dashing = true
 		is_wall_climbing = false
 		is_wall_sliding = false
@@ -353,6 +355,8 @@ func invert_gravity():
 
 func suspend_gravity_for_duration(duration: float):
 	if duration > 0:
+		gravity_enabled = false
+		
 		var timer: Timer = Timer.new()
 		timer.name = "SuspendGravityTimer"
 		timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
@@ -362,7 +366,7 @@ func suspend_gravity_for_duration(duration: float):
 		
 		add_child(timer)
 		timer.timeout.connect(on_suspend_gravity_timeout.bind(timer))
-		gravity_enabled = false
+
 	
 func reset_jump_queue():
 	jump_queue.clear()
@@ -397,9 +401,8 @@ func jump():
 		
 		
 func apply_jump():
+	jumped.emit()
 	jump_queue.append(global_position)
-	is_wall_sliding = false
-	is_wall_climbing = false
 	
 	if jump_queue.size() > 1 and height_reduced_by_jump > 0:
 		var height_reduced: int =  max(0, jump_queue.size() - 1) * height_reduced_by_jump
@@ -407,8 +410,6 @@ func apply_jump():
 	else:
 		velocity.y = calculate_jump_velocity(jump_height)
 		
-	jumped.emit()
-
 
 func can_wall_jump() -> bool:
 	return wall_jump_enabled and body.is_on_wall() and not body.is_on_ceiling() and not velocity.y == 0
@@ -491,11 +492,11 @@ func wall_slide():
 
 
 func check_coyote_jump_time_window(was_on_floor: bool = true):
-	if coyote_jump_enabled:
+	if coyote_jump_enabled and coyote_timer.is_stopped():
 		var just_left_ledge = was_on_floor and not body.is_on_floor() and (velocity.y >= 0 or (is_inverted_gravity and velocity.y <= 0))
 		
 		if just_left_ledge:
-			coyote_timer.start()
+			coyote_time_started.emit()
 	
 	
 func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
@@ -540,6 +541,8 @@ func _create_coyote_timer():
 	coyote_timer.autostart = false
 
 	add_child(coyote_timer)
+	coyote_timer.timeout.connect(on_coyote_timer_timeout)
+	coyote_time_started.connect(on_coyote_time_started)
 
 
 func _create_wall_climbing_timer(time: float = time_it_can_climb):
@@ -581,9 +584,12 @@ func on_wall_climb_timer_timeout():
 	
 	
 func on_jumped():
+	gravity_enabled = true
 	is_wall_climbing = false
 	is_wall_sliding = false
 	is_dashing = false
+	
+	coyote_timer.stop()
 
 
 func on_wall_jumped(normal: Vector2):
@@ -595,10 +601,26 @@ func on_wall_climb_started():
 	gravity_enabled = false
 	wall_climb_timer.start()
 	
+	
 func on_wall_climb_finished():
 	gravity_enabled = true
 	wall_climb_timer.stop()
 
+
+func on_gravity_changed(enabled: bool):
+	if not enabled:
+		velocity.y = 0
+		
+		
 func on_suspend_gravity_timeout(timer: Timer):
 	timer.queue_free()
+	gravity_enabled = true
+
+
+func on_coyote_time_started():
+	gravity_enabled = false
+	coyote_timer.start()
+
+
+func on_coyote_timer_timeout():
 	gravity_enabled = true
