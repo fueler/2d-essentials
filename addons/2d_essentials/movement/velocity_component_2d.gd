@@ -112,7 +112,13 @@ signal inverted_gravity(inverted: bool)
 
 @onready var body = get_parent() as Node2D
 
-var gravity_enabled: bool = true 
+var gravity_enabled: bool = true:
+	set(value):
+		if value != gravity_enabled:
+			gravity_changed.emit(value)
+			
+		gravity_enabled = value
+		
 var is_inverted_gravity: bool = false
 
 var dash_queue: Array[Vector2] = []
@@ -345,7 +351,19 @@ func invert_gravity():
 	
 	return self
 
-
+func suspend_gravity_for_duration(duration: float):
+	if duration > 0:
+		var timer: Timer = Timer.new()
+		timer.name = "SuspendGravityTimer"
+		timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+		timer.wait_time = max(0.05, duration)
+		timer.one_shot = true
+		timer.autostart = true
+		
+		add_child(timer)
+		timer.timeout.connect(on_suspend_gravity_timeout.bind(timer))
+		gravity_enabled = false
+	
 func reset_jump_queue():
 	jump_queue.clear()
 
@@ -580,3 +598,7 @@ func on_wall_climb_started():
 func on_wall_climb_finished():
 	gravity_enabled = true
 	wall_climb_timer.stop()
+
+func on_suspend_gravity_timeout(timer: Timer):
+	timer.queue_free()
+	gravity_enabled = true
