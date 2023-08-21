@@ -179,7 +179,9 @@ func move():
 		body.move_and_slide()
 		
 		check_coyote_jump_time_window(was_on_floor)
-		reset_jump_queue()
+		
+		if body.is_on_floor():
+			reset_jump_queue()
 		
 	return self
 	
