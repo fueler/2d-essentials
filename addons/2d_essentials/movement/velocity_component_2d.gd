@@ -247,14 +247,18 @@ func accelerate_to_position(position: Vector2):
 
 func decelerate(force_stop: bool = false):
 	if force_stop or friction == 0:
+		velocity = Vector2.ZERO
+	else:
+		velocity = velocity.move_toward(Vector2.ZERO, friction * get_physics_process_delta_time())
+		
+	return self
+	
+func decelerate_horizontally(force_stop: bool = false):
+	if force_stop or friction == 0:
 		velocity.x = 0
 	else:
-		velocity.x -= sign(velocity.x) * friction * get_physics_process_delta_time()
-		if is_inverted_gravity:
-			velocity.x *= -1
-		velocity.x = clamp(velocity.x, -max_speed, max_speed)
-	
-	
+		velocity.x = move_toward(velocity.x, 0.0,friction * get_physics_process_delta_time())
+
 	return self
 	
 func knockback(direction: Vector2, power: int = knockback_power):
