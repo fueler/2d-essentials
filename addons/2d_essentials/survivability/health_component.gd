@@ -67,7 +67,7 @@ func get_health_percent() -> float:
 	return float(current_health) / max_health
 	
 
-func enable_invulnerability(enable: bool, time: float = 0.05):
+func enable_invulnerability(enable: bool, time: float = invulnerability_time):
 	if enable:
 		is_invulnerable = true
 		
