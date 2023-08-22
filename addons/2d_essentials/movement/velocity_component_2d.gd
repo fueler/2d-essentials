@@ -123,13 +123,12 @@ var gravity_enabled: bool = true:
 var is_inverted_gravity: bool = false
 
 var dash_queue: Array[Vector2] = []
+var jump_queue: Array[Vector2] = []
 
 var velocity: Vector2 = Vector2.ZERO
 
 var facing_direction: Vector2 = Vector2.ZERO
-var last_faced_direction: Vector2 = Vector2.DOWN
-
-var jump_queue: Array[Vector2] = []
+var last_faced_direction: Vector2 = Vector2.RIGHT
 
 var coyote_timer: Timer
 var dash_duration_timer: Timer
@@ -224,6 +223,8 @@ func accelerate_in_direction(direction: Vector2, only_horizontal: bool = false):
 	return self
 
 func accelerate_horizontally(direction: Vector2):
+	facing_direction = direction
+	
 	if not direction.is_zero_approx():
 		last_faced_direction = direction
 		
@@ -278,6 +279,7 @@ func can_dash(direction: Vector2 = Vector2.ZERO) -> bool:
 	
 func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float = dash_speed_multiplier):
 	if can_dash(target_direction):
+		last_faced_direction = target_direction
 		facing_direction = target_direction if target_direction.is_normalized() else target_direction.normalized()
 		gravity_enabled = abs(dash_gravity_time_disabled) == 0
 		is_dashing = true
