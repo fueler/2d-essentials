@@ -88,12 +88,13 @@ func _version_to_number(version: String) -> int:
 
 
 func _prepare_update_checker_timer():
-	update_checker_timer.process_callback = Timer.TIMER_PROCESS_IDLE
-	update_checker_timer.autostart = true
-	update_checker_timer.one_shot = false
-	update_checker_timer.wait_time = (60 * 60 * 12)
-	
-	update_checker_timer.timeout.connect(check_for_update)
+	if update_checker_timer:
+		update_checker_timer.process_callback = Timer.TIMER_PROCESS_IDLE
+		update_checker_timer.autostart = true
+		update_checker_timer.one_shot = false
+		update_checker_timer.wait_time = (60 * 60 * 12)
+		
+		update_checker_timer.timeout.connect(check_for_update)
 
 
 func _on_pressed():
