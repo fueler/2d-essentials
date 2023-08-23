@@ -1,10 +1,10 @@
 class_name VelocityComponent2D extends Node2D
 
 ############ SIGNALS ############
-signal dashed
+signal dashed(position: Vector2)
 signal coyote_time_started
-signal jumped
-signal wall_jumped(normal: Vector2)
+signal jumped(position: Vector2)
+signal wall_jumped(normal: Vector2, position: Vector2)
 signal wall_slide_started
 signal wall_slide_finished
 signal wall_climb_started
@@ -236,12 +236,12 @@ func accelerate_horizontally(direction: Vector2):
 	return self
 
 func accelerate_to_target(target: Node2D):
-	var target_direction: Vector2 = (target.global_position - global_position).normalized()
+	var target_direction: Vector2 = (target.global_position - body.global_position).normalized()
 	
 	return accelerate_in_direction(target_direction)
 
 func accelerate_to_position(position: Vector2):
-	var target_direction: Vector2 = (position - global_position).normalized()
+	var target_direction: Vector2 = (position - body.global_position).normalized()
 	
 	return accelerate_in_direction(target_direction)
 
@@ -285,7 +285,7 @@ func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float 
 		is_dashing = true
 		is_wall_climbing = false
 		is_wall_sliding = false
-		dash_queue.append(global_position)
+		dash_queue.append(body.global_position)
 		dash_duration_timer.start()
 		
 		decelerate(true)
@@ -294,7 +294,7 @@ func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float 
 		
 		_create_dash_cooldown_timer()
 		
-		dashed.emit()
+		dashed.emit(body.global_position)
 	
 	return self
 	
@@ -407,8 +407,8 @@ func jump():
 		
 		
 func apply_jump():
-	jumped.emit()
-	jump_queue.append(global_position)
+	jumped.emit(body.global_position)
+	jump_queue.append(body.global_position)
 	
 	if jump_queue.size() > 1 and height_reduced_by_jump > 0:
 		var height_reduced: int =  max(0, jump_queue.size() - 1) * height_reduced_by_jump
@@ -442,11 +442,11 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 	velocity.y = jump_velocity
 	
 	if wall_jump_count_as_jump:
-		jump_queue.append(global_position)
+		jump_queue.append(body.global_position)
 	else:
 		reset_jump_queue()
 
-	wall_jumped.emit(wall_normal)
+	wall_jumped.emit(wall_normal, body.global_position)
 	
 func can_wall_climb(direction: Vector2 = facing_direction) -> bool:
 	return wall_climb_enabled and(direction.is_equal_approx(Vector2.UP) or direction.is_equal_approx(Vector2.DOWN)) and body.is_on_wall() and not body.is_on_ceiling()
