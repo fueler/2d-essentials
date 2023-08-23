@@ -111,7 +111,7 @@ signal inverted_gravity(inverted: bool)
 @export var knockback_power: int = 250
 #################################################
 
-@onready var body = get_parent() as Node2D
+@onready var body = get_parent() as CharacterBody2D
 
 var gravity_enabled: bool = true:
 	set(value):
@@ -236,12 +236,12 @@ func accelerate_horizontally(direction: Vector2):
 	return self
 
 func accelerate_to_target(target: Node2D):
-	var target_direction: Vector2 = (target.global_position - body.global_position).normalized()
+	var target_direction: Vector2 = body.global_position.direction_to(target.global_position)
 	
 	return accelerate_in_direction(target_direction)
 
 func accelerate_to_position(position: Vector2):
-	var target_direction: Vector2 = (position - body.global_position).normalized()
+	var target_direction: Vector2 = body.global_position.direction_to(position)
 	
 	return accelerate_in_direction(target_direction)
 
