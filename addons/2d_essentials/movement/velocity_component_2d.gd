@@ -160,8 +160,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var warnings: PackedStringArray = []
 	var parent_node = get_parent()
 	
-	if parent_node == null or not parent_node is Node2D:
-		warnings.append("This component needs a Node2D parent in order to work properly")
+	if parent_node == null or not parent_node is CharacterBody2D:
+		warnings.append("This component needs a CharacterBody2D parent in order to work properly")
 			
 	return warnings
 	
@@ -589,7 +589,7 @@ func on_wall_climb_timer_timeout():
 	wall_climb_enabled = true
 	
 	
-func on_jumped():
+func on_jumped(position: Vector2):
 	gravity_enabled = true
 	is_wall_climbing = false
 	is_wall_sliding = false
@@ -598,7 +598,7 @@ func on_jumped():
 	coyote_timer.stop()
 
 
-func on_wall_jumped(normal: Vector2):
+func on_wall_jumped(normal: Vector2, position: Vector2):
 	if not normal.is_zero_approx():
 		facing_direction = normal
 		last_faced_direction = normal
