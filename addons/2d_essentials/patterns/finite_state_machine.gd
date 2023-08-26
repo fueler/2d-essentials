@@ -1,8 +1,8 @@
 class_name GodotEssentialsFiniteStateMachine extends Node
 
-signal state_changed(from_state: State, state: State)
+signal state_changed(from_state: GodotEssentialsState, state: GodotEssentialsState)
 
-@export var current_state: State = null
+@export var current_state: GodotEssentialsState = null
 
 var states: Dictionary = {}
 var active: bool = true:
@@ -22,7 +22,7 @@ func _ready():
 	for initialized_state in states.values():
 		initialized_state.state_finished.connect(on_finished_state)
 	
-	if current_state is State:
+	if current_state is GodotEssentialsState:
 		change_state(current_state, true)
 
 func _unhandled_input(event):
@@ -37,11 +37,11 @@ func process(delta):
 	current_state.update(delta)
 		
 
-func change_state(new_state: State, force: bool = false):
+func change_state(new_state: GodotEssentialsState, force: bool = false):
 	if not force and current_state_is(new_state):
 		return
 	
-	if current_state is State:
+	if current_state is GodotEssentialsState:
 		exit_state(current_state)
 	
 	state_changed.emit(current_state, new_state)
@@ -60,12 +60,12 @@ func change_state_by_name(name: String):
 	push_error("The state {name} does not exists on this FiniteStateMachine".format({"name": name}))
 
 
-func enter_state(state: State, previous_state: State):
+func enter_state(state: GodotEssentialsState, previous_state: GodotEssentialsState):
 	state._enter({"previous_state": previous_state})
 	state.state_entered.emit()
 	
 
-func exit_state(state: State):
+func exit_state(state: GodotEssentialsState):
 	state._exit()
 
 
@@ -80,7 +80,7 @@ func has_state(name: String) -> bool:
 	return states.has(name)
 	
 
-func current_state_is(state: State) -> bool:
+func current_state_is(state: GodotEssentialsState) -> bool:
 	if state:
 		return state.name.to_lower() == current_state.name.to_lower()
 		
@@ -95,13 +95,13 @@ func _initialize_states_nodes(node: Node = null):
 	var childrens = node.get_children(true) if node else get_children(true)
 	
 	for child in childrens:
-		if child is State:
+		if child is GodotEssentialsState:
 			_add_state_to_dictionary(child)
 		else:
 			_initialize_states_nodes(child)
 
 
-func _add_state_to_dictionary(state: State):
+func _add_state_to_dictionary(state: GodotEssentialsState):
 	if state.is_inside_tree():
 		states[state.name] = get_node(state.get_path())
 
