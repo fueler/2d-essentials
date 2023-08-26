@@ -212,7 +212,7 @@ func accelerate_in_direction(direction: Vector2, only_horizontal: bool = false):
 	if not direction.is_zero_approx():
 		last_faced_direction = direction
 
-		if only_horizontal or (acceleration == 0 and friction == 0):
+		if only_horizontal:
 			accelerate_horizontally(direction)
 		else:
 			if acceleration > 0:

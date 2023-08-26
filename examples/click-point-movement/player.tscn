@@ -16,6 +16,7 @@ drag_vertical_enabled = true
 
 [node name="VelocityComponent2D" type="Node2D" parent="."]
 script = ExtResource("1_ipvqr")
+acceleration = 400.0
 
 [node name="CoyoteTimer" type="Timer" parent="VelocityComponent2D"]
 process_callback = 0

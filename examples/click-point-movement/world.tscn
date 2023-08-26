@@ -8,7 +8,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_43puf"]
 size = Vector2(191, 118)
 
-[node name="Scenario" type="Node2D"]
+[node name="ClickPointScenario" type="Node2D"]
 
 [node name="ClickPointMovement" parent="." node_paths=PackedStringArray("moveable_entity") instance=ExtResource("1_a4hwd")]
 point_display_scene = ExtResource("2_mchuc")
