@@ -422,7 +422,7 @@ func apply_jump():
 		
 
 func can_wall_jump() -> bool:
-	return wall_jump_enabled and body.is_on_wall() and not body.is_on_ceiling() and not velocity.y == 0
+	return wall_jump_enabled and body.is_on_wall() and not body.is_on_ceiling() 
 	
 
 func wall_jump(direction: Vector2):
@@ -453,15 +453,15 @@ func apply_wall_jump_direction(wall_normal: Vector2):
 	wall_jumped.emit(wall_normal, body.global_position)
 	
 func can_wall_climb() -> bool:
-	return is_wall_climbing or (wall_climb_enabled and body.is_on_wall() and not body.is_on_ceiling())
+	return wall_climb_enabled and is_wall_climbing or (wall_climb_enabled and body.is_on_wall() and not body.is_on_ceiling())
 	
 func wall_climb(direction: Vector2 = Vector2.ZERO):
-	is_wall_climbing = can_wall_climb() and direction in [Vector2.UP, Vector2.DOWN]
+	is_wall_climbing = can_wall_climb() 
 
 	if direction.is_zero_approx():
 		decelerate(true)
 		
-	if is_wall_climbing:
+	if is_wall_climbing and direction in [Vector2.UP, Vector2.DOWN]:
 		var is_climbing_up = direction.is_equal_approx(Vector2.UP)
 		var wall_climb_speed_direction = wall_climb_speed_up if is_climbing_up else wall_climb_speed_down			
 		var climb_force = wall_climb_speed_direction
@@ -473,8 +473,6 @@ func wall_climb(direction: Vector2 = Vector2.ZERO):
 			if is_climbing_up:
 				climb_force *= -1
 		
-		# Constant x-axis speed to detect the wall
-		velocity.x = -body.get_wall_normal().x * 1.0
 		velocity.y = climb_force
 		
 		if is_inverted_gravity:
