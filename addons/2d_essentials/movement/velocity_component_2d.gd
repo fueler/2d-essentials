@@ -290,7 +290,6 @@ func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float 
 		
 		decelerate(true)
 		velocity = target_direction * (max_speed * max(1, absf(speed_multiplier)))
-		apply_air_friction()
 		
 		_create_dash_cooldown_timer()
 		
@@ -379,6 +378,7 @@ func reset_jump_queue():
 
 func reset_dash_queue():
 	dash_queue.clear()
+	dash_duration_timer.stop()
 	
 
 func can_jump() -> bool:
