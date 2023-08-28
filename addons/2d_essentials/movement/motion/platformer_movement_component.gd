@@ -55,6 +55,15 @@ signal coyote_time_finished
 ## The time window this jump can be executed when the character is not on the floor
 @export var coyote_jump_time_window: float = 0.1
 
+@export_group("Wall Jump")
+## Enable the wall jump action
+@export var wall_jump_enabled : bool = false
+## Defines whether the wall jump is counted as a jump in the overall count.
+@export var wall_jump_count_as_jump: bool = false
+## The maximum angle of deviation that a wall can have to allow the jump to be executed.
+@export var maximum_permissible_wall_angle : float = 0.0
+
+
 @onready var jump_velocity: float = _calculate_jump_velocity()
 @onready var jump_gravity: float =  _calculate_jump_gravity()
 @onready var fall_gravity: float =  _calculate_fall_gravity()
@@ -81,18 +90,19 @@ var jump_queue: Array[Vector2] = []
 func _ready():
 	super._ready()
 	_create_suspend_gravity_timer()
+	
+	wall_jumped.connect(on_wall_jumped)
 
-func move() -> GodotEssentialsMotion:
+
+func move() -> void:
 	var was_on_floor: bool = body.is_on_floor()
 	super.move()
 	
 	var just_left_edge = was_on_floor and not body.is_on_floor()
 	
-	if just_left_edge:
+	if just_left_edge and coyote_timer.is_stopped():
 		coyote_time_started.emit()
-	
-	return self
-	
+		
 
 func accelerate_horizontally(direction: Vector2, delta: float =  get_physics_process_delta_time()) -> GodotEssentialsPlatformerMovementComponent:
 	facing_direction = _normalize_vector(direction)
@@ -162,7 +172,7 @@ func suspend_gravity_for_duration(duration: float):
 
 func can_jump() -> bool:
 	var coyote_jump_active: bool = coyote_jump_enabled and coyote_timer.time_left > 0.0
-	var allowed_jumps: bool= jump_queue.size() < allowed_jumps
+	var available_jumps: bool = jump_queue.size() < allowed_jumps
 	var is_withing_threshold: bool = jump_velocity_threshold == 0
 	
 	if jump_velocity_threshold > 0:
@@ -171,29 +181,56 @@ func can_jump() -> bool:
 		else:	
 			is_withing_threshold = velocity.y < 0 or (velocity.y < jump_velocity_threshold)
 
-	return allowed_jumps and (coyote_jump_active or is_withing_threshold)
+	return available_jumps and (coyote_jump_active or is_withing_threshold)
+
+
+func can_wall_jump() -> bool:
+	var is_on_wall: bool =  wall_jump_enabled and body.is_on_wall()
+	var available_jumps: bool = not wall_jump_count_as_jump or (wall_jump_count_as_jump and jump_queue.size() < allowed_jumps)
 	
+	return is_on_wall and available_jumps
+		
 
 func jump(height: float = jump_height) -> GodotEssentialsPlatformerMovementComponent:
-	if can_jump():
-		var height_reduced: int =  max(0, jump_queue.size()) * height_reduced_by_jump
-		velocity.y = _calculate_jump_velocity(height - height_reduced)
+	var height_reduced: int =  max(0, jump_queue.size()) * height_reduced_by_jump
+	velocity.y = _calculate_jump_velocity(height - height_reduced)
 
-		jumped.emit(body.global_position)
-		jump_queue.append(body.global_position)
-		
-		if jump_queue.size() >= allowed_jumps:
-			allowed_jumps_reached.emit(jump_queue)
-		
+	add_position_to_jump_queue(body.global_position)
+	jumped.emit(body.global_position)
+	
 	return self
 
 
+func wall_jump(direction: Vector2) -> GodotEssentialsPlatformerMovementComponent:
+	var wall_normal: Vector2 = body.get_wall_normal()
+	var left_angle: float = absf(wall_normal.angle_to(Vector2.LEFT))
+	var right_angle: float = absf(wall_normal.angle_to(Vector2.RIGHT))
+	
+	jump()
+	velocity.x = wall_normal.x * velocity.y
+	
+
+	if wall_jump_count_as_jump:
+		add_position_to_jump_queue(body.global_position)
+
+	wall_jumped.emit(wall_normal, body.global_position)
+	
+	return self
+	
+	
 func reset_jump_queue() -> GodotEssentialsPlatformerMovementComponent:
 	if not jump_queue.is_empty():
 		jump_queue.clear()
 		jumps_restarted.emit()
 	
 	return self
+
+func add_position_to_jump_queue(position: Vector2):
+	jump_queue.append(position)
+	
+	if jump_queue.size() == allowed_jumps:
+		allowed_jumps_reached.emit(jump_queue)
+	
 
 
 func _calculate_jump_velocity(height: int = jump_height, time_to_peak: float = jump_time_to_peak):
@@ -252,3 +289,10 @@ func on_coyote_time_started():
 func on_coyote_timer_timeout():
 	gravity_enabled = true
 	coyote_time_finished.emit()
+
+
+func on_wall_jumped(normal: Vector2, position: Vector2):
+	if not normal.is_zero_approx():
+		facing_direction = normal
+		last_faced_direction = normal
+	

@@ -51,12 +51,11 @@ func _ready():
 	_create_temporary_speed_timer(DEFAULT_TEMPORARY_SPEED_TIME)
 
 
-func move() -> GodotEssentialsMotion:
+func move() -> void:
 	if body:
 		body.velocity = velocity
 		body.move_and_slide()
-		
-	return self
+	
 
 
 func move_and_collide(delta: float = get_physics_process_delta_time()) -> KinematicCollision2D:
