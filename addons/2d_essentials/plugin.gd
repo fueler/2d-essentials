@@ -10,8 +10,8 @@ func _enter_tree():
 	add_custom_type("VelocityComponent2D", "Node2D", preload("res://addons/2d_essentials/movement/velocity_component_2d.gd"), preload("res://addons/2d_essentials/icons/arrow_cross.svg"))
 	add_custom_type("ShakeCameraComponent2D", "Node2D", preload("res://addons/2d_essentials/camera/shake_camera_component.gd"), preload("res://addons/2d_essentials/icons/video.png"))
 	add_custom_type("RotatorComponent", "Node2D", preload("res://addons/2d_essentials/movement/rotator_component.gd"), preload("res://addons/2d_essentials/icons/arrow_clockwise.svg"))
-	add_custom_type("GodotEssentialsFiniteStateMachine", "Node", preload("res://addons/2d_essentials/patterns/finite_state_machine.gd"), preload("res://addons/2d_essentials/icons/share2.png"))
-	add_custom_type("GodotEssentialsState", "Node", preload("res://addons/2d_essentials/patterns/state.gd"), preload("res://addons/2d_essentials/icons/target.png"))
+	add_custom_type("GodotEssentialsFiniteStateMachine", "Node", preload("res://addons/2d_essentials/patterns/finite_state_machine/finite_state_machine.gd"), preload("res://addons/2d_essentials/icons/share2.png"))
+	add_custom_type("GodotEssentialsState", "Node", preload("res://addons/2d_essentials/patterns/finite_state_machine/state.gd"), preload("res://addons/2d_essentials/icons/target.png"))
 	
 	_setup_update_notificator()
 
