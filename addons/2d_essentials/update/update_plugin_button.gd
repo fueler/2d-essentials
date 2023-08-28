@@ -39,7 +39,7 @@ func show_dialog(dialog: Window):
 	if not dialog.visible:
 		var scale: float = editor_plugin.get_editor_interface().get_editor_scale() if editor_plugin else 1.0
 		dialog.gui_embed_subwindows = false
-		dialog.popup_centered(Vector2i(200, 200) * scale)
+		dialog.popup_centered(Vector2i(250, 250) * scale)
 
 
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:

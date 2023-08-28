@@ -46,8 +46,12 @@ func translate_x_axis_to_vector(axis: float) -> Vector2:
 			horizontal_direction = Vector2.RIGHT
 			
 	return horizontal_direction
-		
 
+
+func normalize_vector(value: Vector2) -> Vector2:
+	return value if value.is_normalized() else value.normalized()
+
+	
 func frame_freeze(time_scale: float, duration: float):
 	frame_freezed.emit()
 	
