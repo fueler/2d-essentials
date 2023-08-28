@@ -1,8 +1,8 @@
 class_name GodotEssentialsGridMovementComponent extends Node2D
 
 signal moved(result: Dictionary)
-signal flushed_recorded_grid_movements(movements: Array[Vector2])
-signal movements_completed(movements: Array[Vector2])
+signal flushed_recorded_grid_movements(movements: Array[Dictionary])
+signal movements_completed(movements: Array[Dictionary])
 
 @export_group("GridSize")
 ## The tile size for this grid based movement
@@ -17,7 +17,7 @@ signal movements_completed(movements: Array[Vector2])
 @onready var body: CharacterBody2D = get_parent() as CharacterBody2D
 
 var recorded_grid_movements: Array[Dictionary] = []
-
+var movements_count: int = 0
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings: PackedStringArray = []
@@ -30,11 +30,11 @@ func _get_configuration_warnings() -> PackedStringArray:
 
 
 func _ready():
-	moved.connect(on_moved)
-	flushed_recorded_grid_movements.connect(on_flushed_recorded_grid_movements)
-	
 	if body:
 		snap_body_position(body)
+	
+	moved.connect(on_moved)
+	flushed_recorded_grid_movements.connect(on_flushed_recorded_grid_movements)
 	
 	
 func follow_path(moves: Array[Vector2]):
@@ -64,32 +64,47 @@ func move(direction: Vector2, valid_position_callback: Callable = _default_valid
 		moved.emit(result)
 		
 
-func on_moved(from: Vector2, to: Vector2, direction: Vector2):
+func on_moved(result: Dictionary):
 	if MAX_RECORDED_GRID_MOVEMENTS == 0 or recorded_grid_movements.size() < MAX_RECORDED_GRID_MOVEMENTS:
-		recorded_grid_movements.append({"from":from, "to": to, "direction": direction})
+		recorded_grid_movements.append(result)
+	
+	movements_count += 1
+	
+	if movements_count >= EMIT_SIGNAL_EVERY_N_MOVEMENTS:
+		var movements: Array[Dictionary] = recorded_grid_movements.duplicate()
+		movements.reverse()
 		
+		movements_completed.emit(movements.slice(0, movements_count))
+		movements_count = 0
+
 	if recorded_grid_movements.size() >= MAX_RECORDED_GRID_MOVEMENTS:
 		flushed_recorded_grid_movements.emit(recorded_grid_movements)
+	
 
-
-func on_flushed_recorded_grid_movements(movements: Array[Vector2]):
+func on_flushed_recorded_grid_movements(movements: Array[Dictionary]):
 	movements.clear()
 
 
 func _normalize_vector(value: Vector2) -> Vector2:
 	return value if value.is_normalized() else value.normalized()
 
+
 func snap_body_position(body: CharacterBody2D):
-	body.position = body.position.snapped(Vector2.ONE * TILE_SIZE)
-	body.position += Vector2.ONE * TILE_SIZE/2
+	body.global_position = body.global_position.snapped(Vector2.ONE * TILE_SIZE)
+	body.global_position += Vector2.ONE * TILE_SIZE/2
+
 
 func _handle_grid_direction(direction: Vector2):
 	direction = _normalize_vector(direction)
 	
-	if direction.x != 0 and direction.y != 0:
+	# Normalize diagonals
+	if _is_diagonal(direction):
 		direction *= sqrt(2)
 
 	return direction
 
 func _default_valid_position_callback(result: Dictionary = {}) -> bool:
 	return true
+
+func _is_diagonal(direction: Vector2) -> bool:
+	return direction.x != 0 and direction.y != 0

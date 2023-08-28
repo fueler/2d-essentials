@@ -51,7 +51,18 @@ func translate_x_axis_to_vector(axis: float) -> Vector2:
 func normalize_vector(value: Vector2) -> Vector2:
 	return value if value.is_normalized() else value.normalized()
 
+
+func normalize_diagonal_vector(direction: Vector2) -> Vector2:
+	if is_diagonal_direction(direction):
+		return direction * sqrt(2)
 	
+	return direction
+
+
+func is_diagonal_direction(direction: Vector2) -> bool:
+	return direction.x != 0 and direction.y != 0
+	
+
 func frame_freeze(time_scale: float, duration: float):
 	frame_freezed.emit()
 	
