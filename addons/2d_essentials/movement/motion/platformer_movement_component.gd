@@ -8,7 +8,10 @@ signal allowed_jumps_reached(jump_positions: Array[Vector2])
 signal jumps_restarted
 signal coyote_time_started
 signal coyote_time_finished
-
+signal wall_slide_started
+signal wall_slide_finished
+signal wall_climb_started
+signal wall_climb_finished
 
 @export_group("Gravity")
 ## The maximum vertical velocity while falling to control fall speed
@@ -73,6 +76,8 @@ signal coyote_time_finished
 @export_group("Wall Climb")
 ## Enable the wall climb action
 @export var wall_climb_enabled: bool = false
+## Disables gravity so that climbing has no resistance when going up
+@export var disable_gravity_on_wall_climb: bool = true
 ## The speed when climb upwards
 @export var wall_climb_speed_up: float = 50.0
 ## The speed when climb downwards
@@ -97,6 +102,7 @@ var gravity_enabled: bool = true:
 			
 		gravity_enabled = value
 
+
 var is_inverted_gravity: bool = false:
 	set(value):
 		if value != is_inverted_gravity:
@@ -104,15 +110,40 @@ var is_inverted_gravity: bool = false:
 			
 		is_inverted_gravity = value
 
+
+var is_wall_sliding: bool = false:
+	set(value):
+		if value != is_wall_sliding:
+			if value:
+				wall_slide_started.emit()
+			else:
+				wall_slide_finished.emit()
+				
+		is_wall_sliding = value
+
+	
+var is_wall_climbing: bool = false:
+	set(value):
+		if value != is_wall_climbing:
+			if value:
+				wall_climb_started.emit()
+			else:
+				wall_climb_finished.emit()
+				
+		is_wall_climbing = value
+
 var suspend_gravity_timer: Timer
 var coyote_timer: Timer
+var wall_climb_timer: Timer
 var jump_queue: Array[Vector2] = []
 
 func _ready():
 	super._ready()
 	_create_suspend_gravity_timer()
 	
+	jumped.connect(on_jumped)
 	wall_jumped.connect(on_wall_jumped)
+	wall_climb_started.connect(on_wall_climb_started)
 
 
 func move() -> void:
@@ -220,7 +251,7 @@ func jump(height: float = jump_height, bypass: bool = false) -> GodotEssentialsP
 		var height_reduced: int =  max(0, jump_queue.size()) * height_reduced_by_jump
 		velocity.y = _calculate_jump_velocity(height - height_reduced)
 
-		add_position_to_jump_queue(body.global_position)
+		_add_position_to_jump_queue(body.global_position)
 		jumped.emit(body.global_position)
 		
 	return self
@@ -235,7 +266,7 @@ func wall_jump(direction: Vector2, height: float = jump_height) -> GodotEssentia
 	velocity.x = wall_normal.x * velocity.y
 	
 	if wall_jump_count_as_jump:
-		add_position_to_jump_queue(body.global_position)
+		_add_position_to_jump_queue(body.global_position)
 
 	wall_jumped.emit(wall_normal, body.global_position)
 	
@@ -248,6 +279,7 @@ func can_wall_slide() -> bool:
 	
 func wall_slide(delta: float =  get_physics_process_delta_time()) -> GodotEssentialsPlatformerMovementComponent:
 	if can_wall_slide():
+		is_wall_sliding = true
 		velocity.y += wall_slide_gravity * delta
 		
 		if is_inverted_gravity:
@@ -264,6 +296,9 @@ func can_wall_climb() -> bool:
 	
 func wall_climb(direction: Vector2) -> GodotEssentialsPlatformerMovementComponent:
 	if can_wall_climb():
+		is_wall_climbing = true
+		is_wall_sliding = false
+		
 		direction = _normalize_vector(direction)
 		
 		if direction.is_zero_approx():
@@ -293,7 +328,7 @@ func reset_jump_queue() -> GodotEssentialsPlatformerMovementComponent:
 	return self
 
 
-func add_position_to_jump_queue(position: Vector2):
+func _add_position_to_jump_queue(position: Vector2):
 	jump_queue.append(position)
 	
 	if jump_queue.size() == allowed_jumps:
@@ -344,8 +379,49 @@ func _create_coyote_timer():
 	coyote_time_started.connect(on_coyote_time_started)
 
 
+func _create_wall_climbing_timer(time: float = time_it_can_climb):
+	if wall_climb_timer:
+		return
+		
+	wall_climb_timer = Timer.new()
+	wall_climb_timer.name = "WallClimbTimer"
+	wall_climb_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	wall_climb_timer.wait_time = time
+	wall_climb_timer.one_shot = true
+	wall_climb_timer.autostart = false
+	
+	add_child(wall_climb_timer)
+	wall_climb_timer.timeout.connect(on_wall_climb_timer_timeout)
+
+
+func on_jumped(position: Vector2):
+	is_wall_climbing = false
+	is_wall_sliding = false
+
+
+func on_wall_jumped(normal: Vector2, position: Vector2):
+	if not normal.is_zero_approx():
+		facing_direction = normal
+		last_faced_direction = normal
+		jumped.emit(position)
+	
+
 func on_suspend_gravity_timeout():
 	gravity_enabled = true
+
+
+func on_wall_climb_started():
+	if disable_gravity_on_wall_climb:
+		gravity_enabled = false
+		
+	wall_climb_timer.start()
+
+
+func on_wall_climb_finished():
+	if disable_gravity_on_wall_climb:
+		gravity_enabled = true
+		
+	wall_climb_timer.stop()
 
 
 func on_coyote_time_started():
@@ -358,8 +434,14 @@ func on_coyote_timer_timeout():
 	coyote_time_finished.emit()
 
 
-func on_wall_jumped(normal: Vector2, position: Vector2):
-	if not normal.is_zero_approx():
-		facing_direction = normal
-		last_faced_direction = normal
+func on_wall_climb_timer_timeout(normal: Vector2):
+	is_wall_climbing = false
+	
+	if wall_climb_fatigue_knockback > 0:
+		knockback(normal, wall_climb_fatigue_knockback)
+	
+	if time_disabled_when_timeout > 0:
+		wall_climb_enabled = false
+		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
+		wall_climb_enabled = true
 	

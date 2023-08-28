@@ -218,6 +218,7 @@ func _normalize_vector(value: Vector2) -> Vector2:
 func _velocity_has_reached_max_speed() -> bool:
 	return velocity.length_squared() == MAX_SPEED * MAX_SPEED
 
+
 func _create_dash_duration_timer(time: float = dash_duration):
 	if dash_duration_timer:
 		return
