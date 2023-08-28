@@ -215,25 +215,25 @@ func can_wall_jump() -> bool:
 	return is_on_wall and available_jumps
 		
 
-func jump(height: float = jump_height) -> GodotEssentialsPlatformerMovementComponent:
-	var height_reduced: int =  max(0, jump_queue.size()) * height_reduced_by_jump
-	velocity.y = _calculate_jump_velocity(height - height_reduced)
+func jump(height: float = jump_height, bypass: bool = false) -> GodotEssentialsPlatformerMovementComponent:
+	if bypass or can_jump():
+		var height_reduced: int =  max(0, jump_queue.size()) * height_reduced_by_jump
+		velocity.y = _calculate_jump_velocity(height - height_reduced)
 
-	add_position_to_jump_queue(body.global_position)
-	jumped.emit(body.global_position)
-	
+		add_position_to_jump_queue(body.global_position)
+		jumped.emit(body.global_position)
+		
 	return self
 
 
-func wall_jump(direction: Vector2) -> GodotEssentialsPlatformerMovementComponent:
+func wall_jump(direction: Vector2, height: float = jump_height) -> GodotEssentialsPlatformerMovementComponent:
 	var wall_normal: Vector2 = body.get_wall_normal()
 	var left_angle: float = absf(wall_normal.angle_to(Vector2.LEFT))
 	var right_angle: float = absf(wall_normal.angle_to(Vector2.RIGHT))
 	
-	jump()
+	jump(height, true)
 	velocity.x = wall_normal.x * velocity.y
 	
-
 	if wall_jump_count_as_jump:
 		add_position_to_jump_queue(body.global_position)
 

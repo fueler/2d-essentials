@@ -15,10 +15,15 @@ signal teleported(from: Vector2, to: Vector2)
 @export var ACCELERATION: float = 350.0
 ## The force applied to slow down the character's movement.
 @export var FRICTION: float = 750.0
+## Modulates the rate of horizontal speed decrease during airborne movement.
+@export_range(0.0 , 1.0, 0.001) var AIR_FRICTION_HORIZONTAL_FACTOR: float = 1.0
+## Modulates the rate of vertical speed decrease during airborne movement.
+@export_range(0.0 , 1.0, 0.001) var AIR_FRICTION_VERTICAL_FACTOR: float = 1.0
 
 @export_group("Modifiers")
 ## In seconds, the amount of time a speed modification will endure
 @export var DEFAULT_TEMPORARY_SPEED_TIME = 3.0
+
 
 @export_group("Signals")
 ## Emits a signal when the body reaches its maximum speed.
@@ -102,6 +107,20 @@ func decelerate(delta: float = get_physics_process_delta_time(), force_stop: boo
 func accelerate_to_position(position: Vector2) -> GodotEssentialsMotion:
 	return accelerate(body.global_position.direction_to(position))
 
+
+func apply_air_friction_horizontal(friction_factor: float = AIR_FRICTION_HORIZONTAL_FACTOR) -> GodotEssentialsMotion:
+	if AIR_FRICTION_HORIZONTAL_FACTOR > 0 and not body.is_on_floor() and not body.is_on_wall():
+		velocity.x *= friction_factor
+		
+	return self
+	
+
+func apply_air_friction_vertical(friction_factor: float = AIR_FRICTION_VERTICAL_FACTOR) -> GodotEssentialsMotion:
+	if AIR_FRICTION_VERTICAL_FACTOR > 0 and not body.is_on_floor() and not body.is_on_wall():
+		velocity.y *= friction_factor
+		
+	return self
+	
 
 func knockback(direction: Vector2, power: float) -> GodotEssentialsMotion:
 	var knockback_direction: Vector2 = _normalize_vector(direction) * max(1, power)
