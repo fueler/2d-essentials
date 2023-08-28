@@ -509,6 +509,7 @@ func enable_dash(cooldown: float = dash_cooldown, times: int = times_can_dash):
 	dash_cooldown = cooldown
 	times_can_dash = times
 
+
 func _create_dash_cooldown_timer(time: float = dash_cooldown):
 	var dash_cooldown_timer: Timer = Timer.new()
 

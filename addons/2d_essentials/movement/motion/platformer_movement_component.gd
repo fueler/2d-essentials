@@ -7,6 +7,7 @@ signal wall_jumped(normal: Vector2, position: Vector2)
 signal allowed_jumps_reached(jump_positions: Array[Vector2])
 signal jumps_restarted
 signal coyote_time_started
+signal coyote_time_finished
 
 ## The maximum vertical velocity while falling to control fall speed
 @export_group("Gravity")
@@ -74,12 +75,24 @@ var is_inverted_gravity: bool = false:
 		is_inverted_gravity = value
 
 var suspend_gravity_timer: Timer
+var coyote_timer: Timer
 var jump_queue: Array[Vector2] = []
 
 func _ready():
 	super._ready()
 	_create_suspend_gravity_timer()
 
+func move() -> GodotEssentialsMotion:
+	var was_on_floor: bool = body.is_on_floor()
+	super.move()
+	
+	var just_left_edge = was_on_floor and not body.is_on_floor()
+	
+	if just_left_edge:
+		coyote_time_started.emit()
+	
+	return self
+	
 
 func accelerate_horizontally(direction: Vector2, delta: float =  get_physics_process_delta_time()) -> GodotEssentialsPlatformerMovementComponent:
 	facing_direction = _normalize_vector(direction)
@@ -147,13 +160,31 @@ func suspend_gravity_for_duration(duration: float):
 		suspend_gravity_timer.start()
 
 
-func jump(height: float = jump_height) -> GodotEssentialsPlatformerMovementComponent:
-	var height_reduced: int =  max(0, jump_queue.size()) * height_reduced_by_jump
-	velocity.y = _calculate_jump_velocity(height - height_reduced)
-
-	jumped.emit(body.global_position)
-	jump_queue.append(body.global_position)
+func can_jump() -> bool:
+	var coyote_jump_active: bool = coyote_jump_enabled and coyote_timer.time_left > 0.0
+	var allowed_jumps: bool= jump_queue.size() < allowed_jumps
+	var is_withing_threshold: bool = jump_velocity_threshold == 0
 	
+	if jump_velocity_threshold > 0:
+		if is_inverted_gravity:
+			is_withing_threshold = velocity.y > 0 or (velocity.y < -jump_velocity_threshold)
+		else:	
+			is_withing_threshold = velocity.y < 0 or (velocity.y < jump_velocity_threshold)
+
+	return allowed_jumps and (coyote_jump_active or is_withing_threshold)
+	
+
+func jump(height: float = jump_height) -> GodotEssentialsPlatformerMovementComponent:
+	if can_jump():
+		var height_reduced: int =  max(0, jump_queue.size()) * height_reduced_by_jump
+		velocity.y = _calculate_jump_velocity(height - height_reduced)
+
+		jumped.emit(body.global_position)
+		jump_queue.append(body.global_position)
+		
+		if jump_queue.size() >= allowed_jumps:
+			allowed_jumps_reached.emit(jump_queue)
+		
 	return self
 
 
@@ -192,6 +223,32 @@ func _create_suspend_gravity_timer(time: float = DEFAULT_GRAVITY_SUSPEND_DURATIO
 	add_child(suspend_gravity_timer)
 	suspend_gravity_timer.timeout.connect(on_suspend_gravity_timeout)
 
+
+func _create_coyote_timer():
+	if coyote_timer:
+		return
+	
+	coyote_timer = Timer.new()
+	coyote_timer.name = "CoyoteTimer"
+	coyote_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	coyote_timer.wait_time = coyote_jump_time_window
+	coyote_timer.one_shot = true
+	coyote_timer.autostart = false
+
+	add_child(coyote_timer)
+	coyote_timer.timeout.connect(on_coyote_timer_timeout)
+	coyote_time_started.connect(on_coyote_time_started)
+
+
 func on_suspend_gravity_timeout():
 	gravity_enabled = true
 
+
+func on_coyote_time_started():
+	gravity_enabled = false
+	coyote_timer.start()
+
+
+func on_coyote_timer_timeout():
+	gravity_enabled = true
+	coyote_time_finished.emit()
