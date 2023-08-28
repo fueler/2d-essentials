@@ -12,6 +12,8 @@ func _enter_tree():
 	add_custom_type("RotatorComponent", "Node2D", preload("res://addons/2d_essentials/movement/rotator_component.gd"), preload("res://addons/2d_essentials/icons/arrow_clockwise.svg"))
 	add_custom_type("GodotEssentialsFiniteStateMachine", "Node", preload("res://addons/2d_essentials/patterns/finite_state_machine/finite_state_machine.gd"), preload("res://addons/2d_essentials/icons/share2.png"))
 	add_custom_type("GodotEssentialsState", "Node", preload("res://addons/2d_essentials/patterns/finite_state_machine/state.gd"), preload("res://addons/2d_essentials/icons/target.png"))
+	add_custom_type("GodotEssentialsPlatformerMovementComponent", "Node2D", preload("res://addons/2d_essentials/movement/motion/platformer_movement_component.gd"), preload("res://addons/2d_essentials/icons/target.png"))
+	add_custom_type("GodotEssentialsTopDownMovementComponent", "Node2D", preload("res://addons/2d_essentials/movement/motion/top_down_movement_component.gd"), preload("res://addons/2d_essentials/icons/target.png"))
 	
 	_setup_update_notificator()
 
@@ -21,6 +23,10 @@ func _exit_tree():
 	remove_custom_type("VelocityComponent2D")
 	remove_custom_type("ShakeCameraComponent2D")
 	remove_custom_type("RotatorComponent")
+	remove_custom_type("GodotEssentialsFiniteStateMachine")
+	remove_custom_type("GodotEssentialsState")
+	remove_custom_type("GodotEssentialsPlatformerMovementComponent")
+	remove_custom_type("GodotEssentialsTopDownMovementComponent")
 	
 	_remove_update_notificator()
 

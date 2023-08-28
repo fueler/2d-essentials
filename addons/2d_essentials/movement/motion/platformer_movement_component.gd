@@ -9,11 +9,12 @@ signal jumps_restarted
 signal coyote_time_started
 signal coyote_time_finished
 
-## The maximum vertical velocity while falling to control fall speed
-@export_group("Gravity")
-@export var MAXIMUM_FALL_VELOCITY: float = 200.0
-@export var DEFAULT_GRAVITY_SUSPEND_DURATION: float = 2.0
 
+@export_group("Gravity")
+## The maximum vertical velocity while falling to control fall speed
+@export var MAXIMUM_FALL_VELOCITY: float = 200.
+## The default duration in seconds when the gravity is suspended
+@export var DEFAULT_GRAVITY_SUSPEND_DURATION: float = 2.0
 
 @export_group("Jump")
 ## The maximum height the character can reach
@@ -62,6 +63,26 @@ signal coyote_time_finished
 @export var wall_jump_count_as_jump: bool = false
 ## The maximum angle of deviation that a wall can have to allow the jump to be executed.
 @export var maximum_permissible_wall_angle : float = 0.0
+
+@export_group("Wall Slide")
+# Enable the sliding when the character is on a wall
+@export var wall_slide_enabled: bool = false
+## The gravity applied to start sliding on the wall until reach the floor
+@export var wall_slide_gravity: float = 50.0
+
+@export_group("Wall Climb")
+## Enable the wall climb action
+@export var wall_climb_enabled: bool = false
+## The speed when climb upwards
+@export var wall_climb_speed_up: float = 50.0
+## The speed when climb downwards
+@export var wall_climb_speed_down: float = 55.0
+## The force applied when the time it can climb reachs the timeout
+@export var wall_climb_fatigue_knockback: float = 100.0
+## Window time range in which where you can be climbing without getting tired of it
+@export var time_it_can_climb: float = 3.0
+## Time that the climb action is disabled when the fatigue timeout is triggered.
+@export var time_disabled_when_timeout: float = 0.7
 
 
 @onready var jump_velocity: float = _calculate_jump_velocity()
@@ -144,8 +165,11 @@ func apply_gravity(delta: float = get_physics_process_delta_time()) -> GodotEsse
 		velocity.y += gravity_force
 
 		if MAXIMUM_FALL_VELOCITY > 0:
-			velocity.y = max(velocity.y, -MAXIMUM_FALL_VELOCITY) if is_inverted_gravity else min(velocity.y, absf(MAXIMUM_FALL_VELOCITY))
-
+			if is_inverted_gravity:
+				velocity.y = max(velocity.y, -MAXIMUM_FALL_VELOCITY)
+			else:
+				velocity.y = min(velocity.y, absf(MAXIMUM_FALL_VELOCITY))	
+			
 	return self
 
 
@@ -217,6 +241,49 @@ func wall_jump(direction: Vector2) -> GodotEssentialsPlatformerMovementComponent
 	
 	return self
 	
+
+func can_wall_slide() -> bool:
+	return wall_slide_enabled and body.is_on_wall()
+	
+	
+func wall_slide(delta: float =  get_physics_process_delta_time()) -> GodotEssentialsPlatformerMovementComponent:
+	if can_wall_slide():
+		velocity.y += wall_slide_gravity * delta
+		
+		if is_inverted_gravity:
+			velocity.y = max(velocity.y - wall_slide_gravity * delta, -wall_slide_gravity)
+		else:
+			velocity.y = min(velocity.y + wall_slide_gravity * delta, wall_slide_gravity)
+			
+	return self
+	
+
+func can_wall_climb() -> bool:
+	return wall_climb_enabled and body.is_on_wall()
+	
+	
+func wall_climb(direction: Vector2) -> GodotEssentialsPlatformerMovementComponent:
+	if can_wall_climb():
+		direction = _normalize_vector(direction)
+		
+		if direction.is_zero_approx():
+			decelerate(true)
+		else:
+			var wall_climb_speed: float = 0.0
+			
+			match(direction):
+				Vector2.UP:
+					wall_climb_speed = wall_climb_speed_up
+				Vector2.DOWN:
+					wall_climb_speed = wall_climb_speed_down
+			
+			velocity.y = direction.y * wall_climb_speed
+			
+			if is_inverted_gravity:
+				velocity.y *= -1
+				
+	return self
+	
 	
 func reset_jump_queue() -> GodotEssentialsPlatformerMovementComponent:
 	if not jump_queue.is_empty():
@@ -225,13 +292,13 @@ func reset_jump_queue() -> GodotEssentialsPlatformerMovementComponent:
 	
 	return self
 
+
 func add_position_to_jump_queue(position: Vector2):
 	jump_queue.append(position)
 	
 	if jump_queue.size() == allowed_jumps:
 		allowed_jumps_reached.emit(jump_queue)
 	
-
 
 func _calculate_jump_velocity(height: int = jump_height, time_to_peak: float = jump_time_to_peak):
 	var y_axis = 1.0 if is_inverted_gravity else -1.0

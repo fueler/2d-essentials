@@ -140,7 +140,7 @@ func _normalize_vector(value: Vector2) -> Vector2:
 
 
 func _velocity_has_reached_max_speed() -> bool:
-	return velocity.length_squared() >= MAX_SPEED * MAX_SPEED
+	return velocity.length_squared() == MAX_SPEED * MAX_SPEED
 
 
 func _create_temporary_speed_timer(time: float) -> void:
