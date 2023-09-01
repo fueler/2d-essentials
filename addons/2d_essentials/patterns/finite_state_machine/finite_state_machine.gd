@@ -5,17 +5,11 @@ signal state_changed(from_state: GodotEssentialsState, state: GodotEssentialsSta
 @export var current_state: GodotEssentialsState = null
 
 var states: Dictionary = {}
-var active: bool = true:
-	get:
-		return active
+var locked: bool = false:
 	set(value):
-		if value:
-			set_physics_process(true)
-			set_process_input(true)
-		else:
-			set_physics_process(false)
-			set_process_input(false)
-
+			set_process(not value)
+			set_physics_process(not value)
+			set_process_input(not value)
 
 func _ready():
 	_initialize_states_nodes()
