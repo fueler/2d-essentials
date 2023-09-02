@@ -11,6 +11,7 @@ var locked: bool = false:
 			set_physics_process(not value)
 			set_process_input(not value)
 
+
 func _ready():
 	_initialize_states_nodes()
 	for initialized_state in states.values():
@@ -18,6 +19,7 @@ func _ready():
 	
 	if current_state is GodotEssentialsState:
 		change_state(current_state, true)
+
 
 func _unhandled_input(event):
 	current_state.handle_input(event)

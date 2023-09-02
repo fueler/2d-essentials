@@ -53,7 +53,7 @@ func teleport_to(target_position: Vector2,  valid_position_callback: Callable = 
 	}
 	
 	if _default_valid_position_callback(result):
-		body.global_position = target_position
+		body.global_position = target_position 
 		snap_body_position(body)
 
 
@@ -83,7 +83,7 @@ func move(direction: Vector2, valid_position_callback: Callable = _default_valid
 
 
 func snap_body_position(body: CharacterBody2D) -> void:
-	body.global_position = body.global_position.snapped(Vector2.ONE * TILE_SIZE)
+	body.global_position = snap_position(body.global_position)
 	body.global_position += Vector2.ONE * TILE_SIZE/2
 
 
