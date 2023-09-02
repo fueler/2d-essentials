@@ -10,6 +10,7 @@ var locked: bool = false:
 			set_process(not value)
 			set_physics_process(not value)
 			set_process_input(not value)
+			set_process_unhandled_input(not value)
 
 
 func _ready():
@@ -102,5 +103,9 @@ func _add_state_to_dictionary(state: GodotEssentialsState):
 		states[state.name] = get_node(state.get_path())
 
 
-func on_finished_state(next_state: String):
-	change_state_by_name(next_state)
+func on_finished_state(next_state):
+	if typeof(next_state) == TYPE_STRING:	
+		change_state_by_name(next_state)
+		
+	if next_state is GodotEssentialsState:
+		change_state(next_state)

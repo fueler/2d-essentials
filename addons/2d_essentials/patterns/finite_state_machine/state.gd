@@ -1,7 +1,7 @@
 class_name GodotEssentialsState extends Node
 
 signal state_entered
-signal state_finished(next_state: String)
+signal state_finished(next_state)
 
 
 func _enter(params: Dictionary = {}) -> void:
