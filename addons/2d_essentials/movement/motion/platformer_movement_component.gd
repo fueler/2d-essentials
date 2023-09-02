@@ -70,6 +70,8 @@ signal wall_climb_finished
 @export_group("Wall Slide")
 # Enable the sliding when the character is on a wall
 @export var wall_slide_enabled: bool = false
+## Overrides the fall gravity and apply instead the wall_slide_gravity_value
+@export var override_gravity_on_wall_slide: bool = true
 ## The gravity applied to start sliding on the wall until reach the floor
 @export var wall_slide_gravity: float = 50.0
 
@@ -137,6 +139,7 @@ var coyote_timer: Timer
 var wall_climb_timer: Timer
 var jump_queue: Array[Vector2] = []
 
+
 func _ready():
 	super._ready()
 	_create_suspend_gravity_timer()
@@ -144,6 +147,8 @@ func _ready():
 	jumped.connect(on_jumped)
 	wall_jumped.connect(on_wall_jumped)
 	wall_climb_started.connect(on_wall_climb_started)
+	wall_slide_started.connect(on_wall_slide_started)
+	wall_slide_finished.connect(on_wall_slide_finished)
 
 
 func move() -> void:
@@ -280,13 +285,16 @@ func can_wall_slide() -> bool:
 func wall_slide(delta: float =  get_physics_process_delta_time()) -> GodotEssentialsPlatformerMovementComponent:
 	if can_wall_slide():
 		is_wall_sliding = true
+		
 		velocity.y += wall_slide_gravity * delta
 		
 		if is_inverted_gravity:
 			velocity.y = max(velocity.y - wall_slide_gravity * delta, -wall_slide_gravity)
 		else:
 			velocity.y = min(velocity.y + wall_slide_gravity * delta, wall_slide_gravity)
-			
+	else:
+		is_wall_sliding = false
+	
 	return self
 	
 
@@ -422,6 +430,16 @@ func on_wall_climb_finished():
 		gravity_enabled = true
 		
 	wall_climb_timer.stop()
+
+
+func on_wall_slide_started():
+	if gravity_enabled and override_gravity_on_wall_slide:
+		gravity_enabled = false
+
+
+func on_wall_slide_finished():
+	if override_gravity_on_wall_slide:
+		gravity_enabled = true
 
 
 func on_coyote_time_started():
