@@ -158,6 +158,7 @@ func knockback(direction: Vector2, power: float) -> GodotEssentialsMotion:
 
 	return self	
 
+
 func teleport_to_position(position: Vector2) -> GodotEssentialsMotion:
 	var original_position: Vector2  = body.global_position
 	body.global_position = position
@@ -200,7 +201,6 @@ func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float 
 
 		dash_queue.append(body.global_position)
 		dash_duration_timer.start()
-	
 	
 	return self
 
