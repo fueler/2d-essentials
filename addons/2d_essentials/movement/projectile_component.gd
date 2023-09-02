@@ -70,10 +70,14 @@ func _ready():
 	follow_started.connect(on_follow_started)
 
 
-func move():
+func move(delta: float = get_physics_process_delta_time()):
 	if projectile:
-		projectile.global_position += direction * max_speed
-		look_at(direction + projectile.global_position)
+		if acceleration > 0:
+			projectile.global_position = projectile.global_position.lerp(projectile.global_position * max_speed, acceleration * max_speed * delta)
+		else:
+			projectile.global_position += direction * max_speed
+			
+		projectile.look_at(direction + projectile.global_position)
 
 
 func swap_target(next_target: Node2D) -> void:
@@ -82,10 +86,12 @@ func swap_target(next_target: Node2D) -> void:
 	
 	
 func stop_follow_target() -> void:
+	target = null
 	follow_target = false
 
 
-func begin_follow_target() -> void:
+func begin_follow_target(new_target: Node2D) -> void:
+	target = new_target
 	follow_target = true
 
 	
