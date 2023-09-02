@@ -2,7 +2,7 @@ class_name GodotEssentialsGridMovementComponent extends Node2D
 
 signal moved(result: Dictionary)
 signal move_not_valid(result: Dictionary)
-signal flushed_recorded_grid_movements(movements: Array[Dictionary])
+signal flushed_recorded_grid_movements(recorded_movements: Array[Dictionary])
 signal movements_completed(movements: Array[Dictionary])
 
 @export_group("GridSize")
@@ -38,25 +38,6 @@ func _ready():
 	flushed_recorded_grid_movements.connect(on_flushed_recorded_grid_movements)
 	
 
-func follow_path(moves: Array[Vector2], valid_position_callback: Callable = _default_valid_position_callback):
-	if moves.size() > 0:
-		var move = moves.pop_front()
-		move(move, valid_position_callback)
-		call_deferred("follow_path", moves, valid_position_callback)
-
-
-func teleport_to(target_position: Vector2,  valid_position_callback: Callable = _default_valid_position_callback):
-	var result = {
-		"from":  body.global_position, 
-		"to": target_position, 
-		"direction": Helpers.normalize_vector(target_position)
-	}
-	
-	if _default_valid_position_callback(result):
-		body.global_position = target_position 
-		snap_body_position(body)
-
-
 func move(direction: Vector2, valid_position_callback: Callable = _default_valid_position_callback):
 	direction = _handle_grid_direction(direction)
 	
@@ -80,6 +61,26 @@ func move(direction: Vector2, valid_position_callback: Callable = _default_valid
 		moved.emit(result)
 	else:
 		move_not_valid.emit(result)
+
+
+
+func follow_path(moves: Array[Vector2], valid_position_callback: Callable = _default_valid_position_callback):
+	if moves.size() > 0:
+		var move = moves.pop_front()
+		move(move, valid_position_callback)
+		call_deferred("follow_path", moves, valid_position_callback)
+
+
+func teleport_to(target_position: Vector2,  valid_position_callback: Callable = _default_valid_position_callback):
+	var result = {
+		"from":  body.global_position, 
+		"to": target_position, 
+		"direction": Helpers.normalize_vector(target_position)
+	}
+	
+	if _default_valid_position_callback(result):
+		body.global_position = target_position 
+		snap_body_position(body)
 
 
 func snap_body_position(body: CharacterBody2D) -> void:
@@ -120,6 +121,7 @@ func on_moved(result: Dictionary):
 
 	if recorded_grid_movements.size() >= MAX_RECORDED_GRID_MOVEMENTS:
 		flushed_recorded_grid_movements.emit(recorded_grid_movements)
+		recorded_grid_movements.clear()
 	
 
 func on_flushed_recorded_grid_movements(movements: Array[Dictionary]):

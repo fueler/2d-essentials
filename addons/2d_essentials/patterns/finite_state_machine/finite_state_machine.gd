@@ -48,11 +48,11 @@ func change_state(new_state: GodotEssentialsState, force: bool = false):
 	enter_state(new_state, previous_state)
 
 
-func change_state_by_name(name: String):
+func change_state_by_name(name: String, force: bool = false):
 	var new_state = get_state(name)
 	
 	if new_state:
-		return change_state(new_state)
+		return change_state(new_state, force)
 		
 	push_error("The state {name} does not exists on this FiniteStateMachine".format({"name": name}))
 

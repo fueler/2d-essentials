@@ -46,7 +46,6 @@ var follow_target: bool = false:
 				
 		follow_target = value
 
-var bounced_positions: Array[Vector2] = []
 var penetration_count: int = 0:
 	set(value):
 		penetration_count += value
@@ -54,6 +53,8 @@ var penetration_count: int = 0:
 			penetration_complete.emit()
 		else:
 			penetrated.emit(max(0, max_penetrations - penetration_count))
+
+var bounced_positions: Array[Vector2] = []
 
 
 func _get_configuration_warnings() -> PackedStringArray:
@@ -97,7 +98,7 @@ func begin_follow_target(new_target: Node2D) -> void:
 	
 func target_position() -> Vector2:
 	if target:
-		return projectile.position.direction_to(target.global_position)
+		return projectile.global_position.direction_to(target.global_position)
 	
 	return Vector2.ZERO
 
