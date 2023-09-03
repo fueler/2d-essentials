@@ -77,7 +77,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 	return warnings
 
 
-func ready():
+func _ready():
 	_create_temporary_speed_timer()
 	_create_dash_duration_timer()
 
@@ -224,6 +224,7 @@ func _create_dash_duration_timer(time: float = dash_duration):
 		return
 		
 	dash_duration_timer = Timer.new()
+	dash_duration_timer.name = "DashDurationTimer"
 	dash_duration_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
 	dash_duration_timer.wait_time = time
 	dash_duration_timer.one_shot = true

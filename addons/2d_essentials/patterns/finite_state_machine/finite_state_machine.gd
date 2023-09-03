@@ -7,10 +7,14 @@ signal state_changed(from_state: GodotEssentialsState, state: GodotEssentialsSta
 var states: Dictionary = {}
 var locked: bool = false:
 	set(value):
-			set_process(not value)
-			set_physics_process(not value)
-			set_process_input(not value)
-			set_process_unhandled_input(not value)
+		if value != locked:
+			if value:
+				lock_state_machine()
+			else:
+				unlock_state_machine()
+		locked = value
+	
+		
 
 
 func _ready():
@@ -20,6 +24,8 @@ func _ready():
 	
 	if current_state is GodotEssentialsState:
 		change_state(current_state, true)
+	
+	unlock_state_machine()
 
 
 func _unhandled_input(event):
@@ -109,3 +115,17 @@ func on_finished_state(next_state):
 		
 	if next_state is GodotEssentialsState:
 		change_state(next_state)
+
+
+func lock_state_machine():
+	set_process(false)
+	set_physics_process(false)
+	set_process_input(false)
+	set_process_unhandled_input(false)
+	
+	
+func unlock_state_machine():
+	set_process(true)
+	set_physics_process(true)
+	set_process_input(true)
+	set_process_unhandled_input(true)
