@@ -271,13 +271,13 @@ func shorten_jump() -> void:
 
 
 func wall_jump(direction: Vector2, height: float = jump_height) -> GodotEssentialsPlatformerMovementComponent:
-	var wall_normal: Vector2 = body.get_wall_normal()
+	var wall_normal: Vector2 = body.get_wall_normal() if direction.is_zero_approx() else direction
 	var left_angle: float = absf(wall_normal.angle_to(Vector2.LEFT))
 	var right_angle: float = absf(wall_normal.angle_to(Vector2.RIGHT))
 	
-	jump(height, true)
 	velocity.x = wall_normal.x * velocity.y
-	
+	jump(height, true)
+
 	if wall_jump_count_as_jump:
 		_add_position_to_jump_queue(body.global_position)
 
@@ -440,8 +440,12 @@ func on_wall_jumped(normal: Vector2, position: Vector2):
 	if not normal.is_zero_approx():
 		facing_direction = normal
 		last_faced_direction = normal
-		jumped.emit(position)
-	
+		
+	if not wall_jump_count_as_jump:
+		jump_queue.pop_back()
+		
+	jumped.emit(position)
+
 
 func on_suspend_gravity_timeout():
 	gravity_enabled = true
