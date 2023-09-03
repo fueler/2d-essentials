@@ -5,6 +5,7 @@ signal state_finished(next_state)
 
 var previous_states: Array[GodotEssentialsState] = []
 
+
 func _enter() -> void:
 	pass
 	
@@ -27,6 +28,7 @@ func update(_delta):
 
 func _on_animation_player_finished(name: String):
 	pass
+
 
 func _on_animation_finished():
 	pass

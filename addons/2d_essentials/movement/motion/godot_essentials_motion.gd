@@ -176,7 +176,7 @@ func change_speed_temporary(new_speed: float, time: float = DEFAULT_TEMPORARY_SP
 		
 		MAX_SPEED = absf(new_speed)
 		
-		temporary_speed_started.emit(original_max_speed, new_speed)
+		temporary_speed_started.emit(MAX_SPEED, new_speed)
 
 	return self
 
@@ -258,11 +258,11 @@ func _create_temporary_speed_timer(time: float = DEFAULT_TEMPORARY_SPEED_TIME) -
 	temporary_speed_timer.autostart = false
 
 	add_child(temporary_speed_timer)
-	temporary_speed_timer.timeout.connect(on_temporary_speed_timer_timeout)
+	temporary_speed_timer.timeout.connect(on_temporary_speed_timer_timeout.bind(MAX_SPEED))
 
 
-func on_temporary_speed_timer_timeout():
-	MAX_SPEED = original_max_speed
+func on_temporary_speed_timer_timeout(original_speed: float):
+	MAX_SPEED = original_speed
 	temporary_speed_finished.emit()
 
 

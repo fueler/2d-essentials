@@ -6,6 +6,7 @@ signal stack_flushed(flushed_states: Array[GodotEssentialsState])
 
 @export var current_state: GodotEssentialsState = null
 @export var stack_capacity: int = 3
+@export var flush_stack_when_reach_capacity: bool = false
 @export var enable_stack: bool = true
 
 var states: Dictionary = {}
@@ -80,8 +81,11 @@ func exit_state(state: GodotEssentialsState):
 func push_state_to_stack(state: GodotEssentialsState) -> void:
 	if enable_stack and stack_capacity > 0:
 		if states_stack.size() >= stack_capacity:
-			stack_flushed.emit(states_stack)
-			states_stack.clear()
+			if flush_stack_when_reach_capacity:
+				states_stack.clear()
+				stack_flushed.emit(states_stack)
+			else:
+				states_stack.pop_front()
 		
 		states_stack.append(state)
 		stack_pushed.emit(state, states_stack)
@@ -150,4 +154,5 @@ func on_finished_state(next_state):
 
 func on_stack_pushed(_new_state: GodotEssentialsState, stack:Array[GodotEssentialsState]):
 	for state in states.values():
-		state.previous_states = stack
+		if state is GodotEssentialsState:	
+			state.previous_states = stack

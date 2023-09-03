@@ -2,6 +2,8 @@ class_name GodotEssentialsPlatformerMovementComponent extends GodotEssentialsMot
 
 signal gravity_changed(enabled: bool)
 signal inverted_gravity(inverted: bool)
+signal temporary_gravity_started(previous_gravity: float, current_gravity: float)
+signal temporary_gravity_finished
 signal jumped(position: Vector2)
 signal wall_jumped(normal: Vector2, position: Vector2)
 signal allowed_jumps_reached(jump_positions: Array[Vector2])
@@ -18,6 +20,8 @@ signal wall_climb_finished
 @export var MAXIMUM_FALL_VELOCITY: float = 200.0
 ## The default duration in seconds when the gravity is suspended
 @export var DEFAULT_GRAVITY_SUSPEND_DURATION: float = 2.0
+## The default duration in seconds when the gravity is modified temporary
+@export var DEFAULT_TEMPORARY_GRAVITY_TIME: float = 2.0
 
 @export_group("Jump")
 ## The maximum height the character can reach
@@ -91,7 +95,6 @@ signal wall_climb_finished
 ## Time that the climb action is disabled when the fatigue timeout is triggered.
 @export var time_disabled_when_timeout: float = 0.7
 
-
 @onready var jump_velocity: float = _calculate_jump_velocity()
 @onready var jump_gravity: float =  _calculate_jump_gravity()
 @onready var fall_gravity: float =  _calculate_fall_gravity()
@@ -135,6 +138,7 @@ var is_wall_climbing: bool = false:
 		is_wall_climbing = value
 
 var suspend_gravity_timer: Timer
+var temporary_gravity_timer: Timer
 var coyote_timer: Timer
 var wall_climb_timer: Timer
 var jump_queue: Array[Vector2] = []
@@ -224,12 +228,26 @@ func invert_gravity() -> GodotEssentialsPlatformerMovementComponent:
 	return self
 	
 	
-func suspend_gravity_for_duration(duration: float):
+func suspend_gravity_for_duration(duration: float) -> GodotEssentialsPlatformerMovementComponent:
 	if duration > 0:
 		gravity_enabled = false
 		suspend_gravity_timer.stop()
 		suspend_gravity_timer.wait_time = duration
 		suspend_gravity_timer.start()
+	
+	return self
+
+
+func change_gravity_temporary(gravity: float, time: float) -> GodotEssentialsPlatformerMovementComponent:
+	if temporary_gravity_timer:
+		temporary_gravity_timer.stop()
+		temporary_gravity_timer.wait_time = max(0.05, absf(time))
+		temporary_gravity_timer.start()
+		
+		temporary_gravity_started.emit(fall_gravity, gravity)
+		fall_gravity = gravity
+		
+	return self
 
 
 func can_jump() -> bool:
@@ -429,6 +447,21 @@ func _create_wall_climbing_timer(time: float = time_it_can_climb):
 	wall_climb_timer.timeout.connect(on_wall_climb_timer_timeout)
 
 
+func _create_temporary_gravity_timer(time: float = DEFAULT_TEMPORARY_GRAVITY_TIME):
+	if temporary_gravity_timer:
+			return
+			
+	temporary_gravity_timer = Timer.new()
+	temporary_gravity_timer.name = "TemporaryGravityTimer"
+	temporary_gravity_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	temporary_gravity_timer.wait_time = time
+	temporary_gravity_timer.one_shot = true
+	temporary_gravity_timer.autostart = false
+
+	add_child(temporary_gravity_timer)
+	temporary_gravity_timer.timeout.connect(on_temporary_gravity_timer_timeout.bind(fall_gravity))
+
+
 func on_jumped(position: Vector2):
 	is_wall_climbing = false
 	is_wall_sliding = false
@@ -496,3 +529,7 @@ func on_wall_climb_timer_timeout(normal: Vector2):
 		wall_climb_enabled = false
 		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
 		wall_climb_enabled = true
+
+func on_temporary_gravity_timer_timeout(original_gravity: float):
+	temporary_gravity_finished.emit()
+	fall_gravity = original_gravity
