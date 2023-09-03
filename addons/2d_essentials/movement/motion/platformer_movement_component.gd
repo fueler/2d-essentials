@@ -492,9 +492,7 @@ func on_wall_climb_started():
 
 
 func on_wall_climb_finished():
-	if disable_gravity_on_wall_climb:
-		gravity_enabled = true
-		
+	gravity_enabled = true
 	wall_climb_timer.stop()
 
 
@@ -519,11 +517,11 @@ func on_coyote_timer_timeout():
 	coyote_time_finished.emit()
 
 
-func on_wall_climb_timer_timeout(normal: Vector2):
+func on_wall_climb_timer_timeout():
 	is_wall_climbing = false
 	
 	if wall_climb_fatigue_knockback > 0:
-		knockback(normal, wall_climb_fatigue_knockback)
+		knockback(Vector2(-sign(last_faced_direction.x), last_faced_direction.y), wall_climb_fatigue_knockback)
 	
 	if time_disabled_when_timeout > 0:
 		wall_climb_enabled = false
