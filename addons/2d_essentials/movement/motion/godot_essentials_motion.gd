@@ -200,6 +200,10 @@ func dash(target_direction: Vector2 = facing_direction, speed_multiplier: float 
 		velocity = target_direction * (MAX_SPEED * max(1, absf(speed_multiplier)))
 
 		dash_queue.append(body.global_position)
+		
+		if dash_duration_timer.time_left > 0:
+			dash_duration_timer.timeout.emit()
+		
 		dash_duration_timer.start()
 	
 	return self
