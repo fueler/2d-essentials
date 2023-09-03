@@ -143,6 +143,7 @@ var jump_queue: Array[Vector2] = []
 func _ready():
 	super._ready()
 	_create_suspend_gravity_timer()
+	_create_coyote_timer()
 	
 	jumped.connect(on_jumped)
 	wall_jumped.connect(on_wall_jumped)
