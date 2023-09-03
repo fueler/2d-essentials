@@ -48,7 +48,7 @@ signal wall_climb_finished
 		return jump_time_to_fall
 		
 ## The value represents a velocity threshold that determines whether the character can jump
-@export var jump_velocity_threshold: float = 300.0
+@export var jump_threshold: float = 300.0
 ## Jumps allowed to perform in a row
 @export var allowed_jumps : int = 1
 ## Reduced amount of jump effectiveness at each iteration
@@ -345,17 +345,16 @@ func reset_jump_queue() -> GodotEssentialsPlatformerMovementComponent:
 	
 
 func is_withing_jump_threshold() -> bool:
-	var threshold = clamp(jump_velocity_threshold, jump_velocity_threshold, MAXIMUM_FALL_VELOCITY) 
-	var is_withing_threshold: bool = threshold == 0
+	var is_withing_threshold: bool = jump_threshold == 0
 	
-	if threshold > 0:
+	if jump_threshold > 0:
 		if is_inverted_gravity:
-			is_withing_threshold = velocity.y > 0 or (velocity.y < -threshold)
+			is_withing_threshold = body.global_position.y > 0 or (body.global_position.y < -jump_threshold)
 		else:	
-			is_withing_threshold = velocity.y < 0 or (velocity.y < threshold)
+			is_withing_threshold = body.global_position.y < 0 or (body.global_position.y < jump_threshold)
 
 	return is_withing_threshold
-	
+
 	
 func is_falling() -> bool:
 	return not body.is_on_floor() \
