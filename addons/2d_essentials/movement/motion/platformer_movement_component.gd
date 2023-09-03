@@ -15,7 +15,7 @@ signal wall_climb_finished
 
 @export_group("Gravity")
 ## The maximum vertical velocity while falling to control fall speed
-@export var MAXIMUM_FALL_VELOCITY: float = 200.
+@export var MAXIMUM_FALL_VELOCITY: float = 200.0
 ## The default duration in seconds when the gravity is suspended
 @export var DEFAULT_GRAVITY_SUSPEND_DURATION: float = 2.0
 
@@ -57,7 +57,7 @@ signal wall_climb_finished
 ## Enable the coyote jump
 @export var coyote_jump_enabled: bool = true
 ## The time window this jump can be executed when the character is not on the floor
-@export var coyote_jump_time_window: float = 0.1
+@export var coyote_jump_time_window: float = 0.15
 
 @export_group("Wall Jump")
 ## Enable the wall jump action
@@ -159,7 +159,7 @@ func move() -> void:
 	
 	var just_left_edge = was_on_floor and not body.is_on_floor()
 	
-	if just_left_edge and coyote_timer.is_stopped():
+	if just_left_edge and is_falling():
 		coyote_time_started.emit()
 		
 
@@ -235,15 +235,8 @@ func suspend_gravity_for_duration(duration: float):
 func can_jump() -> bool:
 	var coyote_jump_active: bool = coyote_jump_enabled and coyote_timer.time_left > 0.0
 	var available_jumps: bool = jump_queue.size() < allowed_jumps
-	var is_withing_threshold: bool = jump_velocity_threshold == 0
-	
-	if jump_velocity_threshold > 0:
-		if is_inverted_gravity:
-			is_withing_threshold = velocity.y > 0 or (velocity.y < -jump_velocity_threshold)
-		else:	
-			is_withing_threshold = velocity.y < 0 or (velocity.y < jump_velocity_threshold)
 
-	return available_jumps and (coyote_jump_active or is_withing_threshold)
+	return available_jumps and (coyote_jump_active or is_withing_jump_threshold())
 
 
 func can_wall_jump() -> bool:
@@ -262,6 +255,19 @@ func jump(height: float = jump_height, bypass: bool = false) -> GodotEssentialsP
 		jumped.emit(body.global_position)
 		
 	return self
+
+
+func shorten_jump() -> void:
+	var actual_velocity_y = velocity.y
+	var new_jump_velocity = jump_velocity / 2
+
+	if is_inverted_gravity:
+		if actual_velocity_y > new_jump_velocity:
+			velocity.y = new_jump_velocity
+	else:
+		if actual_velocity_y < new_jump_velocity:
+			velocity.y = new_jump_velocity
+
 
 
 func wall_jump(direction: Vector2, height: float = jump_height) -> GodotEssentialsPlatformerMovementComponent:
@@ -336,6 +342,25 @@ func reset_jump_queue() -> GodotEssentialsPlatformerMovementComponent:
 		jumps_restarted.emit()
 	
 	return self
+	
+
+func is_withing_jump_threshold() -> bool:
+	var is_withing_threshold: bool = jump_velocity_threshold == 0
+	
+	if jump_velocity_threshold > 0:
+		if is_inverted_gravity:
+			is_withing_threshold = velocity.y > 0 or (velocity.y < -jump_velocity_threshold)
+		else:	
+			is_withing_threshold = velocity.y < 0 or (velocity.y < jump_velocity_threshold)
+
+	return is_withing_threshold
+	
+	
+func is_falling() -> bool:
+	return not body.is_on_floor() \
+		and not body.is_on_wall() \
+		and gravity_enabled \
+		and (velocity.y < 0 if is_inverted_gravity else velocity.y > 0)
 
 
 func _add_position_to_jump_queue(position: Vector2):
@@ -385,8 +410,8 @@ func _create_coyote_timer():
 	coyote_timer.autostart = false
 
 	add_child(coyote_timer)
-	coyote_timer.timeout.connect(on_coyote_timer_timeout)
 	coyote_time_started.connect(on_coyote_time_started)
+	coyote_timer.timeout.connect(on_coyote_timer_timeout)
 
 
 func _create_wall_climbing_timer(time: float = time_it_can_climb):
@@ -407,6 +432,8 @@ func _create_wall_climbing_timer(time: float = time_it_can_climb):
 func on_jumped(position: Vector2):
 	is_wall_climbing = false
 	is_wall_sliding = false
+	
+	coyote_timer.stop()
 
 
 func on_wall_jumped(normal: Vector2, position: Vector2):
@@ -445,7 +472,8 @@ func on_wall_slide_finished():
 
 
 func on_coyote_time_started():
-	gravity_enabled = false
+	suspend_gravity_for_duration(coyote_jump_time_window)
+	velocity.y = 0
 	coyote_timer.start()
 
 
@@ -464,4 +492,3 @@ func on_wall_climb_timer_timeout(normal: Vector2):
 		wall_climb_enabled = false
 		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
 		wall_climb_enabled = true
-	

@@ -80,7 +80,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 func _ready():
 	_create_temporary_speed_timer()
 	_create_dash_duration_timer()
-
+	
 
 func move() -> void:
 	if body:
