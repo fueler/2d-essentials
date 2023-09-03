@@ -345,13 +345,14 @@ func reset_jump_queue() -> GodotEssentialsPlatformerMovementComponent:
 	
 
 func is_withing_jump_threshold() -> bool:
-	var is_withing_threshold: bool = jump_velocity_threshold == 0
+	var threshold = clamp(jump_velocity_threshold, jump_velocity_threshold, MAXIMUM_FALL_VELOCITY) 
+	var is_withing_threshold: bool = threshold == 0
 	
-	if jump_velocity_threshold > 0:
+	if threshold > 0:
 		if is_inverted_gravity:
-			is_withing_threshold = velocity.y > 0 or (velocity.y < -jump_velocity_threshold)
+			is_withing_threshold = velocity.y > 0 or (velocity.y < -threshold)
 		else:	
-			is_withing_threshold = velocity.y < 0 or (velocity.y < jump_velocity_threshold)
+			is_withing_threshold = velocity.y < 0 or (velocity.y < threshold)
 
 	return is_withing_threshold
 	
