@@ -377,7 +377,6 @@ func is_withing_jump_threshold() -> bool:
 	
 func is_falling() -> bool:
 	return not body.is_on_floor() \
-		and not body.is_on_wall() \
 		and gravity_enabled \
 		and (velocity.y < 0 if is_inverted_gravity else velocity.y > 0)
 
