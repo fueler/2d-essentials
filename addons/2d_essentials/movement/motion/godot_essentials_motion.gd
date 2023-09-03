@@ -45,7 +45,7 @@ signal dash_restarted
 ## Emits a signal when this body's velocity reaches zero after movement.
 @export var stopped_signal: bool = false
 ## Emits a signal when a knockback function is called.
-@export var knockback_received_signal: bool = false
+@export var knockback_received_signal: bool = true
 
 @onready var body = get_parent() as CharacterBody2D
 @onready var original_max_speed: float = MAX_SPEED

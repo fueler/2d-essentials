@@ -153,6 +153,7 @@ func _ready():
 	jumped.connect(on_jumped)
 	wall_jumped.connect(on_wall_jumped)
 	wall_climb_started.connect(on_wall_climb_started)
+	wall_climb_finished.connect(on_wall_climb_finished)
 	wall_slide_started.connect(on_wall_slide_started)
 	wall_slide_finished.connect(on_wall_slide_finished)
 
@@ -325,7 +326,7 @@ func wall_slide(delta: float =  get_physics_process_delta_time()) -> GodotEssent
 	
 
 func can_wall_climb() -> bool:
-	return wall_climb_enabled and body.is_on_wall()
+	return wall_climb_enabled and (is_wall_climbing or body.is_on_wall())
 	
 	
 func wall_climb(direction: Vector2) -> GodotEssentialsPlatformerMovementComponent:
@@ -527,6 +528,7 @@ func on_wall_climb_timer_timeout():
 		wall_climb_enabled = false
 		await (get_tree().create_timer(time_disabled_when_timeout)).timeout
 		wall_climb_enabled = true
+
 
 func on_temporary_gravity_timer_timeout(original_gravity: float):
 	temporary_gravity_finished.emit()
