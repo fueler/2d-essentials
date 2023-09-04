@@ -52,11 +52,13 @@ signal wall_climb_finished
 		return jump_time_to_fall
 		
 ## The value represents a velocity threshold that determines whether the character can jump
-@export var jump_threshold: float = 300.0
+@export var jump_hang_threshold: float = 300.0
 ## Jumps allowed to perform in a row
 @export var allowed_jumps : int = 1
 ## Reduced amount of jump effectiveness at each iteration
 @export var height_reduced_by_jump : int = 0
+## An extra boost speed on velocity.x when jump
+@export var jump_horizontal_boost: float = 0.0
 
 ## Enable the coyote jump
 @export var coyote_jump_enabled: bool = true
@@ -66,6 +68,8 @@ signal wall_climb_finished
 @export_group("Wall Jump")
 ## Enable the wall jump action
 @export var wall_jump_enabled : bool = false
+## The force applied in the wall jump, this can be different as jump_height
+@export var wall_jump_force: float = jump_height
 ## Defines whether the wall jump is counted as a jump in the overall count.
 @export var wall_jump_count_as_jump: bool = false
 ## The maximum angle of deviation that a wall can have to allow the jump to be executed.
@@ -144,6 +148,12 @@ var wall_climb_timer: Timer
 var jump_queue: Array[Vector2] = []
 
 
+enum JUMP_TYPES {
+	NORMAL,
+	WALL_JUMP
+}
+
+
 func _ready():
 	super._ready()
 	_create_suspend_gravity_timer()
@@ -187,6 +197,30 @@ func decelerate_horizontally(delta: float = get_physics_process_delta_time(), fo
 		velocity.x = 0
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
+
+	return self
+
+
+func accelerate_vertically(direction: Vector2, delta: float =  get_physics_process_delta_time()) -> GodotEssentialsPlatformerMovementComponent:
+	facing_direction = _normalize_vector(direction)
+	
+	if not direction.is_zero_approx():
+		last_faced_direction = direction
+		
+		if ACCELERATION > 0:
+			velocity.y = lerp(velocity.y, direction.y * MAX_SPEED, (ACCELERATION / 100) * delta)
+		else:
+			velocity.y = direction.y * MAX_SPEED
+		
+	return self
+
+
+
+func decelerate_vertically(delta: float = get_physics_process_delta_time(), force_stop: bool = false) -> GodotEssentialsPlatformerMovementComponent:
+	if force_stop or AIR_FRICTION_VERTICAL_FACTOR == 1:
+		velocity.y = 0
+	else:
+		velocity.y = move_toward(velocity.y, 0.0, AIR_FRICTION_VERTICAL_FACTOR * delta)
 
 	return self
 
@@ -255,7 +289,7 @@ func can_jump() -> bool:
 	var coyote_jump_active: bool = coyote_jump_enabled and coyote_timer.time_left > 0.0
 	var available_jumps: bool = jump_queue.size() < allowed_jumps
 
-	return available_jumps and (coyote_jump_active or is_withing_jump_threshold())
+	return available_jumps and (coyote_jump_active or is_withing_jump_hang_threshold())
 
 
 func can_wall_jump() -> bool:
@@ -269,6 +303,9 @@ func jump(height: float = jump_height, bypass: bool = false) -> GodotEssentialsP
 	if bypass or can_jump():
 		var height_reduced: int =  max(0, jump_queue.size()) * height_reduced_by_jump
 		velocity.y = _calculate_jump_velocity(height - height_reduced)
+		
+		if jump_horizontal_boost > 0:
+			velocity.x += sign(velocity.x) + jump_horizontal_boost
 
 		_add_position_to_jump_queue(body.global_position)
 		jumped.emit(body.global_position)
@@ -290,11 +327,15 @@ func shorten_jump() -> void:
 
 
 func wall_jump(direction: Vector2, height: float = jump_height) -> GodotEssentialsPlatformerMovementComponent:
-	var wall_normal: Vector2 = body.get_wall_normal() if direction.is_zero_approx() else direction
+	var wall_normal: Vector2 = body.get_wall_normal()
 	var left_angle: float = absf(wall_normal.angle_to(Vector2.LEFT))
 	var right_angle: float = absf(wall_normal.angle_to(Vector2.RIGHT))
 	
-	velocity.x = wall_normal.x * velocity.y
+	velocity.x = wall_normal.x * wall_jump_force
+	
+	if not direction.is_zero_approx():
+		velocity *= Helpers.normalize_vector(direction)
+		
 	jump(height, true)
 
 	if wall_jump_count_as_jump:
@@ -303,7 +344,7 @@ func wall_jump(direction: Vector2, height: float = jump_height) -> GodotEssentia
 	wall_jumped.emit(wall_normal, body.global_position)
 	
 	return self
-	
+
 
 func can_wall_slide() -> bool:
 	return wall_slide_enabled and body.is_on_wall()
@@ -363,14 +404,14 @@ func reset_jump_queue() -> GodotEssentialsPlatformerMovementComponent:
 	return self
 	
 
-func is_withing_jump_threshold() -> bool:
-	var is_withing_threshold: bool = jump_threshold == 0
+func is_withing_jump_hang_threshold() -> bool:
+	var is_withing_threshold: bool = jump_hang_threshold == 0
 	
-	if jump_threshold > 0:
+	if jump_hang_threshold > 0:
 		if is_inverted_gravity:
-			is_withing_threshold = velocity.y > 0 or (velocity.y < -jump_threshold)
+			is_withing_threshold = velocity.y > 0 or (velocity.y < -jump_hang_threshold)
 		else:	
-			is_withing_threshold = velocity.y < 0 or (velocity.y < jump_threshold)
+			is_withing_threshold = velocity.y < 0 or (velocity.y < jump_hang_threshold)
 
 	return is_withing_threshold
 
@@ -477,8 +518,6 @@ func on_wall_jumped(normal: Vector2, position: Vector2):
 	if not wall_jump_count_as_jump:
 		jump_queue.pop_back()
 		
-	jumped.emit(position)
-
 
 func on_suspend_gravity_timeout():
 	gravity_enabled = true
