@@ -164,7 +164,7 @@ func move() -> void:
 	
 	var just_left_edge = was_on_floor and not body.is_on_floor()
 	
-	if just_left_edge and is_falling():
+	if coyote_jump_enabled and just_left_edge and is_falling():
 		coyote_time_started.emit()
 		
 
@@ -368,9 +368,9 @@ func is_withing_jump_threshold() -> bool:
 	
 	if jump_threshold > 0:
 		if is_inverted_gravity:
-			is_withing_threshold = body.global_position.y > 0 or (body.global_position.y < -jump_threshold)
+			is_withing_threshold = velocity.y > 0 or (velocity.y < -jump_threshold)
 		else:	
-			is_withing_threshold = body.global_position.y < 0 or (body.global_position.y < jump_threshold)
+			is_withing_threshold = velocity.y < 0 or (velocity.y < jump_threshold)
 
 	return is_withing_threshold
 
