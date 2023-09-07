@@ -160,12 +160,13 @@ func knockback(direction: Vector2, power: float) -> GodotEssentialsMotion:
 	return self	
 
 
-func teleport_to_position(position: Vector2) -> GodotEssentialsMotion:
-	var original_position: Vector2  = body.global_position
-	body.global_position = position
-	
-	teleported.emit(original_position, position)
-	
+func teleport_to_position(target_position: Vector2, valid_position_callback: Callable = _default_valid_position_callback) -> GodotEssentialsMotion:
+	if call("valid_position_callback" ,body, target_position):
+		var original_position: Vector2  = body.global_position
+		body.global_position = target_position
+		
+		teleported.emit(original_position, target_position)
+		
 	return self
 
 
@@ -264,6 +265,10 @@ func _create_temporary_speed_timer(time: float = DEFAULT_TEMPORARY_SPEED_TIME) -
 
 	add_child(temporary_speed_timer)
 	temporary_speed_timer.timeout.connect(on_temporary_speed_timer_timeout.bind(MAX_SPEED))
+
+
+func  _default_valid_position_callback(_body: CharacterBody2D, _position: Vector2) -> bool:
+	return true
 
 
 func on_temporary_speed_timer_timeout(original_speed: float):

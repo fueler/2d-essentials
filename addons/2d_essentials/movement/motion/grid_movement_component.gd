@@ -54,7 +54,7 @@ func move(direction: Vector2, valid_position_callback: Callable = _default_valid
 	}
 	
 
-	if _default_valid_position_callback(result):
+	if call("valid_position_callback", result):
 		body.global_position = next_position
 		look_at(direction + body.global_position)
 
@@ -102,7 +102,7 @@ func _handle_grid_direction(direction: Vector2):
 	return direction
 
 
-func _default_valid_position_callback(result: Dictionary = {}) -> bool:
+func _default_valid_position_callback(_result: Dictionary = {}) -> bool:
 	return true
 
 
