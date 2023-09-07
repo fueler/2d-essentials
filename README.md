@@ -19,3 +19,8 @@ To manually install the plugin, create an **"addons"** folder at the root of you
 This collection comprises new nodes that can be added as scenes, following your usual process when working with the Godot game engine. These nodes are designed to be flexible, allowing them to adapt to the mechanics of your game without interfering with decisions that might impact the implementation of your game's unique mechanics.
 # Official documentation
 For detailed understanding and examples of usage, please refer to the [official documentation](https://godot-essentials.gitbook.io/addons-documentation/), where you can find all the necessary information.
+
+
+# Examples
+- [Alys - Precision platformer](https://github.com/godotessentials/alys)
+- [Veneno - Playing card game](https://github.com/godotessentials/Veneno)
