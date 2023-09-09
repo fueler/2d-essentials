@@ -46,8 +46,6 @@ func _ready():
 	
 	health_changed.connect(on_health_changed)
 	died.connect(on_died)
-	
-	current_health = current_health
 
 
 func damage(amount: int):
