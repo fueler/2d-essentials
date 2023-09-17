@@ -18,6 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 Helpers="*res://addons/2d_essentials/autoload/helpers.tscn"
+GodotEssentialsHelpers="*res://addons/2d_essentials/autoload/helpers.gd"
+GodotEssentialsAudio="*res://addons/2d_essentials/autoload/audio/audio.gd"
 
 [display]
 
