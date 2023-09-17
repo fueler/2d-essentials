@@ -75,7 +75,7 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 
 func _on_download_version_button_pressed():
 	if FileAccess.file_exists("res://examples/click-point-movement/world.tscn"): 
-		push_error("You can't update the 2d essentials addon from within itself.")
+		push_error("Godot2DEssentialsPlugin: You can't update the 2d essentials addon from within itself.")
 		failed.emit(401)
 		return
 		
@@ -85,7 +85,7 @@ func _on_download_version_button_pressed():
 		download_version_button.disabled = true
 		download_version_button.text = "Downloading new version..."
 	else:
-		push_warning("You're up to date with the latest version of 2d essentials plugin")
+		push_warning("Godot2DEssentialsPlugin: You're up to date with the latest version of the plugin")
 
 
 func _on_read_release_notes_button_pressed():

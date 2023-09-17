@@ -12,7 +12,7 @@ var shake_fade: float = 5.0
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings: PackedStringArray = []
 	var camera_node = get_parent()
-	
+
 	if camera_node == null:
 		warnings.append("The camera node was not found, make sure this node is a child of Camera2D")
 			

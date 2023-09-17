@@ -67,7 +67,7 @@ func change_state_by_name(name: String, params: Dictionary = {}, force: bool = f
 	if new_state:
 		return change_state(new_state, params, force)
 		
-	push_error("The state {name} does not exists on this FiniteStateMachine".format({"name": name}))
+	push_error("Godot2DEssentialsPlugin: The state {name} does not exists on this FiniteStateMachine".format({"name": name}))
 
 
 func enter_state(state: GodotEssentialsState):
