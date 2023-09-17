@@ -1,7 +1,7 @@
 @tool
 extends EditorPlugin
 
-const HELPERS_AUTOLOAD = "Helpers"
+const HELPERS_AUTOLOAD = "GodotEssentialsHelpers"
 const AUDIO_AUTOLOAD = "GodotEssentialsAudio"
 var update_dialog_scene: UpdateGodot2DEssentialsButton
 
