@@ -20,8 +20,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 
 
 func _process(delta):
-	if not Engine.is_editor_hint():
-		shake_camera(delta)
+	shake_camera(delta)
 
 
 func shake_camera(delta: float = get_process_delta_time()):

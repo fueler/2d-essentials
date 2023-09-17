@@ -54,7 +54,7 @@ func move(direction: Vector2, valid_position_callback: Callable = _default_valid
 	}
 	
 
-	if call("valid_position_callback", result):
+	if valid_position_callback.call(result):
 		body.global_position = next_position
 		look_at(direction + body.global_position)
 
@@ -78,7 +78,7 @@ func teleport_to(target_position: Vector2,  valid_position_callback: Callable = 
 		"direction": Helpers.normalize_vector(target_position)
 	}
 	
-	if _default_valid_position_callback(result):
+	if valid_position_callback.call(result):
 		body.global_position = target_position 
 		snap_body_position(body)
 
