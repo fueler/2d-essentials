@@ -6,14 +6,15 @@ enum AVAILABLE_TRANSITIONS {
 	FADE_OUT
 }
 
+var fade_scene: PackedScene = preload("res://addons/2d_essentials/scene_transitions/prefab_scenes/fade.tscn")
 
 var PREFAB_SCENES: Dictionary = {
 	AVAILABLE_TRANSITIONS.FADE_IN: {
-		"scene": preload("res://addons/2d_essentials/scene_transitions/prefab_scenes/fade.tscn"),
+		"scene": fade_scene,
 		"parameters": {"animation": "fade_in"}
 	},
 	AVAILABLE_TRANSITIONS.FADE_OUT: {
-		"scene": preload("res://addons/2d_essentials/scene_transitions/prefab_scenes/fade.tscn"),
+		"scene": fade_scene,
 		"parameters": {"animation": "fade_out"}
 	}
 }
