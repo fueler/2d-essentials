@@ -20,6 +20,8 @@ This collection comprises new nodes that can be added as scenes, following your 
 # Official documentation
 For detailed understanding and examples of usage, please refer to the [official documentation](https://godot-essentials.gitbook.io/addons-documentation/), where you can find all the necessary information.
 
+# Other plugins from us
+- [Godotenv](https://github.com/godotessentials/godotenv)
 
 # Examples
 - [Alys - Precision platformer](https://github.com/godotessentials/alys)
