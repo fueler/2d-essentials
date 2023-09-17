@@ -1,4 +1,4 @@
-extends Node
+class_name GodotEssentialsPluginAudio extends Node
 
 @onready var available_buses: Array[String] = _enumerate_available_buses()
 
@@ -17,13 +17,13 @@ func get_actual_volume_db_from_bus_name(name: String) -> float:
 	var bus_index: int = AudioServer.get_bus_index(name)
 	
 	if bus_index == -1:
-		push_error("Godot2DEssentialsPlugin: Cannot retrieve volume for bus name {name}, does not exists".format({"name": name}))
+		push_error("Godot2DEssentialsPlugin: Cannot retrieve volume for bus name {name}, it does not exists".format({"name": name}))
 		return 0.0
 		
 	return db_to_linear(AudioServer.get_bus_volume_db(AudioServer.get_bus_index(name)))
 
 ## Get the actual linear value from the selected bus by its index
-func get_actual_volume_db_from_bus_index(bus_index: int):
+func get_actual_volume_db_from_bus_index(bus_index: int) -> float:
 	return db_to_linear(AudioServer.get_bus_volume_db(bus_index))
 
 ## Get a list of available buses by name

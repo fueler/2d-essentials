@@ -2,11 +2,13 @@
 extends EditorPlugin
 
 const HELPERS_AUTOLOAD = "Helpers"
+const AUDIO_AUTOLOAD = "GodotEssentialsAudio"
 var update_dialog_scene: UpdateGodot2DEssentialsButton
 
 
 func _enter_tree():
-	add_autoload_singleton(HELPERS_AUTOLOAD, "res://addons/2d_essentials/autoload/helpers.tscn")
+	add_autoload_singleton(HELPERS_AUTOLOAD, "res://addons/2d_essentials/autoload/helpers.gd")
+	add_autoload_singleton(AUDIO_AUTOLOAD, "res://addons/2d_essentials/autoload/audio/audio.gd")
 	add_custom_type("HealthComponent", "Node", preload("res://addons/2d_essentials/survivability/health_component.gd"), preload("res://addons/2d_essentials/icons/suit_hearts.svg"))
 	add_custom_type("ShakeCameraComponent2D", "Node2D", preload("res://addons/2d_essentials/camera/shake_camera_component.gd"), preload("res://addons/2d_essentials/icons/video.png"))
 	add_custom_type("RotatorComponent", "Node2D", preload("res://addons/2d_essentials/movement/rotator_component.gd"), preload("res://addons/2d_essentials/icons/arrow_clockwise.svg"))
@@ -22,6 +24,7 @@ func _enter_tree():
 
 func _exit_tree():
 	remove_autoload_singleton(HELPERS_AUTOLOAD)
+	remove_autoload_singleton(AUDIO_AUTOLOAD)
 	remove_custom_type("HealthComponent")
 	remove_custom_type("ShakeCameraComponent2D")
 	remove_custom_type("RotatorComponent")
