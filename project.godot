@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 GodotEssentialsHelpers="*res://addons/2d_essentials/autoload/helpers.gd"
 GodotEssentialsAudio="*res://addons/2d_essentials/autoload/audio/audio.gd"
-GodotEssentialsSceneTransitioner="*res://addons/2d_essentials/scene_transitions/scene_transitioner.gd"
+GodotEssentialsSceneTransitioner="*res://addons/2d_essentials/autoload/scene_transitions/scene_transitioner.gd"
 
 [display]
 
