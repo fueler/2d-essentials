@@ -75,7 +75,7 @@ func teleport_to(target_position: Vector2,  valid_position_callback: Callable = 
 	var result = {
 		"from":  body.global_position, 
 		"to": target_position, 
-		"direction": Helpers.normalize_vector(target_position)
+		"direction": GodotEssentialsHelpers.normalize_vector(target_position)
 	}
 	
 	if valid_position_callback.call(result):
@@ -93,10 +93,10 @@ func snap_position(position: Vector2) -> Vector2:
 
 
 func _handle_grid_direction(direction: Vector2):
-	direction = Helpers.normalize_vector(direction)
+	direction = GodotEssentialsHelpers.normalize_vector(direction)
 	
 	# Normalize diagonals
-	if Helpers.is_diagonal_direction(direction):
+	if GodotEssentialsHelpers.is_diagonal_direction(direction):
 		direction *= sqrt(2)
 
 	return direction

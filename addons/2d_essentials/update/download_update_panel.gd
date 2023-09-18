@@ -74,7 +74,7 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 	updated.emit(next_version_release.tag_name.substr(1))
 
 func _on_download_version_button_pressed():
-	if FileAccess.file_exists("res://examples/click-point-movement/.gitkeep"): 
+	if FileAccess.file_exists("res://examples/.gitkeep"): 
 		push_error("Godot2DEssentialsPlugin: You can't update the 2d essentials addon from within itself.")
 		failed.emit(401)
 		return

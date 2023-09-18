@@ -1,6 +1,6 @@
 class_name GodotEssentialsPluginAudio extends Node
 
-@onready var available_buses: Array[String] = _enumerate_available_buses()
+@onready var available_buses: Array = _enumerate_available_buses()
 
 
 ## Change the volume of selected bus_index if it exists
@@ -27,5 +27,5 @@ func get_actual_volume_db_from_bus_index(bus_index: int) -> float:
 	return db_to_linear(AudioServer.get_bus_volume_db(bus_index))
 
 ## Get a list of available buses by name
-func _enumerate_available_buses() -> Array[String]:
-	return range(AudioServer.bus_count).map(func(bus_index: int): return AudioServer.get_bus_name(bus_index)) 
+func _enumerate_available_buses() -> Array:
+	return range(AudioServer.bus_count).map(func(bus_index: int): return AudioServer.get_bus_name(bus_index))

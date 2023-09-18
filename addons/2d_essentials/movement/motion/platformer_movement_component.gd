@@ -334,7 +334,7 @@ func wall_jump(direction: Vector2, height: float = jump_height) -> GodotEssentia
 	velocity.x = wall_normal.x * wall_jump_force
 	
 	if not direction.is_zero_approx():
-		velocity *= Helpers.normalize_vector(direction)
+		velocity *= GodotEssentialsHelpers.normalize_vector(direction)
 		
 	jump(height, true)
 

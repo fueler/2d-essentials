@@ -1,4 +1,4 @@
-class_name GodotEssentialsSceneTransitioner extends Node
+class_name GodotEssentialsPluginSceneTransitioner extends Node
 
 
 enum AVAILABLE_TRANSITIONS {
@@ -24,6 +24,7 @@ func transition_to(scene, transition: AVAILABLE_TRANSITIONS, data: Dictionary = 
 	var transition_scene_data = PREFAB_SCENES[transition]
 	var transition_scene = transition_scene_data["scene"].instantiate() as GodotEssentialsSceneTransition
 	
+	print("data ", transition_scene_data)
 	transition_scene_data["parameters"].merge(data)
 	transition_scene.data = transition_scene_data["parameters"]
 	get_viewport().add_child(transition_scene)

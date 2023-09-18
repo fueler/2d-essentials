@@ -118,7 +118,7 @@ func _target_can_be_follow(target: Node2D) -> bool:
 
 func on_follow_started(delta: float = get_physics_process_delta_time()) -> void:
 	if _target_can_be_follow(target):
-		var direction_to_target: Vector2 = Helpers.normalize_vector(target.global_position - projectile.global_position)
+		var direction_to_target: Vector2 = GodotEssentialsHelpers.normalize_vector(target.global_position - projectile.global_position)
 		direction = direction.lerp(direction_to_target, homing_strength * delta)
 	else:
 		stop_follow_target()

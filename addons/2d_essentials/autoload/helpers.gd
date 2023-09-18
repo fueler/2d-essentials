@@ -1,5 +1,3 @@
-@tool
-
 class_name Utilities extends Node
 
 signal frame_freezed
