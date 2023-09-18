@@ -3,14 +3,15 @@ class_name GodotEssentialsSceneTransition extends Node
 signal started_transition(data: Dictionary)
 signal finished_transition(data: Dictionary, next_scene)
 
-func _enter_tree():
-	started_transition.emit(data)
-
 var data: Dictionary = {}
 
 ## LOADING GROUP ##
-var progress = []
+var progress = [0]
 var load_status = ResourceLoader.THREAD_LOAD_FAILED
+
+func _enter_tree():
+	started_transition.emit(data)
+
 
 func _ready():
 	if _is_loading_screen():
@@ -23,6 +24,7 @@ func _process(delta):
 		
 		if load_status == ResourceLoader.THREAD_LOAD_LOADED:
 			finished_transition.emit(data, ResourceLoader.load_threaded_get(data["scene_path"]))
+			queue_free()
 
 
 func _is_loading_screen() -> bool:
