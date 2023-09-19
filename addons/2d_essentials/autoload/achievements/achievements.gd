@@ -52,16 +52,6 @@ func unlock_achievement(name: String) -> void:
 			achievement_unlocked.emit(name, achievement)
 
 
-func _create_save_directory(path: String) -> void:
-	DirAccess.make_dir_absolute(path)
-
-
-func _prepare_achievements() -> void:
-	read_from_local_source()
-	read_from_remote_source()
-	_sync_achievements()
-
-
 func read_from_local_source() -> void:
 	var local_source_file = _local_source_file_path()
 
@@ -81,7 +71,17 @@ func read_from_remote_source() -> void:
 		await http_request.request_completed
 
 
-func _sync_achievements() -> void:
+func _create_save_directory(path: String) -> void:
+	DirAccess.make_dir_absolute(path)
+
+
+func _prepare_achievements() -> void:
+	read_from_local_source()
+	read_from_remote_source()
+	_sync_achievements_with_encrypted_saved_file()
+
+
+func _sync_achievements_with_encrypted_saved_file() -> void:
 	var saved_file_path = _encrypted_save_file_path()
 	
 	if FileAccess.file_exists(saved_file_path):
