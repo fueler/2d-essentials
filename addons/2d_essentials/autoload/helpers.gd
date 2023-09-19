@@ -1,4 +1,4 @@
-class_name Utilities extends Node
+class_name GodotEssentialsPluginHelpers extends Node
 
 signal frame_freezed
 
@@ -80,3 +80,10 @@ func generate_random_string(length: int, characters: String =  "abcdefghijklmnop
 			result += characters[random_number_generator.randi() % characters.length()]
 
 	return result
+
+func is_valid_url(url: String) -> bool:
+	var regex = RegEx.new()
+	var url_pattern = "/(https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})(\\.[a-zA-Z]{2,})?\\/[a-zA-Z0-9]{2,}|((https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})(\\.[a-zA-Z]{2,})?)|(https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z0-9]{2,}\\.[a-zA-Z0-9]{2,}\\.[a-zA-Z0-9]{2,}(\\.[a-zA-Z0-9]{2,})?/g"
+	regex.compile(url_pattern)
+	
+	return regex.search(url) != null
