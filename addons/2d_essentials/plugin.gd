@@ -9,7 +9,7 @@ var DEFAULT_SETTINGS = [
 		"name": SETTINGS_BASE + "/achievements/local_source",
 		"type": TYPE_STRING,
 		"hint": PROPERTY_HINT_TYPE_STRING,
-		"value": "res://"
+		"value": "res://",
 	},
 		{
 		"name": SETTINGS_BASE + "/achievements/remote_source",
@@ -29,11 +29,17 @@ var DEFAULT_SETTINGS = [
 		"hint": PROPERTY_HINT_TYPE_STRING,
 		"value": "achievements.json"
 	},
-		{
+	{
 		"name": SETTINGS_BASE + "/achievements/password",
 		"type": TYPE_STRING,
 		"hint": PROPERTY_HINT_TYPE_STRING,
 		"value": ""
+	},
+	{
+		"name": SETTINGS_BASE + "/godotenv/root_directory",
+		"type": TYPE_STRING,
+		"hint": PROPERTY_HINT_TYPE_STRING,
+		"value": "res://"
 	}
 ]
 
@@ -45,6 +51,7 @@ func _enter_tree():
 	add_autoload_singleton(_add_prefix("Audio"), "res://addons/2d_essentials/autoload/audio/audio.gd")
 	add_autoload_singleton(_add_prefix("SceneTransitioner"), "res://addons/2d_essentials/autoload/scene_transitions/scene_transitioner.gd")
 	add_autoload_singleton(_add_prefix("Achievements"), "res://addons/2d_essentials/autoload/achievements/achievements.tscn")
+	add_autoload_singleton(_add_prefix("Environment"), "res://addons/2d_essentials/autoload/dotenv/godotenv.gd")
 	add_custom_type(_add_prefix("SceneTransition"), "Node", preload("res://addons/2d_essentials/autoload/scene_transitions/scene_transition.gd"), preload("res://addons/2d_essentials/icons/video.png"))
 	add_custom_type(_add_prefix("HealthComponent"), "Node", preload("res://addons/2d_essentials/survivability/health_component.gd"), preload("res://addons/2d_essentials/icons/suit_hearts.svg"))
 	add_custom_type(_add_prefix("ShakeCameraComponent2D"), "Node2D", preload("res://addons/2d_essentials/camera/shake_camera_component.gd"), preload("res://addons/2d_essentials/icons/video.png"))
@@ -61,10 +68,13 @@ func _enter_tree():
 	
 
 func _exit_tree():
+	## AUTOLOAD ##
 	remove_autoload_singleton(_add_prefix("Helpers"))
 	remove_autoload_singleton(_add_prefix("Audio"))
 	remove_autoload_singleton(_add_prefix("SceneTransitioner"))
 	remove_autoload_singleton(_add_prefix("Achievements"))
+	remove_autoload_singleton(_add_prefix("Environment"))
+	## CUSTOM TYPES ##
 	remove_custom_type(_add_prefix("SceneTransition"))
 	remove_custom_type(_add_prefix("HealthComponent"))
 	remove_custom_type(_add_prefix("ShakeCameraComponent2D"))
