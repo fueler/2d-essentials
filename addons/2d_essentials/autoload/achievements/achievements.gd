@@ -5,13 +5,23 @@ signal achievement_updated(name: String, achievement: Dictionary)
 signal all_achievements_unlocked
 
 @onready var http_request: HTTPRequest = $HTTPRequest
-
 @onready var SETTINGS_PATH = "{project_name}/config/achievements".format({"project_name": ProjectSettings.get_setting("application/config/name")})
 
 var current_achievements: Dictionary = {}
-var unlocked_achievements: Array[Dictionary] = []
-var locked_achievements: Array[Dictionary] = []
+var unlocked_achievements: Dictionary = {}
 var achievements_keys: PackedStringArray = []
+
+## Basic achievement dictionary structure
+# "achievement-name": {
+#		"name": "MY achievement",
+#		"description": "This is my awesome achievement",
+#		"is_secret": false,
+#		"count_goal": 25,
+#		"current_progress": 0.0,
+#		"icon_path": "res://assets/icon/my-achievement.png",
+#		"unlocked": false,
+#		"active": true
+#	}
 
 func _ready():
 	http_request.request_completed.connect(_on_request_completed)
@@ -31,13 +41,15 @@ func update_achievement(name: String, data: Dictionary) -> void:
 		current_achievements[name].merge(data, true)
 		
 		achievement_updated.emit(name, data)
-
+		
 
 func unlock_achievement(name: String) -> void:
 	if current_achievements.has(name):
-		if not current_achievements[name]["unlocked"]:
-			current_achievements[name]["unlocked"] = true
-			achievement_unlocked.emit(name, current_achievements[name])
+		var achievement: Dictionary = current_achievements[name]
+		if not achievement["unlocked"]:
+			achievement["unlocked"] = true
+			unlocked_achievements[name] = achievement
+			achievement_unlocked.emit(name, achievement)
 
 
 func _create_save_directory(path: String) -> void:
@@ -45,8 +57,14 @@ func _create_save_directory(path: String) -> void:
 
 
 func _prepare_achievements() -> void:
+	read_from_local_source()
+	read_from_remote_source()
+	_sync_achievements()
+
+
+func read_from_local_source() -> void:
 	var local_source_file = _local_source_file_path()
-	
+
 	if FileAccess.file_exists(local_source_file):
 		var content = JSON.parse_string(FileAccess.get_file_as_string(local_source_file))
 		if content == null:
@@ -54,15 +72,16 @@ func _prepare_achievements() -> void:
 			return
 			
 		current_achievements = content
+		achievements_keys = current_achievements.keys()
 		
+
+func read_from_remote_source() -> void:
 	if GodotEssentialsHelpers.is_valid_url(_remote_source_url()):
 		http_request.request(_remote_source_url())
 		await http_request.request_completed
-	
-	sync_achievements()
-		
 
-func sync_achievements() -> void:
+
+func _sync_achievements() -> void:
 	var saved_file_path = _encrypted_save_file_path()
 	
 	if FileAccess.file_exists(saved_file_path):
@@ -76,7 +95,16 @@ func sync_achievements() -> void:
 			current_achievements.merge(achievements, true)
 
 
-func update_encrypted_save_file() -> void:
+func _check_if_all_achievements_are_unlocked() -> bool:
+	var all_unlocked = unlocked_achievements.size() == current_achievements.size()
+	
+	if all_unlocked:
+		all_achievements_unlocked.emit()
+		
+	return all_unlocked
+
+
+func _update_encrypted_save_file() -> void:
 	if current_achievements.is_empty():
 		return
 	
@@ -121,4 +149,5 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 
 
 func _on_achievement_updated(_name: String, _achievement: Dictionary) -> void:
-	update_encrypted_save_file()
+	_update_encrypted_save_file()
+	_check_if_all_achievements_are_unlocked()
