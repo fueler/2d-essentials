@@ -2,6 +2,7 @@ class_name GodotEssentialsPluginAchievements extends Node
 
 signal achievement_unlocked(name: String, achievement: Dictionary)
 signal achievement_updated(name: String, achievement: Dictionary)
+signal achievement_reset(name: String, achievement: Dictionary)
 signal all_achievements_unlocked
 
 @onready var http_request: HTTPRequest = $HTTPRequest
@@ -33,8 +34,10 @@ func _ready():
 
 
 func get_achievement(name: String) -> Dictionary:
-	return current_achievements[name]
-
+	if current_achievements.has(name):
+		return current_achievements[name]
+	
+	return {}
 
 func update_achievement(name: String, data: Dictionary) -> void:
 	if current_achievements.has(name):
@@ -52,7 +55,19 @@ func unlock_achievement(name: String) -> void:
 			achievement_unlocked.emit(name, achievement)
 
 
-func read_from_local_source() -> void:
+func reset_achievement(name: String, data: Dictionary = {}) -> void:
+	if current_achievements.has(name):
+		current_achievements[name].merge(data, true)
+		current_achievements[name]["unlocked"] = false
+		current_achievements[name]["current_progress"] = 0.0
+		
+		if unlocked_achievements.has(name):
+			unlocked_achievements.erase(name)
+			
+		achievement_reset.emit(name, current_achievements[name])
+		achievement_updated.emit(name, current_achievements[name])
+
+func _read_from_local_source() -> void:
 	var local_source_file = _local_source_file_path()
 
 	if FileAccess.file_exists(local_source_file):
@@ -65,7 +80,7 @@ func read_from_local_source() -> void:
 		achievements_keys = current_achievements.keys()
 		
 
-func read_from_remote_source() -> void:
+func _read_from_remote_source() -> void:
 	if GodotEssentialsHelpers.is_valid_url(_remote_source_url()):
 		http_request.request(_remote_source_url())
 		await http_request.request_completed
@@ -76,8 +91,8 @@ func _create_save_directory(path: String) -> void:
 
 
 func _prepare_achievements() -> void:
-	read_from_local_source()
-	read_from_remote_source()
+	_read_from_local_source()
+	_read_from_remote_source()
 	_sync_achievements_with_encrypted_saved_file()
 
 

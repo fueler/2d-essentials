@@ -8,11 +8,28 @@
 
 config_version=5
 
+[Godot2DEssentials]
+
+config/achievements/local_source="res://"
+config/achievements/remote_source="https://"
+config/achievements/save_directory="C:/Users/localhost/AppData/Roaming/Godot/app_userdata/Godot2DEssentials"
+config/achievements/save_file_name="achievements.json"
+config/achievements/password="pNqMAsj7yswSoEEtwjbos46BY"
+config/godotenv/root_directory="res://"
+
 [application]
 
 config/name="Godot2DEssentials"
 config/features=PackedStringArray("4.1", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GodotEssentialsHelpers="*res://addons/2d_essentials/autoload/helpers.gd"
+GodotEssentialsAudio="*res://addons/2d_essentials/autoload/audio/audio.gd"
+GodotEssentialsSceneTransitioner="*res://addons/2d_essentials/autoload/scene_transitions/scene_transitioner.gd"
+GodotEssentialsAchievements="*res://addons/2d_essentials/autoload/achievements/achievements.tscn"
+GodotEssentialsEnvironment="*res://addons/2d_essentials/autoload/dotenv/godotenv.gd"
 
 [display]
 
@@ -23,6 +40,10 @@ window/size/window_width_override=1280
 window/size/window_height_override=720
 window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/2d_essentials/plugin.cfg")
 
 [input]
 
