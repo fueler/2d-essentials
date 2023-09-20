@@ -67,6 +67,7 @@ func reset_achievement(name: String, data: Dictionary = {}) -> void:
 		achievement_reset.emit(name, current_achievements[name])
 		achievement_updated.emit(name, current_achievements[name])
 
+
 func _read_from_local_source() -> void:
 	var local_source_file = _local_source_file_path()
 
@@ -94,6 +95,10 @@ func _prepare_achievements() -> void:
 	_read_from_local_source()
 	_read_from_remote_source()
 	_sync_achievements_with_encrypted_saved_file()
+	
+	for key in current_achievements.keys():
+		if current_achievements[key]["unlocked"]:
+			unlocked_achievements[key] = current_achievements[key]
 
 
 func _sync_achievements_with_encrypted_saved_file() -> void:
