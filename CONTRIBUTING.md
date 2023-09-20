@@ -28,7 +28,7 @@ We follow the <a href='https://docs.github.com/en/get-started/quickstart/github-
 6. Submit the pull request!
 
 ## License
-By contributing to this project, you agree that your contributions will be licensed under the same <a href='https://github.com/MikeSchulze/gdUnit4/blob/master/LICENSE' target="_blank">MIT License</a> that covers the project. If you have any concerns, please reach out to the maintainers.
+By contributing to this project, you agree that your contributions will be licensed under the same <a href='https://github.com/godotessentials/2d-essentials/blob/master/LICENSE.md' target="_blank">MIT License</a> that covers the project. If you have any concerns, please reach out to the maintainers.
 
 
 ## Coding Style
