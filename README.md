@@ -20,9 +20,19 @@ This collection comprises new nodes that can be added as scenes, following your 
 # Official documentation
 For detailed understanding and examples of usage, please refer to the [official documentation](https://godot-essentials.gitbook.io/addons-documentation/), where you can find all the necessary information.
 
-# Other plugins from us
-- [Godotenv](https://github.com/godotessentials/godotenv)
+# You are welcome to
+- [Give feedback](https://github.com/godotessentials/2d-essentials/pulls)
+- [Suggest improvements](https://github.com/godotessentials/2d-essentials/issues/new?assignees=s3r0s4pi3ns&labels=enhancement&template=feature_request.md&title=)
+- [Bug report](https://github.com/godotessentials/2d-essentials/issues/new?assignees=s3r0s4pi3ns&labels=bug%2C+task&template=bug_report.md&title=)
+- - -
+# Contribution guidelines
+**Thank you for your interest in Godot2DEssentials!
+
+Code of Conduct: We strictly adhere to the Godot code of conduct in this project. As a contributor, it is important to respect and follow this code to maintain a positive and inclusive community.
 
 # Examples
 - [Alys - Precision platformer](https://github.com/godotessentials/alys)
 - [Veneno - Playing card game](https://github.com/godotessentials/Veneno)
+
+# Contact us
+If you have built a project, demo, script or example with this plugin let us know and we can publish it here in the repository to help us to improve and to know that what we do is useful.

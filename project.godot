@@ -14,7 +14,7 @@ config/achievements/local_source="res://"
 config/achievements/remote_source="https://"
 config/achievements/save_directory="C:/Users/localhost/AppData/Roaming/Godot/app_userdata/Godot2DEssentials"
 config/achievements/save_file_name="achievements.json"
-config/achievements/password="pNqMAsj7yswSoEEtwjbos46BY"
+config/achievements/password="ZJHEzqrPcntyISGBV95sZrYub"
 config/godotenv/root_directory="res://"
 
 [application]
