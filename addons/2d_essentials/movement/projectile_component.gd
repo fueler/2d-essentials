@@ -3,6 +3,7 @@ class_name ProjectileComponent extends Node2D
 signal follow_started(target:Node2D)
 signal follow_stopped(target: Node2D)
 signal target_swapped(current_target: Node2D, previous_target:Node2D)
+signal homing_distance_reached()
 signal bounced(position: Vector2)
 signal penetrated(remaining_penetrations: int)
 signal penetration_complete()
@@ -33,18 +34,23 @@ signal penetration_complete()
 
 @onready var projectile = get_parent() as Node2D
 
-var direction: Vector2 = Vector2.ZERO
+var direction: Vector2 = Vector2.ZERO:
+	set(value):
+		direction = GodotEssentialsHelpers.normalize_vector(value)
 
 var target: Node2D
 var follow_target: bool = false:
 	set(value):
-		if value != follow_target:
-			if follow_target:
+		var previous_value = follow_target
+		follow_target = value
+		
+		if value != previous_value:
+			if value:
 				follow_started.emit(target)
 			else:
 				follow_stopped.emit(target)
 				
-		follow_target = value
+		
 
 var penetration_count: int = 0:
 	set(value):
@@ -73,11 +79,14 @@ func _ready():
 
 func move(delta: float = get_physics_process_delta_time()):
 	if projectile:
+		if follow_target:
+			update_follow_direction(target)		
+
 		if acceleration > 0:
-			projectile.global_position = projectile.global_position.lerp(projectile.global_position * max_speed, acceleration * max_speed * delta)
+			projectile.global_position = projectile.global_position.lerp(projectile.global_position + (direction * max_speed), acceleration * delta)
 		else:
 			projectile.global_position += direction * max_speed
-			
+		
 		projectile.look_at(direction + projectile.global_position)
 
 
@@ -112,13 +121,18 @@ func bounce(new_direction: Vector2) -> Vector2:
 	return direction
 
 
+func update_follow_direction(on_target: Node2D = target) -> Vector2:
+	direction = direction.lerp(target_position(), homing_strength * get_physics_process_delta_time())
+	
+	return direction
+
+
 func _target_can_be_follow(target: Node2D) -> bool:
-	return follow_target and target and target.global_position.distance_to(global_position) < homing_distance
+	return follow_target and target and target.global_position.distance_to(projectile.global_position) < homing_distance
 
 
-func on_follow_started(delta: float = get_physics_process_delta_time()) -> void:
+func on_follow_started(target: Node2D) -> void:
 	if _target_can_be_follow(target):
-		var direction_to_target: Vector2 = GodotEssentialsHelpers.normalize_vector(target.global_position - projectile.global_position)
-		direction = direction.lerp(direction_to_target, homing_strength * delta)
+		update_follow_direction(target)
 	else:
 		stop_follow_target()
