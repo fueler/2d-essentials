@@ -305,7 +305,7 @@ func jump(height: float = jump_height, bypass: bool = false) -> GodotEssentialsP
 		velocity.y = _calculate_jump_velocity(height - height_reduced)
 		
 		if jump_horizontal_boost > 0:
-			velocity.x += sign(velocity.x) + jump_horizontal_boost
+			velocity.x += sign(velocity.x) * jump_horizontal_boost
 
 		_add_position_to_jump_queue(body.global_position)
 		jumped.emit(body.global_position)
