@@ -9,7 +9,7 @@ This plugin has been separated into several parts and moved to a new organizatio
 
 This plugin will no longer receive updates, instead you can visit us at [Godot Paradise](https://github.com/GodotParadise)
 
-
+- - -
 **Godot 2D Essentials** is a comprehensive collection of production-ready components designed to expedite the development of your 2D games. These components handle fundamental behaviors without impinging on the distinct logic of your game.
 
 We provide several examples demonstrating how to utilize them, all located in the [examples](https://github.com/godotessentials/2d-essentials/tree/main/examples) folder within this repository
